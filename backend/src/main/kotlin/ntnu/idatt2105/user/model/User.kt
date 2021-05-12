@@ -12,5 +12,5 @@ data class User (@Id
                  var surname:String,
                  @Column(unique = true)
                  var email: String,
-                 var birthDate: LocalDate,
+                 var phoneNumber: String,
                  var password: String)
