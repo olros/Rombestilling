@@ -56,7 +56,7 @@ const Http404 = () => {
   const isAuthenticated = useIsAuthenticated();
 
   return (
-    <Navigation topbarVariant='filled'>
+    <Navigation>
       <Helmet>
         <title>404</title>
       </Helmet>

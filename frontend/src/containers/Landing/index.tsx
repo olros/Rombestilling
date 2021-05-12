@@ -14,7 +14,6 @@ import Container from 'components/layout/Container';
 const useStyles = makeStyles((theme) => ({
   cover: {
     position: 'relative',
-    color: theme.palette.common.white,
     height: '100vh',
     width: '100%',
     display: 'flex',
@@ -23,15 +22,11 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   img: {
-    background: `${theme.palette.colors.gradient}`,
-    objectFit: 'contain',
-    boxShadow: 'inset 0 0 0 1000px rgba(0, 0, 0, 0.2)',
     position: 'absolute',
     top: 0,
     bottom: 0,
     left: 0,
     right: 0,
-    filter: 'blur(1px)',
     zIndex: -1,
   },
   activityContainer: {
@@ -70,9 +65,10 @@ const useStyles = makeStyles((theme) => ({
 
 const Landing = () => {
   const classes = useStyles();
+  const isAuthenticated = useIsAuthenticated();
 
   return (
-    <Navigation maxWidth={false} topbarVariant={'transparent'}>
+    <Navigation maxWidth={false}>
       <Helmet>
         <title>Forsiden - Rombestilling</title>
       </Helmet>
@@ -87,7 +83,7 @@ const Landing = () => {
         <Typography align='center' color='inherit' variant='h3'>
           Finn ditt rom nå!
         </Typography>
-        {!useIsAuthenticated && (
+        {!isAuthenticated && (
           <div className={classes.btnGroup}>
             <Button className={classes.button} component={Link} to={URLS.LOGIN} variant='outlined'>
               Logg inn

@@ -2,15 +2,10 @@ import { useMemo, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
-import { useIsAuthenticated, useLogout } from 'hooks/User';
+import { useIsAuthenticated, useUser } from 'hooks/User';
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Hidden from '@material-ui/core/Hidden';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
+import { makeStyles, AppBar, Toolbar, Hidden, Button, IconButton, Avatar } from '@material-ui/core';
 
 // Assets/Icons
 import MenuIcon from '@material-ui/icons/MenuRounded';
@@ -32,14 +27,6 @@ const useStyles = makeStyles((theme) => ({
   transparentAppBar: {
     backgroundColor: 'transparent',
   },
-  backdrop: {
-    ...theme.palette.blurred,
-    ...theme.palette.transparent,
-    backgroundColor: `${theme.palette.colors.topbar}bf`,
-    borderTop: 'none',
-    borderRight: 'none',
-    borderLeft: 'none',
-  },
   logo: {
     height: 50,
     width: 'auto',
@@ -56,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
       gridTemplateColumns: '80px 1fr',
     },
   },
-
   items: {
     display: 'grid',
     gap: theme.spacing(1),
@@ -75,14 +61,6 @@ const useStyles = makeStyles((theme) => ({
       justifyContent: 'flex-end',
     },
   },
-  profileName: {
-    margin: `auto ${theme.spacing(1)}px`,
-    color: theme.palette.common.white,
-    textAlign: 'right',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
   topbarItem: {
     height: 35,
     margin: 'auto 0',
@@ -90,6 +68,9 @@ const useStyles = makeStyles((theme) => ({
   },
   reverseColor: {
     color: theme.palette.get<string>({ light: theme.palette.common.black, dark: theme.palette.common.white }),
+  },
+  avatar: {
+    padding: theme.spacing(0, 1),
   },
 }));
 
@@ -115,15 +96,11 @@ const TopBarItem = ({ text, to }: TopBarItemProps) => {
   );
 };
 
-export type TopbarProps = {
-  variant: 'transparent' | 'dynamic' | 'filled';
-};
-
-const Topbar = ({ variant }: TopbarProps) => {
+const Topbar = () => {
   const isAuthenticated = useIsAuthenticated();
+  const { data: user } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const classes = useStyles();
-  const logout = useLogout();
   const [scrollLength, setScrollLength] = useState(0);
 
   const handleScroll = () => setScrollLength(window.pageYOffset);
@@ -142,34 +119,28 @@ const Topbar = ({ variant }: TopbarProps) => {
   );
 
   return (
-    <AppBar
-      className={classnames(
-        classes.appBar,
-        variant !== 'filled' && scrollAtTop && !sidebarOpen && classes.transparentAppBar,
-        (variant === 'filled' || !scrollAtTop) && !sidebarOpen && classes.backdrop,
-      )}
-      color='primary'
-      elevation={0}
-      position='fixed'>
+    <AppBar className={classnames(classes.appBar, scrollAtTop && !sidebarOpen && classes.transparentAppBar)} color='primary' elevation={0} position='fixed'>
       <Toolbar disableGutters>
         <div className={classes.toolbar}>
           <Link to={URLS.LANDING}>
             <Logo className={classes.logo} />
           </Link>
           <Hidden mdDown>
-            <div className={classnames(classes.items, variant === 'dynamic' && scrollAtTop && classes.reverseColor)}>
+            <div className={classnames(classes.items, scrollAtTop && classes.reverseColor)}>
               {items.map((item, i) => (
                 <TopBarItem key={i} {...item} />
               ))}
             </div>
           </Hidden>
-          <div className={classnames(classes.right, variant === 'dynamic' && scrollAtTop && classes.reverseColor)}>
+          <div className={classnames(classes.right, scrollAtTop && classes.reverseColor)}>
             <Hidden mdDown>
               <ThemeSettings className={classes.topbarItem} />
               {isAuthenticated ? (
-                <Button className={classes.topbarItem} color='inherit' onClick={logout} variant='outlined'>
-                  Logg ut
-                </Button>
+                user !== undefined && (
+                  <IconButton className={classes.avatar} component={Link} to={URLS.PROFILE}>
+                    <Avatar src={user.image}>{`${user.firstName.substr(0, 1)}${user.surname.substr(0, 1)}`}</Avatar>
+                  </IconButton>
+                )
               ) : (
                 <Button className={classes.topbarItem} color='inherit' component={Link} to={URLS.LOGIN} variant='outlined'>
                   Logg inn

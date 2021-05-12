@@ -39,11 +39,13 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
     }
 
     override fun updateUser(id: UUID, user: UserDto): UserDto {
-        val updatedUser = userRepository.findById(id).orElseThrow { UserNotFoundException() }
-        updatedUser.firstName = user.firstName
-        updatedUser.surname = user.surname
-        updatedUser.email = user.email
-        updatedUser.phoneNumber = user.phoneNumber
+        val updatedUser = userRepository.findById(id).orElseThrow { UserNotFoundException() }.copy(
+            firstName = user.firstName,
+            surname = user.surname,
+            email = user.email,
+            phoneNumber = user.phoneNumber,
+            image = user.image,
+        )
         return modelMapper.map(userRepository.save(updatedUser), UserDto::class.java)
     }
 }

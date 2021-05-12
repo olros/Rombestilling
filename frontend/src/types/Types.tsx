@@ -26,13 +26,13 @@ export type User = {
   firstName: string;
   surname: string;
   email: string;
-  birthDate: string | null;
+  phoneNumber: string;
   image: string;
 };
 
 export type UserList = Pick<User, 'id' | 'firstName' | 'surname' | 'email' | 'image'>;
 
-export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname'> & {
+export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname' | 'phoneNumber'> & {
   password: string;
 };
 

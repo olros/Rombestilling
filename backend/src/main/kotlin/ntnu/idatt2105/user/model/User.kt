@@ -14,6 +14,6 @@ data class User(@Id
                 @Column(unique = true)
                 var email: String = "",
                 var phoneNumber: String = "",
+                var image: String = "",
                 var expirationDate: LocalDate = LocalDate.EPOCH,
-                var password: String = ""){
-}
+                var password: String = "")
