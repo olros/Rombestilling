@@ -7,6 +7,7 @@ import ntnu.idatt2105.section.factory.SectionFactory
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
 import ntnu.idatt2105.util.JpaUtils
+import ntnu.idatt2105.util.SectionType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -66,7 +67,7 @@ class SectionServiceTest {
     @Test
     fun `test section service createSection returns new section`(){
         val newSection = SectionFactory().`object`
-        val newSectionDto = SectionCreateDto(UUID.randomUUID(), newSection.name,  newSection.capacity, newSection.picture)
+        val newSectionDto = SectionCreateDto(UUID.randomUUID(), newSection.name,  newSection.description, newSection.capacity, newSection.picture)
         lenient().`when`(sectionRepository.save(any(Section::class.java))).thenReturn(newSection)
         assertThat(sectionService.createSection(newSectionDto).name).isEqualTo(newSectionDto.name)
     }
@@ -75,7 +76,7 @@ class SectionServiceTest {
     fun `test section service updateSection returns update section`(){
         val name = "newname"
         section.name = name
-        val sectionDto = SectionDto(section.id, name, section.capacity, section.picture, mutableListOf())
+        val sectionDto = SectionDto(section.id, name, section.capacity, section.picture, "", SectionType.ROOM)
         lenient().`when`(sectionRepository.save(any(Section::class.java))).thenReturn(section)
         assertThat(sectionService.updateSection(section.id, sectionDto).name).isEqualTo(name)
     }

@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.util.*
+import org.hamcrest.Matchers.hasItem
 
 
 @SpringBootTest
@@ -45,7 +46,24 @@ class SectionControllerTest {
         section = SectionFactory().`object`
         section = sectionRepository.save(section)
 
+
     }
+
+    @Test
+    @WithMockUser(value = "spring")
+    fun `test section controller GET all returns OK and page of sections`() {
+        val newSection =  SectionFactory().`object`
+        newSection.parent = section
+        sectionRepository.save(newSection)
+        this.mvc.perform(get(URL))
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].name", hasItem(section.name)))
+                .andExpect(jsonPath("$.content.[*].name", hasItem(newSection.name)))
+
+
+    }
+
 
     @Test
     @WithMockUser(value = "spring")
@@ -54,12 +72,14 @@ class SectionControllerTest {
                 .andExpect(status().isOk)
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("\$.name").value(section.name))
+                .andExpect(jsonPath("\$.type").value(section.getType().toString()))
+
     }
 
     @Test
     @WithMockUser(value = "spring")
     fun `test section controller GET returns not found`() {
-        this.mvc.perform(get("$URL{sectionId}",UUID.randomUUID().toString()))
+        this.mvc.perform(get("$URL{sectionId}", UUID.randomUUID().toString()))
                 .andExpect(status().isNotFound)
     }
 
@@ -90,7 +110,7 @@ class SectionControllerTest {
     @Test
     @WithMockUser(value = "spring")
     fun `test section controller PUT returns not found`() {
-        this.mvc.perform(put("$URL{sectionId}/",UUID.randomUUID().toString())
+        this.mvc.perform(put("$URL{sectionId}/", UUID.randomUUID().toString())
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(section)))
                 .andExpect(status().isNotFound)

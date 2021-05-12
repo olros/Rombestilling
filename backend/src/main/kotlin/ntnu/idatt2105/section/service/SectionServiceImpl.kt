@@ -2,6 +2,7 @@ package ntnu.idatt2105.section.service
 
 import ntnu.idatt2105.section.dto.SectionCreateDto
 import ntnu.idatt2105.section.dto.SectionDto
+import ntnu.idatt2105.section.dto.SectionListDto
 import ntnu.idatt2105.section.exception.SectionNotFoundException
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
@@ -15,9 +16,9 @@ import java.util.*
 @Service
 class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapper: ModelMapper): SectionService {
 
-    override fun getAllSections(pageable: Pageable): Page<SectionDto> {
+    override fun getAllSections(pageable: Pageable): Page<SectionListDto> {
         val sections = sectionRepository.findAll(pageable)
-        return sections.map{ modelMapper.map(it, SectionDto::class.java)}
+        return sections.map{ modelMapper.map(it, SectionListDto::class.java)}
     }
 
     override fun createSection(section: SectionCreateDto): SectionDto {
@@ -43,6 +44,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
                     name = section.name,
                     capacity = section.capacity,
                     picture = section.picture,
+                    description = section.description
             )
             updatedSection = sectionRepository.save(updatedSection)
             return modelMapper.map(updatedSection, SectionDto::class.java)

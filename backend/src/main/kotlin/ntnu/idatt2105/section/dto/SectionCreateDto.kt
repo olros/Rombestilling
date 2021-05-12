@@ -4,5 +4,6 @@ import java.util.*
 
 data class SectionCreateDto(var id: UUID = UUID.randomUUID(),
                             var name: String = "",
+                            var description: String = "",
                             var capacity: Int = 0,
                             var picture: String = "",)

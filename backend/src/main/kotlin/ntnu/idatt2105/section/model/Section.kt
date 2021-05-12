@@ -1,5 +1,6 @@
 package ntnu.idatt2105.section.model
 
+import ntnu.idatt2105.util.SectionType
 import java.util.*
 import javax.persistence.*
 
@@ -9,11 +10,19 @@ data class Section(
         @Column(columnDefinition = "CHAR(32)")
         var id: UUID = UUID.randomUUID(),
         var name: String = "",
+        var description: String = "",
         var capacity: Int = 0,
         var picture: String,
         @OneToMany(fetch = FetchType.LAZY,mappedBy = "parent" )
         var children: MutableList<Section>? = mutableListOf(),
         @ManyToOne
         var parent: Section?
-        )
+        ){
+        fun getType(): SectionType{
+                if (parent != null)
+                        return SectionType.SECTION
+
+                return SectionType.ROOM
+        }
+}
 

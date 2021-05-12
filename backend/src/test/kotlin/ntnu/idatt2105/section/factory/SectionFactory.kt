@@ -18,6 +18,6 @@ class SectionFactory : FactoryBean<Section> {
     }
 
     override fun getObject(): Section {
-       return Section(UUID.randomUUID(), faker.name.name(), Random(1).nextInt(), "", mutableListOf(), null)
+       return Section(UUID.randomUUID(), faker.name.name(),faker.backToTheFuture.quotes(), Random(1).nextInt(), "", mutableListOf(), null)
     }
 }
