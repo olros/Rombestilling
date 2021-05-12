@@ -5,6 +5,7 @@ import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
+
 @Entity
 data class User(@Id
                 @Column(columnDefinition = "CHAR(32)")

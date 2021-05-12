@@ -3,7 +3,6 @@ package ntnu.idatt2105.user.controller
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
 import ntnu.idatt2105.user.service.UserService
-import ntnu.idatt2105.util.Constants
 import ntnu.idatt2105.util.PaginationConstants
 import ntnu.idatt2105.util.Response
 import org.springframework.data.domain.Page
@@ -35,9 +34,8 @@ class UserController(val userService: UserService) {
         } else ResponseEntity(Response("You have to be logged in"), HttpStatus.FORBIDDEN)
     }
 
-    @GetMapping("{userId}/")
-    fun getUser(@PathVariable userId: UUID,
-                @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort="firstName", direction = Sort.Direction.ASC) pageable: Pageable
+    @GetMapping
+    fun getUsers(@PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["firstName"], direction = Sort.Direction.ASC) pageable: Pageable
     ): ResponseEntity<Page<UserDto>> =
         ResponseEntity(userService.getUsers(pageable), HttpStatus.OK)
 
