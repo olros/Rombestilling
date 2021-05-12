@@ -11,5 +11,5 @@ interface UserService {
     fun registerUser(user: UserRegistrationDto): UserDto
     fun updateUser(id: UUID, user: UserDto): UserDto
     fun getUsers(pageable: Pageable): Page<UserDto>
-    fun getUser(id: UUID): UserDto
+    fun <T> getUser(id: UUID, mapTo: Class<T>): T
 }
