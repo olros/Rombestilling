@@ -2,8 +2,6 @@ import { useForm } from 'react-hook-form';
 import { useSnackbar } from 'hooks/Snackbar';
 import { useUpdateUser, useChangePassword, useLogout, useDeleteUser } from 'hooks/User';
 import { User } from 'types/Types';
-import { dateAsUTC } from 'utils';
-import { parseISO } from 'date-fns';
 import { useState } from 'react';
 
 // Material UI
@@ -13,7 +11,6 @@ import Typography from '@material-ui/core/Typography';
 // Project components
 import Paper from 'components/layout/Paper';
 import VerifyDialog from 'components/layout/VerifyDialog';
-import DatePicker from 'components/inputs/DatePicker';
 import TextField from 'components/inputs/TextField';
 import SubmitButton from 'components/inputs/SubmitButton';
 import { Button } from '@material-ui/core';
@@ -42,9 +39,7 @@ export type EditProfileProps = {
   user: User;
 };
 
-type UserEditData = Pick<User, 'firstName' | 'surname' | 'email' | 'image'> & {
-  birthDate: Date | null;
-};
+type UserEditData = Pick<User, 'firstName' | 'surname' | 'email' | 'image' | 'phoneNumber'>;
 
 type ChangePasswordData = {
   oldPassword: string;
@@ -61,18 +56,18 @@ const EditProfile = ({ user }: EditProfileProps) => {
   const logout = useLogout();
   const deleteUser = useDeleteUser();
   const showSnackbar = useSnackbar();
-  const { register, control, formState, handleSubmit, setValue, watch } = useForm<UserEditData>({
+  const { register, formState, handleSubmit, setValue, watch } = useForm<UserEditData>({
     defaultValues: {
       firstName: user.firstName,
       surname: user.surname,
       email: user.email,
-      birthDate: user.birthDate ? parseISO(user.birthDate) : null,
+      phoneNumber: user.phoneNumber,
       image: user.image,
     },
   });
   const submit = async (data: UserEditData) => {
     updateUser.mutate(
-      { userId: user.id, user: { ...data, birthDate: data.birthDate ? dateAsUTC(data.birthDate).toJSON() : null } },
+      { userId: user.id, user: { ...data } },
       {
         onSuccess: () => {
           showSnackbar('Profilen ble oppdatert', 'success');
@@ -134,7 +129,14 @@ const EditProfile = ({ user }: EditProfileProps) => {
           required
           type='email'
         />
-        <DatePicker control={control} dateProps={{ disableFuture: true }} formState={formState} label='Fødselsdato' name='birthDate' type='date' />
+        <TextField
+          disabled={updateUser.isLoading}
+          formState={formState}
+          InputProps={{ type: 'number' }}
+          label='Telefonnummer'
+          {...register('phoneNumber', { required: 'Feltet er påkrevd' })}
+          required
+        />
         <SingleImageUpload
           formState={formState}
           label='Legg til bilde'
@@ -158,7 +160,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
             className={classes.red}
             closeText='Avbryt'
             confirmText='Slett brukeren min'
-            contentText='Sikker på at du vil slette brukeren din? Du kan ikke angre dette. Dine innlegg, likes, kommentarer, påmeldinger, invitasjoner og brukeren din vil slettes. Aktiviteter du har opprettet vil bli værende, men vil bli stående uten eier.'
+            contentText='Sikker på at du vil slette brukeren din? Du kan ikke angre dette. Dine bestillinger vil slettes og kan ikke gjennopprettes.'
             onConfirm={confirmedDeleteUser}>
             Slett bruker
           </VerifyDialog>

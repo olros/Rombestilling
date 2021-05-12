@@ -8,4 +8,5 @@ data class UserDto(val id: UUID = UUID.randomUUID(),
                    val surname:String = "",
                    val email:String = "",
                    val phoneNumber: String = "",
+                   val image: String = "",
                    val expirationDate: LocalDate = LocalDate.EPOCH)

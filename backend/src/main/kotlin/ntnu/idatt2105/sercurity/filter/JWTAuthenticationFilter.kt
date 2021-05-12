@@ -30,6 +30,7 @@ class JWTAuthenticationFilter(val jwtConfig: JWTConfig, val jwtUtil: JwtUtil) : 
         if (header != null && header.startsWith(jwtConfig.prefix)) {
             processAuthentication(request)
             chain.doFilter(request, response)
+            return
         }
         chain.doFilter(request, response)
         return

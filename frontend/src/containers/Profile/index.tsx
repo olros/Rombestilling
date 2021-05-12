@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Helmet from 'react-helmet';
 import classnames from 'classnames';
 import { useUser, useLogout } from 'hooks/User';
-import { useParams } from 'react-router-dom';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,34 +12,16 @@ import Collapse from '@material-ui/core/Collapse';
 
 // Icons
 import EditIcon from '@material-ui/icons/EditRounded';
-import AktivitiesIcon from '@material-ui/icons/DateRangeRounded';
-import FollowIcon from '@material-ui/icons/ClearAllRounded';
 import PostsIcon from '@material-ui/icons/ViewAgendaRounded';
 
 // Project Components
 import Navigation from 'components/navigation/Navigation';
-import Container from 'components/layout/Container';
 import Paper from 'components/layout/Paper';
 import Tabs from 'components/layout/Tabs';
 import Http404 from 'containers/Http404';
 import EditProfile from 'containers/Profile/components/EditProfile';
 
 const useStyles = makeStyles((theme) => ({
-  backgroundImg: {
-    background: `${theme.palette.colors.gradient}`,
-    width: '100%',
-    height: 300,
-    backgroundSize: 'cover',
-  },
-  avatarContainer: {
-    position: 'relative',
-    marginTop: -120,
-    zIndex: 2,
-    alignItems: 'center',
-    [theme.breakpoints.down('lg')]: {
-      marginTop: -80,
-    },
-  },
   avatar: {
     height: 120,
     width: 120,
@@ -58,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'self-start',
   },
   root: {
+    marginTop: theme.spacing(2),
     gridTemplateColumns: '300px 1fr',
     gap: theme.spacing(2),
     [theme.breakpoints.down('lg')]: {
@@ -76,15 +58,12 @@ const useStyles = makeStyles((theme) => ({
 
 const Profile = () => {
   const classes = useStyles();
-  const { userId }: { userId?: string } = useParams();
-  const { data: user, isLoading, isError } = useUser(userId);
+  const { data: user, isLoading, isError } = useUser();
   const logout = useLogout();
-  const posts = { value: 'posts', label: 'Innlegg', icon: PostsIcon };
-  const activitiesTab = { value: 'activities', label: 'Aktiviteter', icon: AktivitiesIcon };
-  const followTab = { value: 'follow', label: 'Følger', icon: FollowIcon };
+  const bookings = { value: 'bookings', label: 'Mine bestillinger', icon: PostsIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
-  const tabs = [posts, activitiesTab, followTab, ...(userId ? [] : [editTab])];
-  const [tab, setTab] = useState(posts.value);
+  const tabs = [bookings, editTab];
+  const [tab, setTab] = useState(bookings.value);
 
   if (isError) {
     return <Http404 />;
@@ -94,14 +73,13 @@ const Profile = () => {
   }
 
   return (
-    <Navigation maxWidth={false}>
+    <Navigation>
       <Helmet>
         <title>{`${user.firstName} ${user.surname} - Rombestilling`}</title>
       </Helmet>
-      <div className={classes.backgroundImg} />
-      <Container className={classnames(classes.grid, classes.root)}>
+      <div className={classnames(classes.grid, classes.root)}>
         <div className={classes.grid}>
-          <Paper blurred className={classnames(classes.grid, classes.avatarContainer)}>
+          <Paper blurred className={classes.grid}>
             <Avatar className={classes.avatar} src={user.image}>{`${user.firstName.substr(0, 1)}${user.surname.substr(0, 1)}`}</Avatar>
             <div>
               <Typography align='center' variant='h2'>{`${user.firstName} ${user.surname}`}</Typography>
@@ -124,7 +102,7 @@ const Profile = () => {
             </Collapse>
           </div>
         </div>
-      </Container>
+      </div>
     </Navigation>
   );
 };
