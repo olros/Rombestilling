@@ -8,8 +8,8 @@ import java.util.*
 
 
 interface UserService {
-    fun createUser(user: UserRegistrationDto): UserDto
-    fun getUserDataByEmail(email: String): UserDto
+    fun registerUser(user: UserRegistrationDto): UserDto
     fun updateUser(id: UUID, user: UserDto): UserDto
     fun getUsers(pageable: Pageable): Page<UserDto>
+    fun getUser(id: UUID): UserDto
 }

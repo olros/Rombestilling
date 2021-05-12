@@ -47,10 +47,11 @@ class UserControllerTest {
     private lateinit var objectMapper: ObjectMapper
 
     @Autowired
-    private val jwtConfig: JWTConfig? = null
+    private lateinit var jwtConfig: JWTConfig
 
     @Autowired
     private lateinit var userRepository: UserRepository
+
     private lateinit var user: User
     private val userFactory: UserFactory = UserFactory()
     private lateinit var firstName: String
@@ -89,12 +90,10 @@ class UserControllerTest {
     @ParameterizedTest
     @MethodSource("provideValidEmails")
     @Throws(Exception::class)
-    fun testCreateUserWithValidEmailAndPassword(email: String) {
-        val password = "ValidPassword123"
+    fun testCreateUserWithValidEmail(email: String) {
         val validUser = UserRegistrationDto(
             firstName=firstName,
             surname=surname,
-            password=password,
             email=email,
             phoneNumber=Faker().phoneNumber.phoneNumber()
         )
@@ -146,11 +145,10 @@ class UserControllerTest {
         val user: User = userFactory.getObject()
         userRepository.save<User>(user)
         val email: String = user.email
-        val password = "ValidPassword123"
+
         val validUser = UserRegistrationDto(
             firstName=firstName,
             surname=surname,
-            password=password,
             email=email,
             phoneNumber=Faker().phoneNumber.phoneNumber()
         )
@@ -159,9 +157,9 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validUser))
         )
-            .andExpect(status().isForbidden)
+            .andExpect(status().isBadRequest)
             .andExpect(
-                jsonPath("$.message").value("Email is already associated with another user")
+                jsonPath("$.message").isNotEmpty
             )
     }
 
@@ -174,11 +172,9 @@ class UserControllerTest {
     @MethodSource("provideInvalidEmails")
     @Throws(Exception::class)
     fun testCreateUserWithInvalidEmail(email: String) {
-        val password = "ValidPassword123"
         val invalidUser = UserRegistrationDto(
             firstName=firstName,
             surname=surname,
-            password=password,
             email=email,
             phoneNumber=Faker().phoneNumber.phoneNumber()
         )
@@ -190,37 +186,10 @@ class UserControllerTest {
                 .content(objectMapper.writeValueAsString(invalidUser))
         )
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.message").value("One or more method arguments are invalid"))
+            .andExpect(jsonPath("$.message").isNotEmpty)
             .andExpect(jsonPath("$.data.email").exists())
     }
 
-    /**
-     * Test that a user cannot be created if password is too weak
-     *
-     * @throws Exception
-     */
-    @Test
-    @Throws(Exception::class)
-    fun testCreateUserWithInvalidPassword() {
-        val password = "abc123"
-
-        val invalidUser = UserRegistrationDto(
-            firstName=firstName,
-            surname=surname,
-            password=password,
-            email="test@testersen.com",
-            phoneNumber=Faker().phoneNumber.phoneNumber()
-        )
-        mockMvc.perform(
-            post(URI)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidUser))
-        )
-            .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("$.message").value("One or more method arguments are invalid"))
-            .andExpect(jsonPath("$.data.password").exists())
-    }
 
     /**
      * Tests that get return a correct user according to token
@@ -230,7 +199,6 @@ class UserControllerTest {
     @Test
     @Throws(Exception::class)
     fun testGetUserReturnsCorrectUser() {
-        val userDetails: UserDetails = UserDetailsImplBuilder(email=user.email).build()
         mockMvc.perform(
             get(URI + "me/")
                 .with(user(userDetails))
@@ -248,7 +216,6 @@ class UserControllerTest {
     @Throws(Exception::class)
     fun testUpdateUserUpdatesUserAndReturnUpdatedData() {
         user.surname = Faker().name.lastName()
-        val userDetails: UserDetails = UserDetailsImplBuilder(email=user.email).build()
 
         mockMvc.perform(
             put(URI + user.id.toString() + "/")
@@ -258,22 +225,6 @@ class UserControllerTest {
         )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(user.id.toString()))
-    }
-
-    @Test
-    @WithMockUser(value = "spring")
-    @Throws(Exception::class)
-    fun testDeleteUserAndReturnsOk() {
-        var userToDelete: User = userFactory.getObject()
-        userToDelete = userRepository.save(userToDelete)
-        val userDetails: UserDetails = UserDetailsImplBuilder(email=userToDelete.email).build()
-        mockMvc.perform(
-            delete(URI + "me/")
-                .with(user(userDetails))
-                .contentType(MediaType.APPLICATION_JSON)
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.message").value("User has been deleted"))
     }
 
     companion object {
