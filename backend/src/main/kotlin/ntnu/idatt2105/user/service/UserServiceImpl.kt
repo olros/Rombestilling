@@ -1,9 +1,10 @@
 package ntnu.idatt2105.user.service
 
+import ntnu.idatt2105.exception.ApplicationException
+import ntnu.idatt2105.exception.EntityType
+import ntnu.idatt2105.exception.ExceptionType
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
-import ntnu.idatt2105.user.exception.EmailInUseException
-import ntnu.idatt2105.user.exception.UserNotFoundException
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.UserRepository
 import org.modelmapper.ModelMapper
@@ -19,7 +20,7 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
 
     override fun registerUser(user: UserRegistrationDto): UserDto {
         if (existsByEmail(user.email))
-            throw EmailInUseException()
+            throw ApplicationException.throwException(EntityType.USER, ExceptionType.ENTITY_NOT_FOUND, "2", user.email)
 
         val userObj: User = modelMapper.map(user, User::class.java)
         userObj.id = UUID.randomUUID()
@@ -40,7 +41,9 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
     }
 
     override fun updateUser(id: UUID, user: UserDto): UserDto {
-        val updatedUser = userRepository.findById(id).orElseThrow { UserNotFoundException() }.copy(
+        val updatedUser = userRepository.findById(id)
+            .orElseThrow { ApplicationException.throwException(EntityType.USER, ExceptionType.ENTITY_NOT_FOUND, id.toString()) }
+            .copy(
             firstName = user.firstName,
             surname = user.surname,
             email = user.email,
@@ -51,6 +54,6 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
     }
 
     private fun getUserById(id: UUID): User =
-        userRepository.findById(id).orElseThrow { UserNotFoundException() }
+        userRepository.findById(id).orElseThrow { throw ApplicationException.throwException(EntityType.USER, ExceptionType.ENTITY_NOT_FOUND, id.toString()) }
 
 }
