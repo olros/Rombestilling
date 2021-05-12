@@ -14,7 +14,7 @@ data class Section(
         var capacity: Int = 0,
         var picture: String,
         @OneToMany(fetch = FetchType.EAGER,mappedBy = "parent" , cascade =[CascadeType.ALL])
-        var children: MutableList<Section>? = mutableListOf(),
+        var children: MutableList<Section> = mutableListOf(),
         @ManyToOne
         var parent: Section? = null
         ){

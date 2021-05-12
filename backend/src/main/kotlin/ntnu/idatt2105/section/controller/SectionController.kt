@@ -5,6 +5,7 @@ import ntnu.idatt2105.section.dto.SectionDto
 import ntnu.idatt2105.section.service.SectionService
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
+import ntnu.idatt2105.util.PaginationConstants
 import ntnu.idatt2105.util.Response
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
@@ -22,7 +23,8 @@ import javax.validation.Valid
 class SectionController(val sectionService: SectionService) {
 
     @GetMapping
-    fun getAllSections(@PageableDefault(size = 25, sort= ["name"], direction = Sort.Direction.DESC) pageable: Pageable) =
+    fun getAllSections(@PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
+                        sort= ["name"], direction = Sort.Direction.DESC) pageable: Pageable) =
             sectionService.getAllSections(pageable)
 
 
