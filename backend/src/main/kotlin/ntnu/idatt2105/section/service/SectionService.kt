@@ -13,9 +13,8 @@ import java.util.*
 interface SectionService {
     fun getAllSections(pageable: Pageable): Page<SectionListDto>
     fun createSection(section: SectionCreateDto): SectionDto
-    fun createChild(section: SectionCreateDto, parent: Section): Section
     fun getSectionById(id: UUID): SectionDto
     fun updateSection(id: UUID, section: SectionDto): SectionDto
     fun deleteSection(id: UUID)
-    fun addChildToSection(parentId: UUID, child: SectionCreateDto) : SectionDto
+    fun addChildToSection(parentId: UUID, child: Section) : SectionDto
 }

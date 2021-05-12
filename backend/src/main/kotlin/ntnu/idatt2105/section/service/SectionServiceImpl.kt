@@ -23,15 +23,14 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
 
     override fun createSection(section: SectionCreateDto): SectionDto {
         var newSection = modelMapper.map(section, Section::class.java)
+        if(section.parentId != null) newSection.parent = sectionRepository.findById(section.parentId!!)
+                .orElseThrow { throw SectionNotFoundException("Could not find parent") }
         newSection = sectionRepository.save(newSection)
-        return modelMapper.map(newSection, SectionDto::class.java)
+        val savedSection = modelMapper.map(newSection, SectionDto::class.java)
+        if(section.parentId != null) return addChildToSection(section.parentId!!, newSection)
+        return savedSection
     }
 
-    override fun createChild(section: SectionCreateDto, parent: Section): Section {
-        var newSection = modelMapper.map(section, Section::class.java)
-        newSection.parent = parent
-        return sectionRepository.save(newSection)
-    }
 
     override fun getSectionById(id: UUID): SectionDto {
         val section = sectionRepository.findById(id).orElseThrow{ throw SectionNotFoundException() }
@@ -59,12 +58,11 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
 
     }
 
-    override fun addChildToSection(parentId: UUID, child: SectionCreateDto) : SectionDto{
+    override fun addChildToSection(parentId: UUID, child: Section) : SectionDto{
         var parent = sectionRepository.findById(parentId).orElseThrow { throw SectionNotFoundException() }
-        val newChild = createChild(child, parent)
-        parent.children?.add(newChild)
+        parent.children?.add(child)
         sectionRepository.save(parent)
-        return modelMapper.map(newChild, SectionDto::class.java)
+        return modelMapper.map(child, SectionDto::class.java)
 
     }
 
