@@ -1,6 +1,7 @@
 package ntnu.idatt2105.section.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import ntnu.idatt2105.section.dto.SectionCreateDto
 import ntnu.idatt2105.section.dto.SectionDto
 import ntnu.idatt2105.section.factory.SectionFactory
 import ntnu.idatt2105.section.model.Section
@@ -18,6 +19,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.util.*
 import org.hamcrest.Matchers.hasItem
+import org.assertj.core.api.Assertions.assertThat
+
 
 
 @SpringBootTest
@@ -88,7 +91,7 @@ class SectionControllerTest {
     fun `test section controller POST returns Created and the created section`() {
 
         this.mvc.perform(post(URL)
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(section)))
                 .andExpect(status().isCreated)
                 .andExpect(jsonPath("\$.name").value(section.name))
@@ -101,7 +104,7 @@ class SectionControllerTest {
         section.name = name
 
         this.mvc.perform(put("$URL{sectionId}/", section.id)
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(section)))
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("\$.name").value(name))
@@ -128,5 +131,23 @@ class SectionControllerTest {
     fun `test section controller DELETE return NotFound`() {
         this.mvc.perform(delete("$URL{sectionId}/", UUID.randomUUID().toString()))
                 .andExpect(status().isNotFound)
+    }
+
+
+    @Test
+    @WithMockUser(value = "spring")
+    fun `test section controller POST with parentId adds parent`() {
+
+        val newSection = SectionCreateDto(name = section.name, parentId = section.id)
+        this.mvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(newSection)))
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("\$.name").value(section.name))
+
+        assertThat(sectionRepository.findById(section.id).get().children?.isNotEmpty())
+
+
+
     }
 }

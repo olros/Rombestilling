@@ -22,7 +22,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
     }
 
     override fun createSection(section: SectionCreateDto): SectionDto {
-        var newSection = modelMapper.map(section, Section::class.java)
+        var newSection = Section(section.id, section.name, section.description, section.capacity, section.picture)
         if(section.parentId != null) newSection.parent = sectionRepository.findById(section.parentId!!)
                 .orElseThrow { throw SectionNotFoundException("Could not find parent") }
         newSection = sectionRepository.save(newSection)

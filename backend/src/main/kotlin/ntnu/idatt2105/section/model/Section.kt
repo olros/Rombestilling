@@ -13,10 +13,10 @@ data class Section(
         var description: String = "",
         var capacity: Int = 0,
         var picture: String,
-        @OneToMany(fetch = FetchType.LAZY,mappedBy = "parent" )
+        @OneToMany(fetch = FetchType.EAGER,mappedBy = "parent" )
         var children: MutableList<Section>? = mutableListOf(),
         @ManyToOne
-        var parent: Section?
+        var parent: Section? = null
         ){
         fun getType(): SectionType{
                 if (parent != null)
