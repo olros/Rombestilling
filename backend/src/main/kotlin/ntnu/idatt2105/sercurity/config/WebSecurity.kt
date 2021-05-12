@@ -66,7 +66,7 @@ class WebSecurity(val refreshTokenService: RefreshTokenService,
                     .authenticated()
                     .and()
                     .exceptionHandling()
-                    .authenticationEntryPoint { req: HttpServletRequest?, res: HttpServletResponse, e: AuthenticationException? ->
+                        .authenticationEntryPoint { req: HttpServletRequest?, res: HttpServletResponse, e: AuthenticationException? ->
                         res.contentType = "application/json"
                         res.status = HttpServletResponse.SC_UNAUTHORIZED
                         res.outputStream.println("{ \"message\": \"Brukernavn eller passord er feil\"}")
