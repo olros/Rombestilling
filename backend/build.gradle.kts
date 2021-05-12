@@ -6,7 +6,6 @@ plugins {
 	kotlin("jvm") version "1.4.32"
 	kotlin("plugin.spring") version "1.4.32"
 	kotlin("plugin.jpa") version "1.4.32"
-
 }
 group = "fullstack-project"
 version = "0.0.1-SNAPSHOT"
@@ -35,6 +34,7 @@ dependencies {
 	implementation("com.zaxxer:HikariCP:3.4.5")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
+	implementation("io.github.serpro69:kotlin-faker:1.6.0")
 }
 
 tasks.withType<KotlinCompile> {
