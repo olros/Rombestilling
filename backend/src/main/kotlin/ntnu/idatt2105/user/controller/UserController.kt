@@ -40,10 +40,10 @@ class UserController(val userService: UserService) {
 
     @GetMapping
     fun getUsers(@PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["firstName"], direction = Sort.Direction.ASC) pageable: Pageable
-    ): ResponseEntity<Page<UserDto>> =
+    ) =
         ResponseEntity(userService.getUsers(pageable), HttpStatus.OK)
 
     @PutMapping("{userId}/")
-    fun updateUser(@PathVariable userId: UUID, @RequestBody user: UserDto): ResponseEntity<UserDto> =
+    fun updateUser(@PathVariable userId: UUID, @RequestBody user: UserDto) =
             ResponseEntity.ok(userService.updateUser(userId, user))
 }
