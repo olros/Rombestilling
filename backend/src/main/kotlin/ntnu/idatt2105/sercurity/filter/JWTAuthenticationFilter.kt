@@ -8,6 +8,7 @@ import ntnu.idatt2105.user.service.UserDetailsImpl
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.client.HttpClientErrorException
@@ -68,9 +69,10 @@ class JWTAuthenticationFilter(val jwtConfig: JWTConfig, val jwtUtil: JwtUtil) : 
     private fun setAuthentication(token: String) {
         val email: String? = jwtUtil.getEmailFromToken(token)
         val id: UUID? = jwtUtil.getUserIdFromToken(token)
-        val userDetails: UserDetails = UserDetailsImpl(id!!, email!!, "")
+        val roles: List<SimpleGrantedAuthority> = jwtUtil.getRolesFromToken(token)
+        val userDetails: UserDetails = UserDetailsImpl(id!!, email!!, "", setOf())
         val authentication = UsernamePasswordAuthenticationToken(
-                userDetails, null, ArrayList())
+                userDetails, null, roles)
         SecurityContextHolder.getContext().authentication = authentication
     }
 }

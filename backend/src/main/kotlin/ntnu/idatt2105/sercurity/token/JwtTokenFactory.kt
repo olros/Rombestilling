@@ -6,20 +6,30 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import ntnu.idatt2105.sercurity.config.JWTConfig
 import ntnu.idatt2105.user.service.UserDetailsImpl
+import ntnu.idatt2105.util.SecurityConstants.AUTHORITIES_KEY
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.stereotype.Component
 import java.util.*
+import java.util.stream.Collectors
 
 @Component
-data class JwtTokenFactory(val jwtConfig: JWTConfig) : TokenFactory{
+data class JwtTokenFactory(val jwtConfig: JWTConfig) : TokenFactory {
+
     @Suppress("DEPRECATION")
     override fun createAccessToken(userDetails: UserDetailsImpl): JwtAccessToken {
+        val authorities = userDetails.authorities.stream()
+            .map { it?.authority }
+            .collect(Collectors.joining(","))
+
         val token: String = Jwts.builder()
                 .setSubject(userDetails.username)
                 .setIssuedAt(Date(System.currentTimeMillis()))
                 .setExpiration(Date(System.currentTimeMillis() + jwtConfig.expiration))
                 .claim("uuid", userDetails.getId())
+                .claim(AUTHORITIES_KEY, authorities)
                 .signWith(SignatureAlgorithm.HS512, jwtConfig.secret)
                 .compact()
+
         return JwtAccessToken(token)
     }
 
@@ -35,6 +45,7 @@ data class JwtTokenFactory(val jwtConfig: JWTConfig) : TokenFactory{
         val claims: Claims = Jwts.claims()
                 .setSubject(userDetails.getUsername())
         claims.put("scopes", Arrays.asList(Scopes.REFRESH_TOKEN.scope()))
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setId(UUID.randomUUID()
