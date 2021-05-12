@@ -7,7 +7,7 @@ import ntnu.idatt2105.user.dto.UserRegistrationDto
 import java.util.*
 
 interface SectionService {
-    fun createSection(user: SectionCreateDto): SectionDto
+    fun createSection(section: SectionCreateDto): SectionDto
     fun getSectionById(id: UUID): SectionDto
     fun updateSection(id: UUID, section: SectionDto): SectionDto
     fun deleteSection(id: UUID): SectionDto
