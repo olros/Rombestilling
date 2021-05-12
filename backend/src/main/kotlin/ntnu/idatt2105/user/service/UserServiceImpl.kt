@@ -20,11 +20,12 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
         return userRepository.findByEmail(email) != null
     }
     override fun createUser(user: UserRegistrationDto): UserDto {
-        if (emailExist(user.email)) {
+        /*if (emailExist(user.email)) {
             throw EmailInUseException()
-        }
+        }*/
         val userObj: User = modelMapper.map(user, User::class.java)
         userObj.password = (passwordEncoder.encode(user.password))
+        userObj.id = UUID.randomUUID()
         return modelMapper.map(userRepository.save(userObj), UserDto::class.java)
     }
 
@@ -42,7 +43,7 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
         updatedUser.firstName = user.firstName
         updatedUser.surname = user.surname
         updatedUser.email = user.email
-        updatedUser.birthDate = user.birthDate
+        updatedUser.phoneNumber = user.phoneNumber
         return modelMapper.map(userRepository.save(updatedUser), UserDto::class.java)
     }
 }
