@@ -14,25 +14,25 @@ const useStyles = makeStyles((theme) => ({
   padding: {
     padding: theme.spacing(3),
   },
-  noBorder: {
-    border: 'none',
+  border: {
+    border: `${theme.palette.borderWidth} solid ${theme.palette.divider}`,
   },
 }));
 
 export type PaperProps = {
   children: ReactNode;
-  shadow?: boolean;
+  border?: boolean;
   blurred?: boolean;
   noPadding?: boolean;
   className?: string;
 };
 
-const Paper = ({ shadow, noPadding, blurred = false, children, className }: PaperProps) => {
+const Paper = ({ border, noPadding, blurred = false, children, className }: PaperProps) => {
   const classes = useStyles();
   return (
     <MaterialPaper
-      className={classnames(classes.main, !noPadding && classes.padding, shadow && classes.noBorder, blurred && classes.blurred, className)}
-      elevation={shadow ? 2 : 0}>
+      className={classnames(classes.main, !noPadding && classes.padding, border && classes.border, blurred && classes.blurred, className)}
+      elevation={0}>
       {children}
     </MaterialPaper>
   );

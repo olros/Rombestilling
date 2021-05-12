@@ -13,7 +13,7 @@ import { RoomFilters } from 'containers/Rooms';
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(2),
-    margin: theme.spacing(2),
+    margin: theme.spacing(2, 0),
   },
   filter: {
     display: 'grid',
@@ -37,11 +37,10 @@ const RoomFilterBox = ({ updateFilters }: RoomFilterBoxProps) => {
   const classes = useStyles();
   const { control, formState, handleSubmit, register } = useForm<FormValues>();
   const submit = async (data: FormValues) => {
-    console.log({ ...data, to: data.to.toJSON(), from: data.from.toJSON() });
     updateFilters({ ...data, to: data.to.toJSON(), from: data.from.toJSON() });
   };
   return (
-    <Paper className={classes.paper}>
+    <Paper blurred border className={classes.paper}>
       <form className={classes.filter} onSubmit={handleSubmit(submit)}>
         <TextField
           formState={formState}
