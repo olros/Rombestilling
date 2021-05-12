@@ -8,7 +8,7 @@ data class SectionListDto (
         var id: UUID = UUID.randomUUID(),
         var name: String = "",
         var capacity: Int = 0,
-        var type: SectionType = SectionType.ROOM,
+        var type: String = SectionType.ROOM,
         var parent: SectionListDto? = null,
 
         )

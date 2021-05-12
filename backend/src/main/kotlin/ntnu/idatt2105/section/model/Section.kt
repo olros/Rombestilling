@@ -18,7 +18,7 @@ data class Section(
         @ManyToOne
         var parent: Section? = null
         ){
-        fun getType(): SectionType{
+        fun getType(): String{
                 if (parent != null)
                         return SectionType.SECTION
 
