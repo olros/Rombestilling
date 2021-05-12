@@ -40,9 +40,10 @@ const useStyles = makeStyles((theme) => ({
 
 export type RoomListItemProps = {
   room: RoomList | SectionList;
+  reserve: (sectionId: string) => void;
 };
 
-const RoomListItem = ({ room }: RoomListItemProps) => {
+const RoomListItem = ({ room, reserve }: RoomListItemProps) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const isRoom = room.type === 'room';
@@ -53,7 +54,7 @@ const RoomListItem = ({ room }: RoomListItemProps) => {
           <Typography variant='h3'>{room.name}</Typography>
           <Typography variant='caption'>{`${isRoom ? 'Rom' : 'Del av rom'} | Kapasitet: ${room.capacity}`}</Typography>
         </div>
-        <Button endIcon={<ArrowIcon />} variant='outlined'>
+        <Button endIcon={<ArrowIcon />} onClick={() => reserve(room.id)} variant='outlined'>
           Bestill
         </Button>
       </div>
@@ -74,7 +75,7 @@ const RoomListItem = ({ room }: RoomListItemProps) => {
               <ListItem component={Paper} key={section.id} noPadding>
                 <ListItemText primary={section.name} secondary={`Kapasitet: ${section.capacity}`} />
                 <ListItemSecondaryAction>
-                  <Button className={classes.button} endIcon={<ArrowIcon />} variant='outlined'>
+                  <Button className={classes.button} endIcon={<ArrowIcon />} onClick={() => reserve(section.id)} variant='outlined'>
                     Bestill
                   </Button>
                 </ListItemSecondaryAction>

@@ -2,10 +2,11 @@ import { useState } from 'react';
 import Helmet from 'react-helmet';
 
 // Material UI Components
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Typography, SwipeableDrawer, Button } from '@material-ui/core';
 
 // Project Components
 import Navigation from 'components/navigation/Navigation';
+import ReserveForm from 'components/miscellaneous/ReserveForm';
 import RoomFilterBox from 'containers/Rooms/components/RoomFilterBox';
 import RoomListItem from 'containers/Rooms/components/RoomListItem';
 import { RoomList, SectionList } from 'types/Types';
@@ -14,6 +15,13 @@ const useStyles = makeStyles((theme) => ({
   list: {
     display: 'grid',
     gap: theme.spacing(1),
+  },
+  reservationPaper: {
+    maxWidth: theme.breakpoints.values.md,
+    margin: 'auto',
+    padding: theme.spacing(3, 2, 5),
+    borderRadius: `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0`,
+    background: theme.palette.background.paper,
   },
 }));
 
@@ -60,8 +68,17 @@ const rooms: Array<RoomList | SectionList> = [
 
 const Rooms = () => {
   const classes = useStyles();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [filters, setFilters] = useState<RoomFilters | undefined>(undefined);
+  const [reservationOpen, setReservationOpen] = useState(false);
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+  const startReservation = async (sectionId: string) => {
+    setSelectedSectionId(sectionId);
+    setReservationOpen(true);
+  };
+  const stopReservation = () => {
+    setReservationOpen(false);
+    setSelectedSectionId(null);
+  };
   return (
     <Navigation>
       <Helmet>
@@ -69,11 +86,24 @@ const Rooms = () => {
       </Helmet>
       <div className={classes.list}>
         <Typography variant='h1'>Finn rom</Typography>
-        <RoomFilterBox updateFilters={(newFilters: RoomFilters) => setFilters(newFilters)} />
-        {rooms.map((room) => (
-          <RoomListItem key={room.id} room={room} />
-        ))}
+        <RoomFilterBox filters={filters} updateFilters={(newFilters: RoomFilters) => setFilters(newFilters)} />
+        {filters && rooms.map((room) => <RoomListItem key={room.id} reserve={startReservation} room={room} />)}
       </div>
+      <SwipeableDrawer
+        anchor='bottom'
+        classes={{ paper: classes.reservationPaper }}
+        disableSwipeToOpen
+        onClose={stopReservation}
+        onOpen={() => setReservationOpen(true)}
+        open={reservationOpen}
+        swipeAreaWidth={56}>
+        <div className={classes.list}>
+          {selectedSectionId && filters && <ReserveForm from={filters.from} sectionId={selectedSectionId} to={filters.to} />}
+          <Button onClick={stopReservation} variant='text'>
+            Avbryt
+          </Button>
+        </div>
+      </SwipeableDrawer>
     </Navigation>
   );
 };
