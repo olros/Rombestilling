@@ -1,8 +1,8 @@
 version: '3'
 services:
-  test_db:
+  rb_db:
     image: mysql:5.7
-    container_name: test_db
+    container_name: rb_db
     restart: always
     ports:
       - "3306:3306"
@@ -12,14 +12,14 @@ services:
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=local
 
-  phpmyadmin_test:
-    container_name: phpmyadmin_test
+  phpmyadmin_rb:
+    container_name: phpmyadmin_rb
     depends_on:
-      - test_db
+      - rb_db
     image: phpmyadmin/phpmyadmin
     restart: always
     ports:
       - '8000:80'
     environment:
-      PMA_HOST: test_db
+      PMA_HOST: rb_db
       MYSQL_ROOT_PASSWORD: password
