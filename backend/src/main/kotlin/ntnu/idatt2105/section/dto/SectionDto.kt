@@ -11,4 +11,4 @@ data class SectionDto(
                     var name: String = "",
                     var capacity: Int = 0,
                     var picture: String = "",
-                    var children: MutableList<SectionListDto> = mutableListOf())
+                    var children: MutableList<SectionListDto>? = mutableListOf())

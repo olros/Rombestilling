@@ -1,17 +1,22 @@
 package ntnu.idatt2105.section.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import ntnu.idatt2105.section.dto.SectionDto
+import ntnu.idatt2105.section.factory.SectionFactory
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.modelmapper.ModelMapper
 import org.springframework.http.MediaType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import java.util.*
 
 
 @SpringBootTest
@@ -31,64 +36,77 @@ class SectionControllerTest {
 
     private lateinit var section : Section
 
+    @Autowired
+    private lateinit var modelMapper: ModelMapper
+
 
     @BeforeEach
     fun setUp(){
-        TODO()
+        section = SectionFactory().`object`
+        section = sectionRepository.save(section)
+
     }
 
     @Test
-    fun `test author controller GET returns OK and the author`() {
-        this.mvc.perform(get("$URL{sectionId}", section.id))
+    @WithMockUser(value = "spring")
+    fun `test section controller GET returns OK and the section`() {
+        this.mvc.perform(get("$URL{sectionId}/", section.id.toString()))
                 .andExpect(status().isOk)
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("\$.name").value(section.name))
-                .andExpect(jsonPath("\$.id").value(section.id.toString()))
     }
 
     @Test
-    fun `test author controller GET returns not found`() {
-        this.mvc.perform(get("$URL{name}","test"))
+    @WithMockUser(value = "spring")
+    fun `test section controller GET returns not found`() {
+        this.mvc.perform(get("$URL{sectionId}",UUID.randomUUID().toString()))
                 .andExpect(status().isNotFound)
     }
 
     @Test
-    fun `test author controller POST returns OK`() {
+    @WithMockUser(value = "spring")
+    fun `test section controller POST returns Created and the created section`() {
+
         this.mvc.perform(post(URL)
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(newAuthor)))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("\$.name").value(newAuthor.name))
-                .andExpect(jsonPath("\$.age").value(newAuthor.age))
+                .content(objectMapper.writeValueAsString(section)))
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("\$.name").value(section.name))
     }
 
     @Test
-    fun `test author controller PUT returns OK`() {
-        this.mvc.perform(put("$URL{name}/", name)
+    @WithMockUser(value = "spring")
+    fun `test section controller PUT returns OK and the updated section`() {
+        val name = "new name"
+        section.name = name
+
+        this.mvc.perform(put("$URL{sectionId}/", section.id)
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(author)))
+                .content(objectMapper.writeValueAsString(section)))
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("\$.name").value(newName))
-                .andExpect(jsonPath("\$.age").value(author.age))
+                .andExpect(jsonPath("\$.name").value(name))
     }
 
     @Test
-    fun `test author controller PUT returns not found`() {
-        this.mvc.perform(put("$URL{name}/","test")
+    @WithMockUser(value = "spring")
+    fun `test section controller PUT returns not found`() {
+        this.mvc.perform(put("$URL{sectionId}/",UUID.randomUUID().toString())
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(author)))
+                .content(objectMapper.writeValueAsString(section)))
                 .andExpect(status().isNotFound)
     }
 
     @Test
-    fun `test author controller DELETE returns OK`() {
-        this.mvc.perform(delete("$URL{name}/", author.name))
+    @WithMockUser(value = "spring")
+    fun `test secton controller DELETE returns OK`() {
+        this.mvc.perform(delete("$URL{sectionId}/", section.id))
                 .andExpect(status().isOk)
     }
 
     @Test
-    fun `test author controller DELETE return NotFound`() {
-        this.mvc.perform(delete("$URL{name}/", getRandomString(5)))
+    @WithMockUser(value = "spring")
+    fun `test section controller DELETE return NotFound`() {
+        this.mvc.perform(delete("$URL{sectionId}/", UUID.randomUUID().toString()))
                 .andExpect(status().isNotFound)
     }
 }

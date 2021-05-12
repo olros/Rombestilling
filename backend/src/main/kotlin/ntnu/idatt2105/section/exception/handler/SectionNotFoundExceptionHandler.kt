@@ -13,5 +13,5 @@ class SectionNotFoundExceptionHandler {
 
     @ExceptionHandler(SectionNotFoundException::class)
     protected fun emailInUseException(ex: SectionNotFoundException, request: WebRequest): ResponseEntity<Any> =
-            ResponseEntity(Response(ex.message!!) , HttpStatus.BAD_REQUEST)
+            ResponseEntity(Response(ex.message!!) , HttpStatus.NOT_FOUND)
 }
