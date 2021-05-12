@@ -5,11 +5,14 @@ import ntnu.idatt2105.sercurity.JwtUtil
 import ntnu.idatt2105.sercurity.config.JWTConfig
 import ntnu.idatt2105.sercurity.exception.InvalidJwtToken
 import ntnu.idatt2105.user.service.UserDetailsImpl
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.filter.OncePerRequestFilter
+import org.springframework.web.server.ResponseStatusException
 import java.io.IOException
 import java.util.*
 import javax.servlet.FilterChain
@@ -40,7 +43,7 @@ class JWTAuthenticationFilter(val jwtConfig: JWTConfig, val jwtUtil: JwtUtil) : 
 
     private fun processAuthentication(request: HttpServletRequest) {
         try {
-            val token = extractAuthorizationHeaderFromRequest(request) ?: throw InvalidJwtToken()
+            val token = extractAuthorizationHeaderFromRequest(request) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
             setAuthenticationFromToken(token)
         } catch (ex: ExpiredJwtException) {
             request.setAttribute("exception", ex)
