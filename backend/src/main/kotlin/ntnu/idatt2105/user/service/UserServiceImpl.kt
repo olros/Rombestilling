@@ -20,7 +20,7 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
 
     override fun registerUser(user: UserRegistrationDto): UserDto {
         if (existsByEmail(user.email))
-            throw ApplicationException.throwException(EntityType.USER, ExceptionType.ENTITY_NOT_FOUND, "2", user.email)
+            throw ApplicationException.throwException(EntityType.USER, ExceptionType.DUPLICATE_ENTITY, "2", user.email)
 
         val userObj: User = modelMapper.map(user, User::class.java)
         userObj.id = UUID.randomUUID()
