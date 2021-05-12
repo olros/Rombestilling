@@ -7,6 +7,8 @@ import ntnu.idatt2105.user.exception.UserNotFoundException
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.UserRepository
 import org.modelmapper.ModelMapper
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
@@ -37,6 +39,10 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
             throw UserNotFoundException()
         }
     }
+
+    override fun getUsers(pageable: Pageable): Page<UserDto> =
+        userRepository.findAll(pageable).map { user -> modelMapper.map(user, UserDto::class.java) }
+
 
     override fun updateUser(id: UUID, user: UserDto): UserDto {
         val updatedUser = userRepository.findById(id).orElseThrow { UserNotFoundException() }.copy(
