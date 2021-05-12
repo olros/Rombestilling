@@ -17,5 +17,6 @@ export const AUTH_ROUTES = {
 export default {
   LANDING: '/',
   PROFILE: '/profile/',
+  ROOMS: '/rooms/',
   ...AUTH_ROUTES,
 };
