@@ -27,7 +27,7 @@ class SectionController(val sectionService: SectionService) {
 
 
     @PostMapping
-    fun createSection(@RequestBody sectionCreateDto: @Valid SectionCreateDto): ResponseEntity<SectionDto> =
+    fun createSection(@RequestBody sectionCreateDto: @Valid SectionCreateDto) =
             ResponseEntity(sectionService.createSection(sectionCreateDto), HttpStatus.CREATED)
 
     @GetMapping("{sectionId}/")
@@ -36,7 +36,7 @@ class SectionController(val sectionService: SectionService) {
     }
 
     @PutMapping("{sectionId}/")
-    fun updateSection(@PathVariable sectionId: UUID, @RequestBody section: SectionDto): ResponseEntity<SectionDto> =
+    fun updateSection(@PathVariable sectionId: UUID, @RequestBody section: SectionDto) =
             ResponseEntity(sectionService.updateSection(sectionId, section), HttpStatus.OK)
 
     @DeleteMapping("{sectionId}/")
