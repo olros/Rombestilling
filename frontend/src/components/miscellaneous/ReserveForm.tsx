@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import classnames from 'classnames';
 import { formatDate } from 'utils';
 import { parseISO } from 'date-fns';
+import { useSectionById } from 'hooks/Section';
 
 // Material UI
 import { makeStyles, Typography } from '@material-ui/core';
@@ -32,18 +33,7 @@ type FormValues = {
 
 const ReserveForm = ({ onConfirm, sectionId, from, to, className }: ReserveFormProps) => {
   const classes = useStyles();
-  const section = {
-    id: '456',
-    name: 'A-blokka',
-    capacity: 92,
-    description: 'Wow',
-    image: '',
-    type: 'room',
-    children: [],
-    parent: {
-      name: 'Labben',
-    },
-  };
+  const { data: section } = useSectionById(sectionId);
   const { formState, handleSubmit, register } = useForm<FormValues>();
   const submit = async (data: FormValues) => {
     // eslint-disable-next-line no-console
@@ -52,6 +42,9 @@ const ReserveForm = ({ onConfirm, sectionId, from, to, className }: ReserveFormP
       onConfirm();
     }
   };
+  if (!section) {
+    return null;
+  }
   return (
     <form className={classnames(classes.form, className)} onSubmit={handleSubmit(submit)}>
       <Typography variant='h2'>{`Reserver ${section.name}`}</Typography>

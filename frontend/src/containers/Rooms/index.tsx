@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Helmet from 'react-helmet';
+import { useSections } from 'hooks/Section';
 
 // Material UI Components
 import { makeStyles, Typography, SwipeableDrawer, Button } from '@material-ui/core';
@@ -9,7 +10,8 @@ import Navigation from 'components/navigation/Navigation';
 import ReserveForm from 'components/miscellaneous/ReserveForm';
 import RoomFilterBox from 'containers/Rooms/components/RoomFilterBox';
 import RoomListItem from 'containers/Rooms/components/RoomListItem';
-import { RoomList, SectionList } from 'types/Types';
+import Pagination from 'components/layout/Pagination';
+import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -31,44 +33,12 @@ export type RoomFilters = {
   to: string;
 };
 
-const rooms: Array<RoomList | SectionList> = [
-  {
-    id: '123',
-    name: 'Labben',
-    capacity: 45,
-    type: 'section',
-    parent: {
-      id: '456',
-      name: 'A-blokka',
-      capacity: 92,
-      type: 'room',
-    },
-  },
-  {
-    id: '456',
-    name: 'A-blokka',
-    capacity: 92,
-    type: 'room',
-    children: [
-      {
-        id: '123',
-        name: 'Labben',
-        capacity: 45,
-        type: 'section',
-      },
-      {
-        id: '987',
-        name: 'Kontoret',
-        capacity: 13,
-        type: 'section',
-      },
-    ],
-  },
-];
-
 const Rooms = () => {
   const classes = useStyles();
   const [filters, setFilters] = useState<RoomFilters | undefined>(undefined);
+  const { data, error, hasNextPage, fetchNextPage, isFetching } = useSections(filters);
+  const results = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
+  const isEmpty = useMemo(() => !results.length && !isFetching, [results, isFetching]);
   const [reservationOpen, setReservationOpen] = useState(false);
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
   const startReservation = async (sectionId: string) => {
@@ -86,8 +56,13 @@ const Rooms = () => {
       </Helmet>
       <div className={classes.list}>
         <Typography variant='h1'>Finn rom</Typography>
-        <RoomFilterBox filters={filters} updateFilters={(newFilters: RoomFilters) => setFilters(newFilters)} />
-        {filters && rooms.map((room) => <RoomListItem key={room.id} reserve={startReservation} room={room} />)}
+        <RoomFilterBox filters={filters} updateFilters={setFilters} />
+        <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
+          <div className={classes.list}>
+            {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen ledige rom'} />}
+            {filters && results.map((room) => <RoomListItem key={room.id} reserve={startReservation} room={room} />)}
+          </div>
+        </Pagination>
       </div>
       <SwipeableDrawer
         anchor='bottom'

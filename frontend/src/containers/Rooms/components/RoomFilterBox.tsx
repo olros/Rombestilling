@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export type RoomFilterBoxProps = {
-  updateFilters: (newFilters: RoomFilters) => void;
+  updateFilters: (newFilters: RoomFilters | undefined) => void;
   filters: RoomFilters | undefined;
 };
 type FormValues = Pick<RoomFilters, 'name'> & {
@@ -44,10 +44,15 @@ const RoomFilterBox = ({ filters, updateFilters }: RoomFilterBoxProps) => {
   const classes = useStyles();
   const [isOpen, setIsOpen] = useState(true);
   const mdDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
-  const { control, formState, handleSubmit, register } = useForm<FormValues>();
+  const { control, formState, handleSubmit, register, reset } = useForm<FormValues>();
   const submit = async (data: FormValues) => {
     updateFilters({ ...data, to: data.to.toJSON(), from: data.from.toJSON() });
     setIsOpen(false);
+  };
+  const resetFilters = async () => {
+    updateFilters(undefined);
+    setIsOpen(true);
+    reset();
   };
   return (
     <Paper blurred border className={classes.paper}>
@@ -61,6 +66,9 @@ const RoomFilterBox = ({ filters, updateFilters }: RoomFilterBoxProps) => {
         )}
         <Button fullWidth onClick={() => setIsOpen(true)} variant='text'>
           Endre søk
+        </Button>
+        <Button color='secondary' fullWidth onClick={resetFilters} variant='text'>
+          Reset
         </Button>
       </Collapse>
       <Collapse in={isOpen}>
