@@ -1,4 +1,4 @@
-name: Java CI
+name: CI - Backend
 
 on: [pull_request]
 
@@ -17,5 +17,5 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Test with Gradle
+        run: ./gradlew test
