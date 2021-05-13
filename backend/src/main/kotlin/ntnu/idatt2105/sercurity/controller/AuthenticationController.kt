@@ -27,8 +27,8 @@ class AuthenticationController(val jwtConfig: JWTConfig, val jwtService: JwtServ
         return userService.forgotPassword(email)
     }
 
-    @PostMapping("/reset-password/")
-    fun resetPassword(@PathVariable id: UUID, reset: ResetPasswordDto) {
-        return userService.resetPassword(reset, id)
+    @PostMapping("/reset-password/{passwordResetTokenId}/")
+    fun resetPassword(@PathVariable passwordResetTokenId: UUID, reset: ResetPasswordDto) {
+        return userService.resetPassword(reset, passwordResetTokenId)
     }
 }
