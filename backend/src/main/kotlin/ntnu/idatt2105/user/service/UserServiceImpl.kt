@@ -57,14 +57,7 @@ class UserServiceImpl(
     }
 
     override fun updateUser(id: UUID, user: UserDto): UserDto {
-        val updatedUser = userRepository.findById(id)
-            .orElseThrow {
-                ApplicationException.throwException(
-                    EntityType.USER,
-                    ExceptionType.ENTITY_NOT_FOUND,
-                    id.toString()
-                )
-            }
+        val updatedUser = getUserById(id)
             .copy(
                 firstName = user.firstName,
                 surname = user.surname,
