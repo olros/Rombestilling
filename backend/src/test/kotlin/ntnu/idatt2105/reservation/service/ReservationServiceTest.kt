@@ -85,6 +85,7 @@ class ReservationServiceTest {
                 text = text,
                 fromTime = reservation.fromTime, toTime = reservation.toTime)
         val test = reservationService.createReservation(reservation.section?.id!!, newReservation)
+        //TODO
        //next PR!!!!! assertThat(test.text).isEqualTo(reservation.text)
 
     }

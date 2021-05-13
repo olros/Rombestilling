@@ -2,7 +2,6 @@ package ntnu.idatt2105.factories
 
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.reservation.model.Reservation
-import ntnu.idatt2105.reservation.model.ReservationId
 import org.springframework.beans.factory.FactoryBean
 import java.time.ZonedDateTime
 import java.util.*

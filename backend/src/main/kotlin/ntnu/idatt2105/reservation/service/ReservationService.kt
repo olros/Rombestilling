@@ -12,6 +12,6 @@ interface ReservationService {
     fun getUserReservation(userId: UUID, pageable: Pageable) : Page<ReservationDto>
     fun updateReservation(sectionId: UUID,reservationId: UUID, reservation: ReservationDto) : ReservationDto
     fun deleteReservation(sectionId: UUID,reservationId: UUID)
-    fun geReservation(sectionId: UUID, reservationId: UUID): ReservationDto
+    fun getReservation(sectionId: UUID, reservationId: UUID): ReservationDto
 
 }

@@ -27,8 +27,8 @@ class ReservationController(val reservationService: ReservationService) {
             reservationService.getAllReservation(sectionId, pageable)
 
     @GetMapping("{reservationId}/")
-    fun getReservations(@PathVariable sectionId: UUID, @PathVariable reservationId: UUID) =
-            reservationService.geReservation(sectionId, reservationId)
+    fun getReservation(@PathVariable sectionId: UUID, @PathVariable reservationId: UUID) =
+            reservationService.getReservation(sectionId, reservationId)
 
     @PostMapping
     fun createReservation(@PathVariable sectionId: UUID, @RequestBody reservation: ReservationCreateDto) =

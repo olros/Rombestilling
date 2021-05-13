@@ -6,7 +6,6 @@ import ntnu.idatt2105.exception.ExceptionType
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
 import ntnu.idatt2105.reservation.model.Reservation
-import ntnu.idatt2105.reservation.model.ReservationId
 import ntnu.idatt2105.reservation.repository.ReservationRepository
 import ntnu.idatt2105.section.repository.SectionRepository
 import ntnu.idatt2105.user.repository.UserRepository
@@ -57,7 +56,7 @@ class ReservationServiceImpl(
             return this.map { modelMapper.map(it, ReservationDto::class.java) }
         }
 
-    override fun geReservation(sectionId: UUID, reservationId: UUID): ReservationDto =
+    override fun getReservation(sectionId: UUID, reservationId: UUID): ReservationDto =
         reservationRepository.findById(reservationId).orElseThrow { throw ApplicationException.throwException(
                 EntityType.RESERVATION, ExceptionType.ENTITY_NOT_FOUND, reservationId.toString(), sectionId.toString()) }
                 .run {
