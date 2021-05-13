@@ -1,6 +1,9 @@
 package ntnu.idatt2105.config
 
+import ntnu.idatt2105.user.model.Role
+import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.User
+import ntnu.idatt2105.user.repository.RoleRepository
 import ntnu.idatt2105.user.repository.UserRepository
 import org.springframework.context.ApplicationListener
 import org.springframework.context.event.ContextRefreshedEvent
@@ -11,22 +14,32 @@ import java.util.*
 
 
 @Component
-class SetupDataLoader (val userRepository: UserRepository, val passwordEncoder: BCryptPasswordEncoder): ApplicationListener<ContextRefreshedEvent?> {
+class SetupDataLoader(
+    val userRepository: UserRepository,
+    val roleRepository: RoleRepository,
+    val passwordEncoder: BCryptPasswordEncoder
+): ApplicationListener<ContextRefreshedEvent?> {
     private var alreadySetup = false
 
 
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
-        if(!alreadySetup){
+        if (!alreadySetup) {
 
-            if(userRepository.findByEmail("admin@test.com") == null)
-                userRepository.save(User(
-                    id=UUID.randomUUID(),
+            val userRole = roleRepository.findByName(RoleType.USER)
+                ?: roleRepository.save(Role(id = UUID.randomUUID(), name = RoleType.USER))
+
+            val adminRole = roleRepository.findByName(RoleType.ADMIN)
+                ?: roleRepository.save(Role(id = UUID.randomUUID(), name = RoleType.ADMIN))
+
+            userRepository.findByEmail("admin@test.com") ?: userRepository.save(
+                User(id=UUID.randomUUID(),
                     firstName="hei",
                     surname="hei",
                     email="admin@test.com",
                     phoneNumber="+4712345678",
                     password=passwordEncoder.encode("admin"),
-                    expirationDate = LocalDate.EPOCH
+                    expirationDate = LocalDate.EPOCH,
+                    roles = setOf(userRole, adminRole)
                 ))
         }
         alreadySetup = true

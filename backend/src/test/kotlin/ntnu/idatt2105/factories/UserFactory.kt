@@ -14,10 +14,15 @@ import java.util.*
 class UserFactory : FactoryBean<User> {
 
     private val faker = Faker()
+
     private val encoder = BCryptPasswordEncoder()
 
     @Throws(Exception::class)
     override fun getObject(): User {
+        faker.unique.configuration { enable(faker::internet) }
+        faker.unique.configuration { enable(faker::name) }
+        val userRole = RoleFactory().`object`
+        
         return UserBuilder(
             id=UUID.randomUUID(),
             email=faker.internet.email(faker.name.neutralFirstName()),
@@ -25,7 +30,8 @@ class UserFactory : FactoryBean<User> {
             surname=faker.name.lastName(),
             password=encoder.encode(faker.rickAndMorty.locations()),
             phoneNumber = faker.phoneNumber.phoneNumber(),
-            expirationDate = LocalDate.now().plusDays(1)
+            expirationDate = LocalDate.now().plusDays(1),
+            roles = setOf(userRole)
         ).build()
     }
 
