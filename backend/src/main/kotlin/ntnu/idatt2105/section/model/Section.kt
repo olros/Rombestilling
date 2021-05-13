@@ -22,7 +22,6 @@ data class Section(
         fun getType(): String{
                 if (parent != null)
                         return SectionType.SECTION
-
                 return SectionType.ROOM
         }
 }
