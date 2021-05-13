@@ -23,10 +23,12 @@ import {
 } from '@devexpress/dx-react-scheduler-material-ui';
 
 // Material-UI
-import { Button, Typography, LinearProgress, makeStyles } from '@material-ui/core';
+import { Button, Typography, LinearProgress, makeStyles, SwipeableDrawer, Slide } from '@material-ui/core';
 
 // Project components
 import Paper from 'components/layout/Paper';
+import ReserveForm from 'components/miscellaneous/ReserveForm';
+import Container from 'components/layout/Container';
 
 // Styles
 const useStyles = makeStyles((theme) => ({
@@ -60,6 +62,24 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     bottom: 0,
     left: 0,
+  },
+  list: {
+    display: 'grid',
+    gap: theme.spacing(1),
+  },
+  reservationPaper: {
+    maxWidth: theme.breakpoints.values.md,
+    margin: 'auto',
+    padding: theme.spacing(3, 2, 5),
+    borderRadius: `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0`,
+    background: theme.palette.background.paper,
+  },
+  fixedBottom: {
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingBottom: theme.spacing(1),
   },
 }));
 
@@ -97,7 +117,7 @@ export const SectionCalendar = ({ sectionId }: SectionCalendarProps) => {
   const { data, isLoading } = useSectionReservations(sectionId, filters);
 
   if (!data) {
-    return <Calendar data={data} isLoading={isLoading} setFilters={setFilters} />;
+    return <Calendar data={data} isLoading={isLoading} sectionId={sectionId} setFilters={setFilters} />;
   }
   return null;
 };
@@ -106,19 +126,20 @@ export type CalendarProps = {
   data?: InfiniteData<PaginationResponse<Reservation>>;
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
   isLoading: boolean;
+  sectionId?: string;
 };
 
 type ViewTypes = 'Day' | 'Week' | 'Month';
 type NewAppointmentType = { endDate: Date; startDate: Date };
-
 const NEW_APPOINTMENT = { title: 'Ny reservasjon', id: 'new-appointment' };
 
-const Calendar = ({ data, isLoading, setFilters }: CalendarProps) => {
+const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => {
   const classes = useStyles();
   const showSnackbar = useSnackbar();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentViewName, setCurrentViewName] = useState<ViewTypes>('Week');
   const [addedAppointment, setAddedAppointment] = useState<AppointmentModel | undefined>();
+  const [reservationOpen, setReservationOpen] = useState(false);
   const reservations = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const displayedReservations = useMemo(
     () => [
@@ -141,6 +162,13 @@ const Calendar = ({ data, isLoading, setFilters }: CalendarProps) => {
     }
   }, [setFilters, currentViewName, currentDate]);
 
+  const isTouchScreen = matchMedia('(hover: none)').matches;
+
+  const stopReservation = () => {
+    setReservationOpen(false);
+    setAddedAppointment(undefined);
+  };
+
   type AppointmentProps = {
     data: AppointmentModel;
   };
@@ -159,6 +187,13 @@ const Calendar = ({ data, isLoading, setFilters }: CalendarProps) => {
     </Link>
   );
 
+  const DayViewTableCell = ({ onDoubleClick, ...restProps }: DayView.TimeTableCellProps) => (
+    <DayView.TimeTableCell {...(isTouchScreen ? { onClick: onDoubleClick } : { onDoubleClick })} {...restProps} />
+  );
+  const WeekViewTableCell = ({ onDoubleClick, ...restProps }: WeekView.TimeTableCellProps) => (
+    <WeekView.TimeTableCell {...(isTouchScreen ? { onClick: onDoubleClick } : { onDoubleClick })} {...restProps} />
+  );
+
   type ToolbarWithLoadingProps = ToolbarProps & {
     children?: ReactNode;
   };
@@ -172,7 +207,6 @@ const Calendar = ({ data, isLoading, setFilters }: CalendarProps) => {
 
   const commitChanges = ({ changed }: ChangeSet) => {
     if (changed) {
-      // setAddedAppointment((prev) => ({ ...prev, ...changed[NEW_APPOINTMENT.id] }));
       addAppointment(changed[NEW_APPOINTMENT.id]);
     }
   };
@@ -197,8 +231,8 @@ const Calendar = ({ data, isLoading, setFilters }: CalendarProps) => {
           onCurrentDateChange={setCurrentDate}
           onCurrentViewNameChange={(newView) => setCurrentViewName(newView as ViewTypes)}
         />
-        <DayView cellDuration={60} />
-        <WeekView />
+        <DayView cellDuration={60} timeTableCellComponent={DayViewTableCell} />
+        <WeekView timeTableCellComponent={WeekViewTableCell} />
         <MonthView />
         <Toolbar {...(isLoading ? { rootComponent: ToolbarWithLoading } : null)} />
         <ViewSwitcher />
@@ -217,11 +251,37 @@ const Calendar = ({ data, isLoading, setFilters }: CalendarProps) => {
         />
         <Appointments appointmentComponent={Appointment} />
         <DragDropProvider
-          allowDrag={(appointment) => appointment.id === NEW_APPOINTMENT.id}
-          allowResize={(appointment) => appointment.id === NEW_APPOINTMENT.id}
+          allowDrag={(appointment) => Boolean(sectionId) && appointment.id === NEW_APPOINTMENT.id}
+          allowResize={(appointment) => Boolean(sectionId) && appointment.id === NEW_APPOINTMENT.id}
         />
         {currentViewName !== 'Month' && <AppointmentForm visible={false} />}
       </Scheduler>
+      <Slide direction='up' in={Boolean(addedAppointment)}>
+        <Container className={classes.fixedBottom} maxWidth='sm'>
+          <Button fullWidth onClick={() => setReservationOpen(true)}>
+            Reserver
+          </Button>
+        </Container>
+      </Slide>
+      {sectionId && (
+        <SwipeableDrawer
+          anchor='bottom'
+          classes={{ paper: classes.reservationPaper }}
+          disableSwipeToOpen
+          onClose={() => setReservationOpen(false)}
+          onOpen={() => setReservationOpen(true)}
+          open={reservationOpen}
+          swipeAreaWidth={56}>
+          <div className={classes.list}>
+            {addedAppointment && (
+              <ReserveForm from={(addedAppointment.startDate as Date).toJSON()} sectionId={sectionId} to={(addedAppointment.endDate as Date).toJSON()} />
+            )}
+            <Button onClick={stopReservation} variant='text'>
+              Avbryt
+            </Button>
+          </div>
+        </SwipeableDrawer>
+      )}
     </Paper>
   );
 };
