@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### Email ###
-!**/src/main/resources/mail/emailconfig.properties
+src/main/resources/mail/emailconfig.properties
