@@ -66,6 +66,7 @@ class WebSecurity(val refreshTokenService: RefreshTokenService,
                     .antMatchers(HttpMethod.GET, "/users/me/").hasRole(RoleType.USER)
                     .antMatchers(HttpMethod.GET, "/users/me/reservations/").hasRole(RoleType.USER)
                     .antMatchers(HttpMethod.PUT, "/users/{userId}/").hasRole(RoleType.USER)
+                    .antMatchers(HttpMethod.POST, "/users/batch-users/").permitAll()
                     .antMatchers(HttpMethod.GET, "/sections/", "/sections/{sectionId}/").hasRole(RoleType.USER)
                     .antMatchers(HttpMethod.POST, "/sections/{sectionId}/reservations/").hasRole(RoleType.USER)
                     .antMatchers(HttpMethod.GET, "/sections/{sectionId}/reservations/").hasRole(RoleType.USER)

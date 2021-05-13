@@ -1,6 +1,7 @@
 package ntnu.idatt2105.user.service
 
-import ntnu.idatt2105.dto.response.ResponseError
+import com.opencsv.bean.CsvToBean
+import com.opencsv.bean.CsvToBeanBuilder
 import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
@@ -22,6 +23,10 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
 import java.time.ZonedDateTime
 import java.util.*
 
@@ -41,8 +46,51 @@ class UserServiceImpl(
 
         val userObj: User = modelMapper.map(user, User::class.java)
         userObj.id = UUID.randomUUID()
+        val savedUser: User = userRepository.saveAndFlush(userObj)
+        forgotPassword(ForgotPassword(savedUser.email))
+        return modelMapper.map(savedUser, UserDto::class.java)
+    }
 
-        return modelMapper.map(userRepository.save(userObj), UserDto::class.java)
+    override fun registerUserBatch(file: MultipartFile): Response {
+        /*
+        Validate file
+        Read file to list?
+        For each create user
+        Error handle
+        return response
+         */
+
+        var fileReader : BufferedReader? = null
+
+        try {
+            fileReader = BufferedReader(InputStreamReader(file.inputStream))
+            val csvToBean = createCSVToBean(fileReader)
+            val list: List<UserRegistrationDto> = csvToBean.parse()
+            list.forEach {
+                registerUser(it)
+            }
+        } catch (ex: Exception) {
+            throw Exception("Something went wrong during parsing users", ex)
+        } finally {
+            closeFileReader(fileReader)
+        }
+
+        return Response("The users have been created")
+    }
+
+    private fun createCSVToBean(fileReader: BufferedReader?): CsvToBean<UserRegistrationDto> =
+        CsvToBeanBuilder<UserRegistrationDto>(fileReader)
+            .withType(UserRegistrationDto::class.java)
+            .withSkipLines(1)
+            .withIgnoreLeadingWhiteSpace(true)
+            .build()
+
+    private fun closeFileReader(fileReader: BufferedReader?) {
+        try {
+            fileReader!!.close()
+        } catch (ex: IOException) {
+            throw Exception("Error during csv import")
+        }
     }
 
     private fun existsByEmail(email: String): Boolean {

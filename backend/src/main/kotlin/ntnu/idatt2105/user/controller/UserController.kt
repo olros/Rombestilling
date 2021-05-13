@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.util.*
 import javax.validation.Valid
 
@@ -26,6 +27,11 @@ class UserController(val userService: UserService, val reservationService: Reser
     @PostMapping
     fun registerUser(@RequestBody @Valid userRegistrationDto: UserRegistrationDto): ResponseEntity<UserDto>  =
             ResponseEntity(userService.registerUser(userRegistrationDto), HttpStatus.CREATED)
+
+    //TODO: Implement authentication check?
+    @PostMapping("/batch-users/")
+    fun registerUserBatch(@RequestParam("file") file: MultipartFile) =
+        ResponseEntity(userService.registerUserBatch(file), HttpStatus.CREATED)
 
     @GetMapping("me/")
     fun getMe(@AuthenticationPrincipal principal: UserDetailsImpl)=
