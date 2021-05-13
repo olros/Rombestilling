@@ -9,6 +9,7 @@ import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
+import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.repository.UserRepository
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.AfterEach
@@ -69,7 +70,7 @@ class ReservationControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test reservation controller GET all returns OK and page of reservation for given section`() {
         val newReservation = ReservationFactory().`object`
         userRepository.save(newReservation.user!!)
@@ -84,7 +85,7 @@ class ReservationControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test reservation controller POST creates new Reservation`() {
         val newReservation = ReservationFactory().`object`
         userRepository.save(newReservation.user!!)
@@ -103,7 +104,7 @@ class ReservationControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test reservation controller PUT updates Reservation`() {
         val text = faker.breakingBad.episode()
         reservation.text = text
@@ -116,7 +117,7 @@ class ReservationControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test reservation controller POST can't creates new Reservation in a existing interval different end time`() {
         val newReservation = ReservationFactory().`object`
         userRepository.save(newReservation.user!!)
@@ -133,7 +134,7 @@ class ReservationControllerTest {
 
     }
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test reservation controller DELETE updates Reservation`() {
         this.mvc.perform(MockMvcRequestBuilders.delete("${getURL(reservation.section!!)}${reservation.id}/")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -143,7 +144,7 @@ class ReservationControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test reservation controller POST can't creates new Reservation in a existing interval different start time`() {
         val newReservation = ReservationFactory().`object`
         userRepository.save(newReservation.user!!)
@@ -160,7 +161,7 @@ class ReservationControllerTest {
 
     }
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test reservation controller POST can't creates new Reservation in a existing interval`() {
         val newReservation = ReservationFactory().`object`
         userRepository.save(newReservation.user!!)

@@ -9,7 +9,9 @@ import ntnu.idatt2105.reservation.repository.ReservationRepository
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
 import ntnu.idatt2105.section.service.SectionServiceImpl
+import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.UserRepository
+import ntnu.idatt2105.user.service.UserService
 import ntnu.idatt2105.util.JpaUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -21,12 +23,10 @@ import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.domain.Pageable
 import org.mockito.Mockito.any
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.assertj.core.api.Assertions.assertThat
-import java.time.ZonedDateTime
 import java.util.*
 
 
@@ -45,7 +45,7 @@ class ReservationServiceTest {
     private lateinit var reservationRepository: ReservationRepository
 
     @Mock
-    private lateinit var userRepository: UserRepository
+    private lateinit var userService: UserService
 
     @Spy
     @Autowired
@@ -62,7 +62,7 @@ class ReservationServiceTest {
         reservation = ReservationFactory().`object`
         Mockito.lenient().`when`(reservationRepository.findById(reservation.id)).thenReturn(Optional.of(reservation))
         Mockito.lenient().`when`(sectionRepository.findById(reservation.section?.id!!)).thenReturn(Optional.of(reservation.section!!))
-        Mockito.lenient().`when`(userRepository.findById(reservation.user?.id!!)).thenReturn(Optional.of(reservation.user!!))
+        Mockito.lenient().`when`(userService.getUser(reservation.user?.id!!, User::class.java)).thenReturn(reservation.user!!)
         Mockito.lenient().`when`(reservationRepository.save(any(Reservation::class.java))).thenReturn(reservation)
 
     }

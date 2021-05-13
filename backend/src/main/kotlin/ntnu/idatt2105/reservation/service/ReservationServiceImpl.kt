@@ -8,7 +8,8 @@ import ntnu.idatt2105.reservation.dto.ReservationDto
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
 import ntnu.idatt2105.section.repository.SectionRepository
-import ntnu.idatt2105.user.repository.UserRepository
+import ntnu.idatt2105.user.model.User
+import ntnu.idatt2105.user.service.UserService
 import org.modelmapper.ModelMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -20,7 +21,7 @@ import java.util.*
 class ReservationServiceImpl(
     val reservationRepository: ReservationRepository,
     val modelMapper: ModelMapper,
-    val userRepository: UserRepository,
+    val userService: UserService,
     val sectionRepository: SectionRepository) : ReservationService {
 
     override fun getAllReservation(sectionId: UUID, pageable: Pageable): Page<ReservationDto> =
@@ -39,8 +40,7 @@ class ReservationServiceImpl(
                 text = reservation.text,
                 nrOfPeople = reservation.nrOfPeople)
 
-        val user = userRepository.findById(reservation.userId!!).orElseThrow { throw ApplicationException.throwException(
-                EntityType.USER, ExceptionType.ENTITY_NOT_FOUND, reservation.userId.toString()) }
+        val user = userService.getUser(reservation.userId!!, User::class.java)
 
         val section = sectionRepository.findById(sectionId).orElseThrow { throw ApplicationException.throwException(
                 EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, reservation.sectionId.toString()) }
