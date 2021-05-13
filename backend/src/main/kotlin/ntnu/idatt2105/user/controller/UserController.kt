@@ -1,5 +1,6 @@
 package ntnu.idatt2105.user.controller
 
+import ntnu.idatt2105.reservation.service.ReservationService
 import ntnu.idatt2105.user.dto.DetailedUserDto
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
@@ -20,7 +21,7 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping("/users/")
-class UserController(val userService: UserService) {
+class UserController(val userService: UserService, val reservationService: ReservationService) {
 
     @PostMapping
     fun registerUser(@RequestBody @Valid userRegistrationDto: UserRegistrationDto): ResponseEntity<UserDto>  =
@@ -46,4 +47,9 @@ class UserController(val userService: UserService) {
     @DeleteMapping("{userId}/")
     fun deleteUser(@PathVariable userId: UUID) =
         ResponseEntity.ok(userService.deleteUser(userId))
+
+    @GetMapping("me/reservations/")
+    fun getUserReservations(@PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
+                            @AuthenticationPrincipal principal: UserDetailsImpl)=
+           reservationService.getUserReservation(principal.getId(), pageable)
 }

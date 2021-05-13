@@ -3,7 +3,7 @@ package ntnu.idatt2105.section.service;
 
 import ntnu.idatt2105.section.dto.SectionCreateDto
 import ntnu.idatt2105.section.dto.SectionDto
-import ntnu.idatt2105.section.factory.SectionFactory
+import ntnu.idatt2105.factories.SectionFactory
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
 import ntnu.idatt2105.util.JpaUtils

@@ -1,4 +1,4 @@
-package ntnu.idatt2105.section.factory;
+package ntnu.idatt2105.factories;
 
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.section.model.Section
