@@ -3,11 +3,10 @@ package ntnu.idatt2105.user.service
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
+import ntnu.idatt2105.sercurity.dto.ForgotPassword
+import ntnu.idatt2105.sercurity.token.PasswordResetToken
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
-import ntnu.idatt2105.user.model.Role
-import ntnu.idatt2105.user.model.RoleType
-import ntnu.idatt2105.user.model.RoleType.USER
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.UserRepository
 import org.modelmapper.ModelMapper
@@ -27,13 +26,13 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
 
         val userObj: User = modelMapper.map(user, User::class.java)
         userObj.id = UUID.randomUUID()
-        userObj.roles.plus(USER)
+        //TODO: this need to be set when you create a user userObj.roles.plus(USER)
 
         return modelMapper.map(userRepository.save(userObj), UserDto::class.java)
     }
 
     private fun existsByEmail(email: String): Boolean {
-        return userRepository.existsByEmail(email)
+        return userRepository.existsByEmail(email) ?: false
     }
 
     override fun getUsers(pageable: Pageable): Page<UserDto> =
@@ -60,4 +59,12 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
     private fun getUserById(id: UUID): User =
         userRepository.findById(id).orElseThrow { throw ApplicationException.throwException(EntityType.USER, ExceptionType.ENTITY_NOT_FOUND, id.toString()) }
 
+    private fun getUserByEmail(email: String): User =
+        userRepository.findByEmail(email) ?: throw ApplicationException.throwException(EntityType.USER, ExceptionType.ENTITY_NOT_FOUND, email)
+
+    override fun forgotPassword(email: ForgotPassword) {
+        val user = getUserByEmail(email.email)
+        val token = PasswordResetToken(user = user)
+
+    }
 }
