@@ -7,5 +7,8 @@ object PaginationConstants {
 object SectionType {
     const val SECTION = "section"
     const val ROOM = "room"
+}
+
+object SecurityConstants {
     const val AUTHORITIES_KEY = "scopes"
 }
