@@ -2,7 +2,10 @@ package ntnu.idatt2105.dto.response
 
 import java.time.LocalDate
 
-data class ResponseError(val message: String?, val errors: Any?, val status: Status, val timestamp: LocalDate) {
+data class ResponseError(val message: String?,
+                         val errors: Any?,
+                         val status: Status,
+                         val timestamp: LocalDate = LocalDate.now()) {
 
     companion object {
         fun notFound(message: String?, exception: Exception) =
@@ -10,7 +13,6 @@ data class ResponseError(val message: String?, val errors: Any?, val status: Sta
                 message,
                 exception.message,
                 Status.NOT_FOUND,
-                LocalDate.now()
             )
 
         fun duplicateEntity(message: String?, exception: Exception): ResponseError =
@@ -18,7 +20,13 @@ data class ResponseError(val message: String?, val errors: Any?, val status: Sta
                 message,
                 exception.message,
                 Status.DUPLICATE_ENTITY,
-                LocalDate.now()
+            )
+
+        fun validationError(message: String?, errors: Any?): ResponseError =
+            ResponseError(
+                message,
+                errors,
+                Status.VALIDATION_EXCEPTION
             )
     }
 

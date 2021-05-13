@@ -12,6 +12,7 @@ import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.user.service.UserDetailsImplBuilder
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -141,8 +142,8 @@ class UserControllerTest {
                 .content(objectMapper.writeValueAsString(validUser)))
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.firstName").value(validUser.firstName))
-            .andExpect(jsonPath("$.data.password").doesNotExist())
-            .andExpect(jsonPath("$.data.email").doesNotExist())
+            .andExpect(jsonPath("$.errors.password").doesNotExist())
+            .andExpect(jsonPath("$.errors.email").doesNotExist())
     }
 
     @ParameterizedTest
@@ -157,7 +158,7 @@ class UserControllerTest {
                 .content(objectMapper.writeValueAsString(invalidUser)))
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.message").isNotEmpty)
-            .andExpect(jsonPath("$.data.email").exists())
+            .andExpect(jsonPath("$.errors.email").exists())
     }
 
     @Test
@@ -240,5 +241,51 @@ class UserControllerTest {
                 Arguments.of("test@"),
                 Arguments.of("test@mail..com")
             )
+    }
+
+    @Test
+    fun `test delete user as admin returns http ok`() {
+        mockMvc.perform(
+            delete("$URI{userId}/", user.id.toString())
+                .with(user(adminUserDetails))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user))
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.message").isNotEmpty)
+    }
+
+    @Test
+    fun `test delete user as user returns http forbidden`() {
+        mockMvc.perform(
+            delete("$URI{userId}/", user.id.toString())
+                .with(user(userDetails))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user))
+        )
+            .andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `test delete user as admin when user does not exist returns http not found`() {
+        mockMvc.perform(
+            delete("$URI{userId}/", UUID.randomUUID())
+                .with(user(adminUserDetails))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user))
+        )
+            .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `test delete user as admin deletes the user`() {
+        mockMvc.perform(
+            delete("$URI{userId}/", user.id.toString())
+                .with(user(adminUserDetails))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user))
+        )
+
+        assertThat(userRepository.existsById(user.id)).isFalse()
     }
 }
