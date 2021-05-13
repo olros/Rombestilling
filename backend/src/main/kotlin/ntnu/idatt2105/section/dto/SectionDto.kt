@@ -4,7 +4,6 @@ import ntnu.idatt2105.util.SectionType
 import java.util.*
 
 data class SectionDto(
-
         var id: UUID = UUID.randomUUID(),
         var name: String = "",
         var capacity: Int = 0,

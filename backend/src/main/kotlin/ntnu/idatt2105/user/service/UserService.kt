@@ -1,5 +1,6 @@
 package ntnu.idatt2105.user.service
 
+import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
 import org.springframework.data.domain.Page
@@ -11,5 +12,6 @@ interface UserService {
     fun registerUser(user: UserRegistrationDto): UserDto
     fun updateUser(id: UUID, user: UserDto): UserDto
     fun getUsers(pageable: Pageable): Page<UserDto>
-    fun getUser(id: UUID): UserDto
+    fun <T> getUser(id: UUID, mapTo: Class<T>): T
+    fun deleteUser(id: UUID): Response
 }

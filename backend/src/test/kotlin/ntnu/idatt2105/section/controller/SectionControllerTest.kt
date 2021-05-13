@@ -2,10 +2,10 @@ package ntnu.idatt2105.section.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import ntnu.idatt2105.section.dto.SectionCreateDto
-import ntnu.idatt2105.section.dto.SectionDto
-import ntnu.idatt2105.section.factory.SectionFactory
+import ntnu.idatt2105.factories.SectionFactory
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
+import ntnu.idatt2105.user.model.RoleType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.modelmapper.ModelMapper
@@ -49,7 +49,6 @@ class SectionControllerTest {
         section = SectionFactory().`object`
         section = sectionRepository.save(section)
 
-
     }
 
     @Test
@@ -82,12 +81,12 @@ class SectionControllerTest {
     @Test
     @WithMockUser(value = "spring")
     fun `test section controller GET returns not found`() {
-        this.mvc.perform(get("$URL{sectionId}", UUID.randomUUID().toString()))
+        this.mvc.perform(get("$URL{sectionId}/", UUID.randomUUID().toString()))
                 .andExpect(status().isNotFound)
     }
 
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test section controller POST returns Created and the created section`() {
 
         this.mvc.perform(post(URL)
@@ -98,7 +97,7 @@ class SectionControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test section controller PUT returns OK and the updated section`() {
         val name = "new name"
         section.name = name
@@ -111,7 +110,7 @@ class SectionControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test section controller PUT returns not found`() {
         this.mvc.perform(put("$URL{sectionId}/", UUID.randomUUID().toString())
                 .contentType("application/json")
@@ -120,14 +119,14 @@ class SectionControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test secton controller DELETE returns OK`() {
         this.mvc.perform(delete("$URL{sectionId}/", section.id))
                 .andExpect(status().isOk)
     }
 
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test section controller DELETE return NotFound`() {
         this.mvc.perform(delete("$URL{sectionId}/", UUID.randomUUID().toString()))
                 .andExpect(status().isNotFound)
@@ -135,7 +134,7 @@ class SectionControllerTest {
 
 
     @Test
-    @WithMockUser(value = "spring")
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test section controller POST with parentId adds parent`() {
 
         val newSection = SectionCreateDto(name = section.name, parentId = section.id)
@@ -145,7 +144,7 @@ class SectionControllerTest {
                 .andExpect(status().isCreated)
                 .andExpect(jsonPath("\$.name").value(section.name))
 
-        assertThat(sectionRepository.findById(section.id).get().children?.isNotEmpty())
+        assertThat(sectionRepository.findById(section.id).get().children.isNotEmpty())
 
 
 

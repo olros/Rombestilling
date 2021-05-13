@@ -1,17 +1,18 @@
 package ntnu.idatt2105.user.service
 
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
 
 
 data class UserDetailsImpl(private val id: UUID,
         private val email: String,
-        private val password: String): UserDetails {
-
+        private val password: String,
+        private val roles: Set<SimpleGrantedAuthority>): UserDetails {
 
     override fun getAuthorities(): Collection<GrantedAuthority?> {
-        return ArrayList()
+        return roles
     }
 
     override fun getPassword(): String {

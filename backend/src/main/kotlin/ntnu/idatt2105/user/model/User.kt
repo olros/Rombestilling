@@ -2,9 +2,7 @@ package ntnu.idatt2105.user.model
 
 import java.time.LocalDate
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 data class User(@Id
@@ -17,4 +15,10 @@ data class User(@Id
                 var phoneNumber: String = "",
                 var image: String = "",
                 var expirationDate: LocalDate = LocalDate.EPOCH,
-                var password: String = "")
+                var password: String = "",
+                @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+                @JoinTable(name = "user_roles",
+                    joinColumns = [JoinColumn(name = "USER_ID", referencedColumnName = "id")],
+                    inverseJoinColumns = [JoinColumn(name = "ROLE_ID", referencedColumnName = "id")])
+                val roles: Set<Role> = mutableSetOf()
+                )

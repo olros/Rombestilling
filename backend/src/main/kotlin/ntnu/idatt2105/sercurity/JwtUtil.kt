@@ -7,7 +7,9 @@ import io.jsonwebtoken.security.SignatureException
 import ntnu.idatt2105.sercurity.config.JWTConfig
 import ntnu.idatt2105.sercurity.token.JwtRefreshToken
 import ntnu.idatt2105.sercurity.token.RawJwtAccessToken
+import ntnu.idatt2105.util.SecurityConstants.AUTHORITIES_KEY
 import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -50,4 +52,11 @@ class JwtUtil(val jwtConfig: JWTConfig) {
                 .body["uuid"]
         return UUID.fromString(uuid.toString())
     }
+
+    fun getRolesFromToken(token: String) =
+         Jwts.parserBuilder()
+            .setSigningKey(jwtConfig.secret).build()
+            .parseClaimsJws(token.replace(jwtConfig.prefix, ""))
+            .body[AUTHORITIES_KEY].toString().split(",")
+            .map { SimpleGrantedAuthority(it) }
 }

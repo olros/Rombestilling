@@ -1,5 +1,6 @@
 package ntnu.idatt2105.user.service
 
+import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
@@ -35,9 +36,9 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
     override fun getUsers(pageable: Pageable): Page<UserDto> =
         userRepository.findAll(pageable).map { user -> modelMapper.map(user, UserDto::class.java) }
 
-    override fun getUser(id: UUID): UserDto {
+    override fun <T> getUser(id: UUID, mapTo: Class<T>): T {
         val user = getUserById(id)
-        return modelMapper.map(user, UserDto::class.java)
+        return modelMapper.map(user, mapTo)
     }
 
     override fun updateUser(id: UUID, user: UserDto): UserDto {
@@ -51,6 +52,12 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
             image = user.image,
         )
         return modelMapper.map(userRepository.save(updatedUser), UserDto::class.java)
+    }
+
+    override fun deleteUser(id: UUID): Response {
+        val user = getUserById(id)
+        userRepository.delete(user)
+        return Response("The user has been deleted")
     }
 
     private fun getUserById(id: UUID): User =
