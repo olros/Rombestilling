@@ -14,27 +14,33 @@ import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.user.service.UserDetailsImpl
 import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 
 
 @Service
-class JwtServiceImpl(val jwtUtil: JwtUtil, val jwtConfig: JWTConfig, val tokenFactory: TokenFactory, val tokenExtractor: TokenExtractor,
-                     val tokenValidator: TokenValidator,
-                     val refreshTokenService: RefreshTokenService,
-                     val userRepository: UserRepository): JwtService {
+class JwtServiceImpl(
+    val jwtUtil: JwtUtil,
+    val jwtConfig: JWTConfig,
+    val tokenFactory: TokenFactory,
+    val tokenExtractor: TokenExtractor,
+    val tokenValidator: TokenValidator,
+    val refreshTokenService: RefreshTokenService,
+    val userDetailsService: UserDetailsService
+): JwtService {
 
 
 
     override fun refreshToken(header: String): JwtTokenResponse {
         val currentJwtRefreshToken: JwtRefreshToken =  getCurrentJwtRefreshToken(header)
         doValidateToken(currentJwtRefreshToken)
-        val user: User = getUserFromToken(currentJwtRefreshToken)
-        val userDetails: UserDetailsImpl = UserDetailsImpl(user.id, user.email, user.password)
+        val userDetails = getUserFromToken(currentJwtRefreshToken) as UserDetailsImpl
 
         val accessToken: JwtAccessToken = tokenFactory.createAccessToken(userDetails)
         val refreshToken: JwtRefreshToken = tokenFactory.createRefreshToken(userDetails) as JwtRefreshToken
         refreshTokenService.rotateRefreshToken(currentJwtRefreshToken, refreshToken)
-        return JwtTokenResponse(accessToken.getToken(),refreshToken.getToken())
+        return JwtTokenResponse(accessToken.getToken(), refreshToken.getToken())
 
     }
 
@@ -43,9 +49,9 @@ class JwtServiceImpl(val jwtUtil: JwtUtil, val jwtConfig: JWTConfig, val tokenFa
         return jwtUtil.parseToken(token) ?: TODO()
     }
 
-    private fun getUserFromToken(refreshToken: JwtRefreshToken): User {
+    private fun getUserFromToken(refreshToken: JwtRefreshToken): UserDetails {
         val subject: String = refreshToken.getSubject()
-        return userRepository.findByEmail(subject) ?: TODO()
+        return userDetailsService.loadUserByUsername(subject)
     }
 
     private fun doValidateToken(refreshToken: JwtRefreshToken) {
