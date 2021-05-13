@@ -80,7 +80,7 @@ class ReservationControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].text", Matchers.hasItem(reservation.text)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].text", Matchers.hasItem(newReservation.text)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].", Matchers.hasItem(newReservation.text)))
 
     }
 
