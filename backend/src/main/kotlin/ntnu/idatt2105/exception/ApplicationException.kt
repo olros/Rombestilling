@@ -14,6 +14,7 @@ class ApplicationException (propertiesConfig: PropertiesConfig) {
 
     class EntityNotFoundException(message: String?) : RuntimeException(message)
     class DuplicateEntityException(message: String?) : RuntimeException(message)
+    class NotValidException(message: String?) : RuntimeException(message)
 
     companion object {
         private lateinit var propertiesConfig: PropertiesConfig
@@ -74,6 +75,8 @@ class ApplicationException (propertiesConfig: PropertiesConfig) {
                 return EntityNotFoundException(format(messageTemplate, *args))
             } else if (ExceptionType.DUPLICATE_ENTITY == exceptionType) {
                 return DuplicateEntityException(format(messageTemplate, *args))
+            } else if (ExceptionType.NOT_VALID == exceptionType) {
+                return NotValidException(format(messageTemplate, *args))
             }
             return RuntimeException(format(messageTemplate, *args))
         }

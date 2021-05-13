@@ -1,5 +1,6 @@
 package ntnu.idatt2105.user.service
 
+import ntnu.idatt2105.dto.response.ResponseError
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
@@ -39,7 +40,6 @@ class UserServiceImpl(
 
         val userObj: User = modelMapper.map(user, User::class.java)
         userObj.id = UUID.randomUUID()
-        //TODO: this need to be set when you create a user userObj.roles.plus(USER)
 
         return modelMapper.map(userRepository.save(userObj), UserDto::class.java)
     }
@@ -107,10 +107,13 @@ class UserServiceImpl(
     }
 
     override fun resetPassword(resetDto: ResetPasswordDto, id: UUID) {
-        val token = passwordResetTokenRepository.findById(id).orElseThrow { throw ApplicationException.throwException("Token not found")}
+        val token = passwordResetTokenRepository.findById(id).orElseThrow { throw ApplicationException.throwException(EntityType.TOKEN,
+            ExceptionType.ENTITY_NOT_FOUND, id.toString())
+        }
         val user = getUserByEmail(resetDto.email)
         if(!user.equals(token.user) && token.expirationDate.isAfter(ZonedDateTime.now())) {
-            throw ApplicationException.throwException("Token is not valid")
+            throw ApplicationException.throwException(EntityType.TOKEN,
+                ExceptionType.NOT_VALID, id.toString())
         }
         if(user.roles.isEmpty()) user.roles.plus(USER)
         user.password = passwordEncoder.encode(resetDto.password)
@@ -119,7 +122,7 @@ class UserServiceImpl(
 
     private fun sendEmail(email: String, properties: Map<Int, String>) {
         val mail =
-            Mail("mailadresse",
+            Mail("rombestilling@mail.com",
                 properties.getValue(1),
                 "Reset password",
                 HtmlTemplate("reset password", properties)
