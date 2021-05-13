@@ -59,7 +59,7 @@ export type Section = RoomBase & {
 export type SectionList = Omit<Section, 'description' | 'image'>;
 
 export type SectionCreate = Omit<RoomBase, 'id'> & {
-  parentId: string | null;
+  parentId?: string;
 };
 
 export type FileUploadResponse = {
