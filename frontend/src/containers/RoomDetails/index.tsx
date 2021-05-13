@@ -95,10 +95,6 @@ const RoomDetails = () => {
                 <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
                 <div>
                   <Collapse in={tab === calendarTab.value} mountOnEnter>
-                    {/* <Paper>
-                      <Typography variant='h1'>Calendar</Typography>
-                      <Typography>Her kommer det en kalender</Typography>
-                    </Paper> */}
                     <SectionCalendar sectionId={id} />
                   </Collapse>
                   <Collapse in={tab === sectionsTab.value} mountOnEnter>

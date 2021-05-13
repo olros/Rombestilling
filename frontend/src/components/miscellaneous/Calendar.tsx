@@ -212,6 +212,9 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
   };
 
   const addAppointment = (newAppointment: NewAppointmentType) => {
+    if (!sectionId) {
+      return;
+    }
     if (isOverlap(newAppointment)) {
       showSnackbar('Du kan ikke reservere en tid som overlapper med en annen tid', 'warning');
     } else {
@@ -236,12 +239,6 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
         <MonthView />
         <Toolbar {...(isLoading ? { rootComponent: ToolbarWithLoading } : null)} />
         <ViewSwitcher />
-        <EditingState
-          addedAppointment={addedAppointment}
-          onAddedAppointmentChange={(e) => addAppointment(e as NewAppointmentType)}
-          onCommitChanges={commitChanges}
-        />
-        <IntegratedEditing />
         <DateNavigator
           openButtonComponent={({ text, onVisibilityToggle }) => (
             <Button className={classes.button} onClick={onVisibilityToggle} variant='text'>
@@ -249,6 +246,12 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
             </Button>
           )}
         />
+        <EditingState
+          addedAppointment={addedAppointment}
+          onAddedAppointmentChange={(e) => addAppointment(e as NewAppointmentType)}
+          onCommitChanges={commitChanges}
+        />
+        <IntegratedEditing />
         <Appointments appointmentComponent={Appointment} />
         <DragDropProvider
           allowDrag={(appointment) => Boolean(sectionId) && appointment.id === NEW_APPOINTMENT.id}
@@ -257,7 +260,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
         {currentViewName !== 'Month' && <AppointmentForm visible={false} />}
       </Scheduler>
       <Slide direction='up' in={Boolean(addedAppointment)}>
-        <Container className={classes.fixedBottom} maxWidth='sm'>
+        <Container className={classes.fixedBottom} maxWidth='md'>
           <Button fullWidth onClick={() => setReservationOpen(true)}>
             Reserver
           </Button>
