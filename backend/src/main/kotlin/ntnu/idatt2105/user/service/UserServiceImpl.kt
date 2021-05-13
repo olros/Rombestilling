@@ -46,7 +46,7 @@ class UserServiceImpl(
     }
 
     private fun existsByEmail(email: String): Boolean {
-        return userRepository.existsByEmail(email) ?: false
+        return userRepository.existsByEmail(email)
     }
 
     override fun getUsers(pageable: Pageable): Page<UserDto> =

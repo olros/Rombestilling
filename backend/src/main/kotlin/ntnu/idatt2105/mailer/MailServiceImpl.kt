@@ -10,7 +10,7 @@ class MailServiceImpl(
 ) : MailService {
     override fun sendMail(mail: Mail) {
         val message = SimpleMailMessage()
-        message.setTo("olafrosendahl@gmail.com")
+        message.setTo(mail.to)
         message.setFrom(mail.from)
         message.setSubject(mail.subject)
         mail.htmlTemplate.props.get(2)?.let { message.setText(it) }
