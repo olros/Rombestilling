@@ -11,6 +11,7 @@ import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.mailer.HtmlTemplate
 import ntnu.idatt2105.mailer.Mail
+import ntnu.idatt2105.mailer.MailService
 import org.modelmapper.ModelMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -23,7 +24,8 @@ import java.util.*
 class UserServiceImpl(
     val userRepository: UserRepository,
     val modelMapper: ModelMapper,
-    val passwordEncoder: BCryptPasswordEncoder
+    val passwordEncoder: BCryptPasswordEncoder,
+    val mailService: MailService
 ) : UserService {
 
     override fun registerUser(user: UserRegistrationDto): UserDto {
@@ -101,6 +103,6 @@ class UserServiceImpl(
                 "Reset password",
                 HtmlTemplate("reset password", properties)
             )
-
+        mailService.sendMail(mail)
     }
 }

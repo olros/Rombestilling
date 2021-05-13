@@ -1,7 +1,18 @@
 package ntnu.idatt2105.mailer
 
-class MailServiceImpl(): MailService {
+import org.springframework.mail.SimpleMailMessage
+import org.springframework.mail.javamail.JavaMailSender
+import org.springframework.stereotype.Service
+
+@Service
+class MailServiceImpl(
+    private val emailSender: JavaMailSender
+) : MailService {
     override fun sendMail(mail: Mail) {
-        TODO("Not yet implemented")
+        val message = SimpleMailMessage()
+        message.setTo(mail.to)
+        message.setFrom(mail.from)
+        message.setCc(mail.subject)
+        emailSender.send(message)
     }
 }
