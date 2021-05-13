@@ -14,6 +14,7 @@ import ntnu.idatt2105.mailer.Mail
 import ntnu.idatt2105.mailer.MailService
 import ntnu.idatt2105.sercurity.repository.PasswordResetTokenRepository
 import ntnu.idatt2105.user.dto.ResetPasswordDto
+import ntnu.idatt2105.user.model.RoleType.USER
 import org.modelmapper.ModelMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -107,6 +108,7 @@ class UserServiceImpl(
         if(!user.equals(token.user) && token.expirationDate.isAfter(ZonedDateTime.now())) {
             throw ApplicationException.throwException("Token is not valid")
         }
+        if(user.roles.isEmpty()) user.roles.plus(USER)
         user.password = passwordEncoder.encode(resetDto.password)
         userRepository.save(user)
     }
