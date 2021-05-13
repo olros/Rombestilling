@@ -12,7 +12,7 @@ class MailServiceImpl(
         val message = SimpleMailMessage()
         message.setTo(mail.to)
         message.setFrom(mail.from)
-        message.setCc(mail.subject)
+        message.setSubject(mail.subject)
         emailSender.send(message)
     }
 }

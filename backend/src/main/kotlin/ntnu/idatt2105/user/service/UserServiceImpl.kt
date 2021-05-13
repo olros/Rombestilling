@@ -100,7 +100,7 @@ class UserServiceImpl(
         val token = PasswordResetToken(user = user)
         token.id = passwordResetTokenRepository.save(token).id
         val properties = mapOf(
-            1 to user.firstName + " " + user.surname,
+            1 to user.email,
             2 to "https://rombestilling.vercel.app/auth/reset-password/" + token.id + "/"
         )
         sendEmail(user.email, properties)
