@@ -42,6 +42,7 @@ class ReservationControllerTest {
 
     @Autowired
     private lateinit var userRepository:  UserRepository
+
     @Autowired
     private lateinit var sectionRepository:  SectionRepository
 
