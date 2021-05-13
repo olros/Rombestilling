@@ -115,11 +115,12 @@ const Topbar = () => {
 
   const items = useMemo(
     () =>
-      [
-        { text: 'Finn rom', to: URLS.ROOMS },
-        { text: 'Administrer brukere', to: URLS.PROFILE },
-        ...(isAuthenticated ? [{ text: 'Min profil', to: URLS.PROFILE }] : []),
-      ] as Array<TopBarItemProps>,
+      (isAuthenticated
+        ? [
+            { text: 'Finn rom', to: URLS.ROOMS },
+            { text: 'Administrer brukere', to: URLS.PROFILE },
+          ]
+        : []) as Array<TopBarItemProps>,
     [isAuthenticated],
   );
 

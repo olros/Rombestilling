@@ -15,12 +15,15 @@ import {
   SectionCreate,
   SectionList,
   Section,
+  ReservationCreate,
+  Reservation,
 } from 'types/Types';
 
 export const USERS = 'users';
 export const ME = 'me';
 export const AUTH = 'auth';
 export const SECTIONS = 'sections';
+export const RESERVATIONS = 'reservations';
 
 export default {
   // Auth
@@ -52,6 +55,20 @@ export default {
     IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/change-password/`, data: { oldPassword, newPassword } }),
   deleteUser: () => IFetch<RequestResponse>({ method: 'DELETE', url: `${USERS}/me/` }),
 
+  // Reservation
+  getReservation: (sectionId: string, reservationId: string) =>
+    IFetch<Reservation>({ method: 'GET', url: `${SECTIONS}/${sectionId}/${RESERVATIONS}/${reservationId}/` }),
+  getSectionReservations: (sectionId: string, filters?: any) =>
+    IFetch<PaginationResponse<Reservation>>({ method: 'GET', url: `${SECTIONS}/${sectionId}/${RESERVATIONS}/`, data: filters || {} }),
+  getUserReservations: (userId?: string, filters?: any) =>
+    IFetch<PaginationResponse<Reservation>>({ method: 'GET', url: `${USERS}/${userId || ME}/${RESERVATIONS}/`, data: filters || {} }),
+  createReservation: (sectionId: string, newRegistration: ReservationCreate) =>
+    IFetch<Reservation>({ method: 'POST', url: `${SECTIONS}/${sectionId}/${RESERVATIONS}/`, data: newRegistration }),
+  updateReservation: (sectionId: string, reservationId: string, updatedReservation: Partial<Section>) =>
+    IFetch<Reservation>({ method: 'PUT', url: `${SECTIONS}/${sectionId}/${RESERVATIONS}/${reservationId}/`, data: updatedReservation }),
+  deleteReservation: (sectionId: string, reservationId: string) =>
+    IFetch<RequestResponse>({ method: 'DELETE', url: `${SECTIONS}/${sectionId}/${RESERVATIONS}/${reservationId}/` }),
+
   // Section
   getSection: (sectionId: string) => IFetch<Section>({ method: 'GET', url: `${SECTIONS}/${sectionId}/` }),
   getSections: (filters?: any) => IFetch<PaginationResponse<SectionList>>({ method: 'GET', url: `${SECTIONS}/`, data: filters || {} }),
@@ -59,6 +76,7 @@ export default {
   updateSection: (sectionId: string, updatedSection: Partial<Section>) =>
     IFetch<Section>({ method: 'PUT', url: `${SECTIONS}/${sectionId}/`, data: updatedSection }),
   deleteSection: (sectionId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${SECTIONS}/${sectionId}/` }),
+
   // User
   getUser: (userId?: string) => IFetch<User>({ method: 'GET', url: `${USERS}/${userId || ME}/` }),
   getUsers: (filters?: any) => IFetch<PaginationResponse<UserList>>({ method: 'GET', url: `${USERS}/`, data: filters || {} }),
