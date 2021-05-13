@@ -51,6 +51,10 @@ class UserServiceImpl(
     override fun getUsers(pageable: Pageable): Page<UserDto> =
         userRepository.findAll(pageable).map { user -> modelMapper.map(user, UserDto::class.java) }
 
+    override fun getUser(id: UUID): UserDto {
+        TODO("Not yet implemented")
+    }
+
     override fun <T> getUser(id: UUID, mapTo: Class<T>): T {
         val user = getUserById(id)
         return modelMapper.map(user, mapTo)
