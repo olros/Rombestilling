@@ -114,7 +114,12 @@ const Topbar = () => {
   const scrollAtTop = useMemo(() => scrollLength < 20, [scrollLength]);
 
   const items = useMemo(
-    () => [{ text: 'Forsiden', to: URLS.LANDING }, ...(isAuthenticated ? [{ text: 'Min profil', to: URLS.PROFILE }] : [])] as Array<TopBarItemProps>,
+    () =>
+      [
+        { text: 'Finn rom', to: URLS.ROOMS },
+        { text: 'Administrer brukere', to: URLS.PROFILE },
+        ...(isAuthenticated ? [{ text: 'Min profil', to: URLS.PROFILE }] : []),
+      ] as Array<TopBarItemProps>,
     [isAuthenticated],
   );
 

@@ -14,6 +14,11 @@ declare module '@material-ui/core/styles/createPalette' {
       backdropFilter: string;
       '-webkit-backdrop-filter': string;
     };
+    extra: {
+      noOutlinedTextField: {
+        [any: string]: unknown;
+      };
+    };
     transparent: {
       boxShadow: string;
       border: string;
@@ -31,6 +36,11 @@ declare module '@material-ui/core/styles/createPalette' {
     blurred: {
       backdropFilter: string;
       '-webkit-backdrop-filter': string;
+    };
+    extra: {
+      noOutlinedTextField: {
+        [any: string]: unknown;
+      };
     };
     transparent: {
       boxShadow: string;
@@ -144,6 +154,15 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       blurred: {
         backdropFilter: `blur(5px)`,
         '-webkit-backdrop-filter': `blur(5px)`,
+      },
+      extra: {
+        noOutlinedTextField: {
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: 'transparent !important',
+            },
+          },
+        },
       },
       transparent: {
         background: get<string>({ light: '#f6f5f340', dark: '#61616160' }),
