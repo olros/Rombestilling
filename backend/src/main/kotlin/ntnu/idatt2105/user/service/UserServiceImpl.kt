@@ -12,11 +12,14 @@ import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.mailer.HtmlTemplate
 import ntnu.idatt2105.mailer.Mail
 import ntnu.idatt2105.mailer.MailService
+import ntnu.idatt2105.sercurity.repository.PasswordResetTokenRepository
+import ntnu.idatt2105.user.dto.ResetPasswordDto
 import org.modelmapper.ModelMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.time.ZonedDateTime
 import java.util.*
 
 
@@ -25,7 +28,8 @@ class UserServiceImpl(
     val userRepository: UserRepository,
     val modelMapper: ModelMapper,
     val passwordEncoder: BCryptPasswordEncoder,
-    val mailService: MailService
+    val mailService: MailService,
+    val passwordResetTokenRepository: PasswordResetTokenRepository
 ) : UserService {
 
     override fun registerUser(user: UserRegistrationDto): UserDto {
@@ -89,11 +93,22 @@ class UserServiceImpl(
     override fun forgotPassword(email: ForgotPassword) {
         val user = getUserByEmail(email.email)
         val token = PasswordResetToken(user = user)
+        token.id = passwordResetTokenRepository.save(token).id
         val properties = mapOf(
             1 to user.firstName + " " + user.surname,
             2 to "https://rombestilling.vercel.app/auth/reset-password/" + token.id + "/"
         )
         sendEmail(user.email, properties)
+    }
+
+    override fun resetPassword(resetDto: ResetPasswordDto, id: UUID) {
+        val token = passwordResetTokenRepository.findById(id).orElseThrow { throw ApplicationException.throwException("Token not found")}
+        val user = getUserByEmail(resetDto.email)
+        if(!user.equals(token.user) && token.expirationDate.isAfter(ZonedDateTime.now())) {
+            throw ApplicationException.throwException("Token is not valid")
+        }
+        user.password = passwordEncoder.encode(resetDto.password)
+        userRepository.save(user)
     }
 
     private fun sendEmail(email: String, properties: Map<Int, String>) {

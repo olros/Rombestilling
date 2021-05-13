@@ -10,8 +10,8 @@ data class PasswordResetToken(
     var id: UUID = UUID.randomUUID(),
     @OneToOne(targetEntity = User::class, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, referencedColumnName = "id")
-    private val user: User,
-    private val expirationDate: ZonedDateTime = ZonedDateTime.now().plusMinutes(EXPIRATION.toLong())
+    val user: User,
+    val expirationDate: ZonedDateTime = ZonedDateTime.now().plusMinutes(EXPIRATION.toLong())
 ) {
     companion object {
         //60 minutes
