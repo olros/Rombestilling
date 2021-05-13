@@ -1,6 +1,10 @@
-name: build, ktlint
+name: CI-Backend
 
 on: [pull_request]
+
+defaults:
+  run:
+    working-directory: backend
 jobs:
   build:
     runs-on: ubuntu-latest
