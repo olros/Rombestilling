@@ -20,6 +20,7 @@ import Paper from 'components/layout/Paper';
 import Tabs from 'components/layout/Tabs';
 import Http404 from 'containers/Http404';
 import EditProfile from 'containers/Profile/components/EditProfile';
+import { UserCalendar } from 'components/miscellaneous/Calendar';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -95,6 +96,9 @@ const Profile = () => {
         <div className={classes.grid}>
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
           <div>
+            <Collapse in={tab === bookings.value} mountOnEnter>
+              <UserCalendar />
+            </Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <Paper>
                 <EditProfile user={user} />

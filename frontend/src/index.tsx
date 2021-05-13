@@ -99,10 +99,10 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route element={<Landing />} path={URLS.LANDING} />
-      <Route path={URLS.ROOMS}>
+      <AuthRoute path={URLS.ROOMS}>
         <Route element={<RoomDetails />} path=':id/' />
         <Route element={<Rooms />} path='' />
-      </Route>
+      </AuthRoute>
       <Route element={<Auth />} path={`${URLS.LOGIN}*`} />
       <AuthRoute element={<Profile />} path={URLS.PROFILE} />
 

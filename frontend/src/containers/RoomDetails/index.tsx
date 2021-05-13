@@ -20,6 +20,7 @@ import Tabs from 'components/layout/Tabs';
 import RoomSection from 'containers/RoomDetails/components/RoomSection';
 import CreateRoom from 'components/miscellaneous/CreateRoom';
 import EditRoom from 'components/miscellaneous/EditRoom';
+import { SectionCalendar } from 'components/miscellaneous/Calendar';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -94,10 +95,7 @@ const RoomDetails = () => {
                 <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
                 <div>
                   <Collapse in={tab === calendarTab.value} mountOnEnter>
-                    <Paper>
-                      <Typography variant='h1'>Calendar</Typography>
-                      <Typography>Her kommer det en kalender</Typography>
-                    </Paper>
+                    <SectionCalendar sectionId={id} />
                   </Collapse>
                   <Collapse in={tab === sectionsTab.value} mountOnEnter>
                     <Paper className={classes.grid}>

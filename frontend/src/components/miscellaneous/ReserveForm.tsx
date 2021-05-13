@@ -2,7 +2,11 @@ import { useForm } from 'react-hook-form';
 import classnames from 'classnames';
 import { formatDate } from 'utils';
 import { parseISO } from 'date-fns';
+import { useCreateReservation } from 'hooks/Reservation';
 import { useSectionById } from 'hooks/Section';
+import { useSnackbar } from 'hooks/Snackbar';
+import { useUser } from 'hooks/User';
+import { ReservationCreate } from 'types/Types';
 
 // Material UI
 import { makeStyles, Typography } from '@material-ui/core';
@@ -26,21 +30,33 @@ export type ReserveFormProps = {
   className?: string;
 };
 
-type FormValues = {
-  amount: string;
-  description: string;
-};
+type FormValues = Pick<ReservationCreate, 'nrOfPeople' | 'text'>;
 
 const ReserveForm = ({ onConfirm, sectionId, from, to, className }: ReserveFormProps) => {
   const classes = useStyles();
+  const { data: user } = useUser();
   const { data: section } = useSectionById(sectionId);
+  const reserve = useCreateReservation(sectionId);
   const { formState, handleSubmit, register } = useForm<FormValues>();
+  const showSnackbar = useSnackbar();
   const submit = async (data: FormValues) => {
-    // eslint-disable-next-line no-console
-    console.log({ ...data, sectionId });
-    if (onConfirm) {
-      onConfirm();
+    if (!user) {
+      return;
     }
+    reserve.mutate(
+      { ...data, userId: user.id, fromTime: from, toTime: to },
+      {
+        onSuccess: () => {
+          showSnackbar('Reservasjonen var vellykket!', 'success');
+          if (onConfirm) {
+            onConfirm();
+          }
+        },
+        onError: (e) => {
+          showSnackbar(e.message, 'error');
+        },
+      },
+    );
   };
   if (!section) {
     return null;
@@ -61,9 +77,9 @@ const ReserveForm = ({ onConfirm, sectionId, from, to, className }: ReserveFormP
         InputProps={{ type: 'number' }}
         label='Antall personer'
         required
-        {...register('amount', { required: 'Du må oppgi antall personer' })}
+        {...register('nrOfPeople', { valueAsNumber: true, required: 'Du må oppgi antall personer' })}
       />
-      <TextField formState={formState} label='Beskrivelse' maxRows={5} minRows={2} multiline {...register('description')} />
+      <TextField formState={formState} label='Beskrivelse' maxRows={5} minRows={2} multiline {...register('text')} />
       <SubmitButton formState={formState}>Reserver</SubmitButton>
     </form>
   );

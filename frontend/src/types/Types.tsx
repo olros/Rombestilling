@@ -55,6 +55,20 @@ export type SectionCreate = Omit<Section, 'id'> & {
   parentId?: string;
 };
 
+export type Reservation = {
+  id: string;
+  section: SectionList;
+  fromTime: string;
+  toTime: string;
+  text: string;
+  nrOfPeople: number;
+  user: UserList;
+};
+
+export type ReservationCreate = Pick<Reservation, 'nrOfPeople' | 'text' | 'fromTime' | 'toTime'> & {
+  userId: string;
+};
+
 export type FileUploadResponse = {
   data: {
     display_url: string;
