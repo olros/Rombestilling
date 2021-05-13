@@ -52,14 +52,7 @@ class UserServiceImpl(
     }
 
     override fun registerUserBatch(file: MultipartFile): Response {
-        /*
-        Validate file
-        Read file to list?
-        For each create user
-        Error handle
-        return response
-         */
-
+        throwIfFileEmpty(file)
         var fileReader : BufferedReader? = null
 
         try {
@@ -74,7 +67,6 @@ class UserServiceImpl(
         } finally {
             closeFileReader(fileReader)
         }
-
         return Response("The users have been created")
     }
 
@@ -91,6 +83,11 @@ class UserServiceImpl(
         } catch (ex: IOException) {
             throw Exception("Error during csv import")
         }
+    }
+
+    private fun throwIfFileEmpty(file: MultipartFile) {
+        if (file.isEmpty)
+            throw Exception("Empty file")
     }
 
     private fun existsByEmail(email: String): Boolean {
