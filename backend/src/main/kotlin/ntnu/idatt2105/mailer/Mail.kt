@@ -1,6 +1,6 @@
-package ntnu.idatt2105.util
+package ntnu.idatt2105.mailer
 
-import com.sun.istack.NotNull
+import ntnu.idatt2105.mailer.HtmlTemplate
 
 class Mail(
     private val from: String,
