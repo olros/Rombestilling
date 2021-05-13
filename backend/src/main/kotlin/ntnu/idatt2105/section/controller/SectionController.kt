@@ -6,7 +6,7 @@ import ntnu.idatt2105.section.service.SectionService
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
 import ntnu.idatt2105.util.PaginationConstants
-import ntnu.idatt2105.util.Response
+import ntnu.idatt2105.dto.response.Response
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
