@@ -34,7 +34,11 @@ class ReservationServiceImpl(
             throw ApplicationException.throwException(
                     EntityType.RESERVATION, ExceptionType.DUPLICATE_ENTITY, reservation.fromTime.toString(), reservation.toTime.toString())
         }
-        var newReservation = modelMapper.map(reservation, Reservation::class.java)
+        var newReservation = Reservation(id = UUID.randomUUID(),
+                toTime = reservation.toTime,
+                fromTime = reservation.fromTime,
+                text = reservation.text,
+                nrOfPeople = reservation.nrOfPeople)
 
         val user = userRepository.findById(reservation.userId!!).orElseThrow { throw ApplicationException.throwException(
                 EntityType.USER, ExceptionType.ENTITY_NOT_FOUND, reservation.userId.toString()) }
@@ -52,6 +56,13 @@ class ReservationServiceImpl(
         reservationRepository.findReservationsByUserId(userId, pageable).run {
             return this.map { modelMapper.map(it, ReservationDto::class.java) }
         }
+
+    override fun geReservation(sectionId: UUID, reservationId: UUID): ReservationDto =
+        reservationRepository.findById(reservationId).orElseThrow { throw ApplicationException.throwException(
+                EntityType.RESERVATION, ExceptionType.ENTITY_NOT_FOUND, reservationId.toString(), sectionId.toString()) }
+                .run {
+                    return modelMapper.map(this, ReservationDto::class.java)
+            }
 
     override fun updateReservation(sectionId: UUID, reservationId: UUID, reservation: ReservationDto): ReservationDto {
         reservationRepository.findReservationByIdAndSectionId(reservationId, sectionId).run {

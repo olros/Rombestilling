@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param
 import java.time.ZonedDateTime
 import java.util.*
 
-interface ReservationRepository : JpaRepository<Reservation, UUID>, QuerydslPredicateExecutor<Reservation> {
+interface ReservationRepository : JpaRepository<Reservation, UUID> {
     fun findReservationsByUserId(userId: UUID, pageable: Pageable) : Page<Reservation>
     @Query( "SELECT COUNT(ent) > 0 FROM Reservation ent WHERE ent.fromTime <= :toTime AND ent.toTime >= :fromTime")
     fun existsInterval(@Param("fromTime")fromTime: ZonedDateTime, @Param("toTime")toTime: ZonedDateTime): Boolean

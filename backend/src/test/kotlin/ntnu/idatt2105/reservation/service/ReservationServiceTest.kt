@@ -63,7 +63,6 @@ class ReservationServiceTest {
         Mockito.lenient().`when`(reservationRepository.findById(reservation.id)).thenReturn(Optional.of(reservation))
         Mockito.lenient().`when`(sectionRepository.findById(reservation.section?.id!!)).thenReturn(Optional.of(reservation.section!!))
         Mockito.lenient().`when`(userRepository.findById(reservation.user?.id!!)).thenReturn(Optional.of(reservation.user!!))
-        Mockito.lenient().`when`(reservationRepository.save(reservation)).thenReturn(reservation)
     }
 
     @Test
@@ -77,9 +76,14 @@ class ReservationServiceTest {
 
     @Test
     fun `test create reservation creates a reservation`(){
-        Mockito.lenient().`when`(reservationRepository.existsInterval(any(ZonedDateTime::class.java), any(ZonedDateTime::class.java))).thenReturn(true)
-        val newReservation = ReservationCreateDto(userId = reservation.user?.id, text = faker.aquaTeenHungerForce.quote())
-        assertThat(reservationService.createReservation(reservation.section?.id!!, newReservation).text).isEqualTo(newReservation.text)
+        Mockito.lenient().`when`(reservationRepository.existsInterval(reservation.fromTime!!, reservation.toTime!!)).thenReturn(false)
+        val text = faker.aquaTeenHungerForce.quote()
+        reservation.text = text
+        val newReservation = ReservationCreateDto(userId = reservation.user?.id,
+                text = text,
+                fromTime = reservation.fromTime, toTime = reservation.toTime)
+        val test = reservationService.createReservation(reservation.section?.id!!, newReservation)
+        assertThat(test.text).isEqualTo(reservation.text)
 
     }
 }

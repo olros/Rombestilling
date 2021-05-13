@@ -36,8 +36,6 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	implementation("io.github.serpro69:kotlin-faker:1.6.0")
-	implementation("com.querydsl:querydsl-core:4.1.3")
-	implementation("com.querydsl:querydsl-jpa:4.1.3")
 }
 
 tasks.withType<KotlinCompile> {
