@@ -16,4 +16,5 @@ interface UserService {
     fun getUser(id: UUID): UserDto
     fun forgotPassword(email: ForgotPassword)
     fun resetPassword(resetDto: ResetPasswordDto, id: UUID)
+    fun <T> getUser(id: UUID, mapTo: Class<T>): T
 }

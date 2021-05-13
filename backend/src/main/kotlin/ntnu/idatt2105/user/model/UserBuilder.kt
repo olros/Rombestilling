@@ -10,7 +10,8 @@ data class UserBuilder(
     val email: String = "",
     val phoneNumber: String = "",
     val expirationDate: LocalDate = LocalDate.now(),
-    val password: String = ""
+    val password: String = "",
+    val roles: Set<Role> = setOf()
 ) {
     fun build(): User {
         return User(
@@ -20,7 +21,8 @@ data class UserBuilder(
             email = email,
             phoneNumber = phoneNumber,
             expirationDate = expirationDate,
-            password = password
+            password = password,
+            roles = roles
         )
     }
 }
