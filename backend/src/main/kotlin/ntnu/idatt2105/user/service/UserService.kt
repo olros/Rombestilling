@@ -1,7 +1,7 @@
 package ntnu.idatt2105.user.service
 
 import ntnu.idatt2105.sercurity.dto.ForgotPassword
-import ntnu.idatt2105.user.dto.ResetPasswordDto
+import ntnu.idatt2105.sercurity.dto.ResetPasswordDto
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
 import org.springframework.data.domain.Page

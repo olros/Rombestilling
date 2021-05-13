@@ -13,7 +13,7 @@ import ntnu.idatt2105.mailer.HtmlTemplate
 import ntnu.idatt2105.mailer.Mail
 import ntnu.idatt2105.mailer.MailService
 import ntnu.idatt2105.sercurity.repository.PasswordResetTokenRepository
-import ntnu.idatt2105.user.dto.ResetPasswordDto
+import ntnu.idatt2105.sercurity.dto.ResetPasswordDto
 import ntnu.idatt2105.user.model.RoleType.USER
 import org.modelmapper.ModelMapper
 import org.springframework.data.domain.Page
