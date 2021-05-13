@@ -5,13 +5,16 @@ import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
+
 @Entity
 data class User(@Id
-                var id: UUID,
-                var firstName:String,
-                var surname:String,
+                @Column(columnDefinition = "CHAR(32)")
+                var id: UUID = UUID.randomUUID(),
+                var firstName:String = "",
+                var surname:String = "",
                 @Column(unique = true)
-                var email: String,
-                var phoneNumber: String,
-                var expirationDate: LocalDate,
-                var password: String)
+                var email: String = "",
+                var phoneNumber: String = "",
+                var image: String = "",
+                var expirationDate: LocalDate = LocalDate.EPOCH,
+                var password: String = "")

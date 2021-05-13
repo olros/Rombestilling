@@ -6,4 +6,5 @@ import java.util.*
 
 interface UserRepository: JpaRepository<User, UUID> {
     fun findByEmail(email:String): User?
+    fun existsByEmail(email: String): Boolean
 }

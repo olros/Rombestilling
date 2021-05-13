@@ -25,13 +25,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   logo: {
-    minWidth: '250px',
-    width: '100%',
-    maxWidth: '300px',
+    maxWidth: '200px',
+    width: '90%',
     height: 'auto',
-    [theme.breakpoints.down('md')]: {
-      minWidth: '200px',
-    },
   },
 }));
 

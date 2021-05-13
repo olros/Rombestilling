@@ -1,4 +1,4 @@
-export const API_URL = process.env.REACT_APP_API_URL || 'https://rombestilling.azurewebsites.net/api/';
+export const API_URL = process.env.REACT_APP_API_URL || 'https://rombestilling.azurewebsites.net/';
 
 export const ACCESS_TOKEN = 'access_token';
 export const REFRESH_TOKEN = 'refresh_token';

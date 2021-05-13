@@ -14,6 +14,11 @@ declare module '@material-ui/core/styles/createPalette' {
       backdropFilter: string;
       '-webkit-backdrop-filter': string;
     };
+    extra: {
+      noOutlinedTextField: {
+        [any: string]: unknown;
+      };
+    };
     transparent: {
       boxShadow: string;
       border: string;
@@ -31,6 +36,11 @@ declare module '@material-ui/core/styles/createPalette' {
     blurred: {
       backdropFilter: string;
       '-webkit-backdrop-filter': string;
+    };
+    extra: {
+      noOutlinedTextField: {
+        [any: string]: unknown;
+      };
     };
     transparent: {
       boxShadow: string;
@@ -86,8 +96,8 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       MuiAvatar: {
         styleOverrides: {
           root: {
-            background: get<string>({ light: '#475960', dark: '#bddde5' }),
-            color: get<string>({ light: '#ffffff', dark: '#000000' }),
+            background: 'linear-gradient(45deg, #fc8c35, #c80272)',
+            color: '#ffffff',
             fontWeight: 'bold',
           },
         },
@@ -95,7 +105,7 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       MuiCssBaseline: {
         styleOverrides: {
           body: {
-            background: get<string>({ light: 'linear-gradient(45deg, #3e843142, #0000ff3d)', dark: 'linear-gradient(45deg, #160202d9, #070727ed)' }),
+            background: get<string>({ light: 'linear-gradient(45deg, #3e843142, #0000ff3d)', dark: 'linear-gradient(45deg, #271d23, #14142b)' }),
             // eslint-disable-next-line @typescript-eslint/ban-types
             ...get<object>({ light: {}, dark: darkScrollbar() }),
           },
@@ -128,11 +138,11 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       get,
       mode: get<'light' | 'dark'>({ light: 'light', dark: 'dark' }),
       primary: {
-        main: get<string>({ light: '#475960', dark: '#bddde5' }),
+        main: get<string>({ light: '#4e7bea', dark: '#67e0f5' }),
         contrastText: get<string>({ light: '#ffffff', dark: '#000000' }),
       },
       secondary: {
-        main: get<string>({ light: '#4f5643', dark: '#ffa2cb' }),
+        main: get<string>({ light: '#cf3e75', dark: '#fe9edc' }),
       },
       error: {
         main: get<string>({ light: '#F71735', dark: '#ff6060' }),
@@ -144,6 +154,15 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       blurred: {
         backdropFilter: `blur(5px)`,
         '-webkit-backdrop-filter': `blur(5px)`,
+      },
+      extra: {
+        noOutlinedTextField: {
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: 'transparent !important',
+            },
+          },
+        },
       },
       transparent: {
         background: get<string>({ light: '#f6f5f340', dark: '#61616160' }),

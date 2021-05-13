@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import Helmet from 'react-helmet';
 import URLS from 'URLS';
+import { UserCreate } from 'types/Types';
 import { useCreateUser } from 'hooks/User';
 import { EMAIL_REGEX } from 'constant';
 
@@ -28,11 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type SignUpData = {
-  firstName: string;
-  surname: string;
-  email: string;
-  password: string;
+type SignUpData = Pick<UserCreate, 'email' | 'firstName' | 'phoneNumber' | 'surname' | 'password'> & {
   repeatPassword: string;
 };
 
@@ -44,15 +41,13 @@ const SignUp = () => {
 
   const onSignup = async (data: SignUpData) => {
     createUser.mutate(
-      { firstName: data.firstName, surname: data.surname, email: data.email, password: data.password },
+      { firstName: data.firstName, surname: data.surname, email: data.email, password: data.password, phoneNumber: data.phoneNumber },
       {
         onSuccess: () => {
           navigate(URLS.LOGIN);
         },
         onError: (e) => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          setError('password', { message: e.data.password.replace(/,/g, ' ') || 'Noe gikk galt' });
+          setError('password', { message: e.message || 'Noe gikk galt' });
         },
       },
     );
@@ -104,7 +99,7 @@ const SignUp = () => {
         <TextField
           disabled={createUser.isLoading}
           formState={formState}
-          label='Gjennta passord'
+          label='Gjenta passord'
           {...register('repeatPassword', {
             required: 'Feltet er påkrevd',
             validate: {

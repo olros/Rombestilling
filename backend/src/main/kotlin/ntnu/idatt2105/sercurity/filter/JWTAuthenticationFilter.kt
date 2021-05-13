@@ -3,12 +3,16 @@ package ntnu.idatt2105.sercurity.filter
 import io.jsonwebtoken.ExpiredJwtException
 import ntnu.idatt2105.sercurity.JwtUtil
 import ntnu.idatt2105.sercurity.config.JWTConfig
+import ntnu.idatt2105.sercurity.exception.InvalidJwtToken
 import ntnu.idatt2105.user.service.UserDetailsImpl
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.filter.OncePerRequestFilter
+import org.springframework.web.server.ResponseStatusException
 import java.io.IOException
 import java.util.*
 import javax.servlet.FilterChain
@@ -23,22 +27,24 @@ class JWTAuthenticationFilter(val jwtConfig: JWTConfig, val jwtUtil: JwtUtil) : 
     @Throws(IOException::class, ServletException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val header = extractAuthorizationHeaderFromRequest(request)
-        if (!header.startsWith(jwtConfig.prefix)) {
+        if (header != null && header.startsWith(jwtConfig.prefix)) {
+            processAuthentication(request)
             chain.doFilter(request, response)
             return
         }
-        processAuthentication(request)
         chain.doFilter(request, response)
+        return
+
     }
 
-    private fun extractAuthorizationHeaderFromRequest(request: HttpServletRequest): String {
+    private fun extractAuthorizationHeaderFromRequest(request: HttpServletRequest): String?  {
         return request.getHeader(jwtConfig.header)
     }
 
 
     private fun processAuthentication(request: HttpServletRequest) {
-        val token = extractAuthorizationHeaderFromRequest(request)
         try {
+            val token = extractAuthorizationHeaderFromRequest(request) ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
             setAuthenticationFromToken(token)
         } catch (ex: ExpiredJwtException) {
             request.setAttribute("exception", ex)

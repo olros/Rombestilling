@@ -18,7 +18,16 @@ class SetupDataLoader (val userRepository: UserRepository, val passwordEncoder: 
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
         if(!alreadySetup){
 
-            if(userRepository.findByEmail("admin@test.com") == null)userRepository.save(User(UUID.randomUUID(), "hei", "hei", "admin@test.com", LocalDate.EPOCH, passwordEncoder.encode("admin")))
+            if(userRepository.findByEmail("admin@test.com") == null)
+                userRepository.save(User(
+                    id=UUID.randomUUID(),
+                    firstName="hei",
+                    surname="hei",
+                    email="admin@test.com",
+                    phoneNumber="+4712345678",
+                    password=passwordEncoder.encode("admin"),
+                    expirationDate = LocalDate.EPOCH
+                ))
         }
         alreadySetup = true
 

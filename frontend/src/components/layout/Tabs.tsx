@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.primary.main,
     },
     '&:focus': {
-      color: theme.palette.primary.main,
+      color: theme.palette.primary.dark,
     },
   },
   selected: {},

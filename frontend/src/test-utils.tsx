@@ -38,7 +38,7 @@ const headers = {
 const getRegex = (url: string) => new RegExp(`${url}.`, 'gi');
 
 export const mockUser = (id?: string): User => ({
-  birthDate: null,
+  phoneNumber: '99887766',
   email: 'test@example.com',
   firstName: 'Ola',
   id: id || '123',

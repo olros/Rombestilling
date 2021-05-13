@@ -3,11 +3,27 @@ import { IFetch } from 'api/fetch';
 import { setCookie } from 'api/cookie';
 import { ACCESS_TOKEN, ACCESS_TOKEN_DURATION, REFRESH_TOKEN, REFRESH_TOKEN_DURATION } from 'constant';
 import { logout } from 'hooks/User';
-import { FileUploadResponse, LoginRequestResponse, PaginationResponse, RequestResponse, RefreshTokenResponse, User, UserCreate, UserList } from 'types/Types';
+import {
+  FileUploadResponse,
+  LoginRequestResponse,
+  PaginationResponse,
+  RequestResponse,
+  RefreshTokenResponse,
+  User,
+  UserCreate,
+  UserList,
+  SectionCreate,
+  Section,
+  Room,
+  SectionList,
+  RoomList,
+  RoomBase,
+} from 'types/Types';
 
 export const USERS = 'users';
 export const ME = 'me';
 export const AUTH = 'auth';
+export const SECTIONS = 'sections';
 
 export default {
   // Auth
@@ -39,6 +55,13 @@ export default {
     IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/change-password/`, data: { oldPassword, newPassword } }),
   deleteUser: () => IFetch<RequestResponse>({ method: 'DELETE', url: `${USERS}/me/` }),
 
+  // Section
+  getSection: (sectionId: string) => IFetch<Room | Section>({ method: 'GET', url: `${SECTIONS}/${sectionId}/` }),
+  getSections: (filters?: any) => IFetch<PaginationResponse<RoomList | SectionList>>({ method: 'GET', url: `${SECTIONS}/`, data: filters || {} }),
+  createSection: (newPost: SectionCreate) => IFetch<Room | Section>({ method: 'POST', url: `${SECTIONS}/`, data: newPost }),
+  updateSection: (sectionId: string, updatedSection: Partial<RoomBase>) =>
+    IFetch<Room | Section>({ method: 'PUT', url: `${SECTIONS}/${sectionId}/`, data: updatedSection }),
+  deleteSection: (sectionId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${SECTIONS}/${sectionId}/` }),
   // User
   getUser: (userId?: string) => IFetch<User>({ method: 'GET', url: `${USERS}/${userId || ME}/` }),
   getUsers: (filters?: any) => IFetch<PaginationResponse<UserList>>({ method: 'GET', url: `${USERS}/`, data: filters || {} }),

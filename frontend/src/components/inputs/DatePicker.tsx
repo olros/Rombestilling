@@ -1,7 +1,13 @@
-import MuiTextField, { TextFieldProps } from '@material-ui/core/TextField';
+import { makeStyles, TextField as MuiTextField, TextFieldProps } from '@material-ui/core';
 import MuiDatePicker, { DatePickerProps as MuiDatePickerProps } from '@material-ui/lab/DatePicker';
 import MuiDateTimePicker, { DateTimePickerProps as MuiDateTimePickerProps } from '@material-ui/lab/DateTimePicker';
 import { Control, Controller, RegisterOptions, UseFormReturn } from 'react-hook-form';
+
+const useStyles = makeStyles((theme) => ({
+  input: {
+    ...theme.palette.extra.noOutlinedTextField,
+  },
+}));
 
 export type DatePickerProps = TextFieldProps &
   Pick<UseFormReturn, 'formState'> & {
@@ -16,6 +22,7 @@ export type DatePickerProps = TextFieldProps &
   };
 
 const DatePicker = ({ type, name, label, control, formState, rules = {}, defaultValue = '', dateProps, ...props }: DatePickerProps) => {
+  const classes = useStyles();
   const Picker = type === 'date' ? MuiDatePicker : MuiDateTimePicker;
   return (
     <Controller
@@ -31,6 +38,7 @@ const DatePicker = ({ type, name, label, control, formState, rules = {}, default
           label={label}
           renderInput={(params) => (
             <MuiTextField
+              className={classes.input}
               margin='normal'
               variant='outlined'
               {...params}

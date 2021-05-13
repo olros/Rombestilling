@@ -61,11 +61,12 @@ class WebSecurity(val refreshTokenService: RefreshTokenService,
                     .antMatchers(HttpMethod.POST, jwtConfig.uri + "/login").permitAll()
                     .antMatchers(HttpMethod.POST, "/auth/forgot-password/").permitAll()
                     .antMatchers(HttpMethod.POST, "/auth/reset-password/**").permitAll()
+                    .antMatchers(HttpMethod.POST, "/users/").permitAll()
                     .anyRequest()
                     .authenticated()
                     .and()
                     .exceptionHandling()
-                    .authenticationEntryPoint { req: HttpServletRequest?, res: HttpServletResponse, e: AuthenticationException? ->
+                        .authenticationEntryPoint { req: HttpServletRequest?, res: HttpServletResponse, e: AuthenticationException? ->
                         res.contentType = "application/json"
                         res.status = HttpServletResponse.SC_UNAUTHORIZED
                         res.outputStream.println("{ \"message\": \"Brukernavn eller passord er feil\"}")
