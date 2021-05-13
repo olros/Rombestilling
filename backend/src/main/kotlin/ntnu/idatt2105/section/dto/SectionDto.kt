@@ -9,7 +9,8 @@ data class SectionDto(
         var name: String = "",
         var capacity: Int = 0,
         var description: String = "",
-        var picture: String = "",
+        var image: String = "",
         var type: String = SectionType.ROOM,
+        var parent: SectionChildrenDto? = null,
         var children: MutableList<SectionChildrenDto> = mutableListOf()
 )

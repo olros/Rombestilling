@@ -24,7 +24,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
     }
 
     override fun createSection(section: SectionCreateDto): SectionDto {
-        var newSection = Section(section.id, section.name, section.description, section.capacity, section.picture)
+        var newSection = Section(section.id, section.name, section.description, section.capacity, section.image)
         if(section.parentId != null) newSection.parent = sectionRepository.findById(section.parentId!!)
                 .orElseThrow { throw ApplicationException.throwException(
                         EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, section.parentId.toString())  }
@@ -48,7 +48,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
             var updatedSection = this.copy(
                     name = section.name,
                     capacity = section.capacity,
-                    picture = section.picture,
+                image = section.image,
                     description = section.description
             )
             updatedSection = sectionRepository.save(updatedSection)

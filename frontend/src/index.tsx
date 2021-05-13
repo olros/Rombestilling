@@ -28,6 +28,7 @@ const Http404 = lazy(() => import('containers/Http404'));
 const Auth = lazy(() => import('containers/Auth'));
 const Profile = lazy(() => import('containers/Profile'));
 const Rooms = lazy(() => import('containers/Rooms'));
+const RoomDetails = lazy(() => import('containers/RoomDetails'));
 
 type AuthRouteProps = {
   path: string;
@@ -99,6 +100,7 @@ const AppRoutes = () => {
     <Routes>
       <Route element={<Landing />} path={URLS.LANDING} />
       <Route path={URLS.ROOMS}>
+        <Route element={<RoomDetails />} path=':id/' />
         <Route element={<Rooms />} path='' />
       </Route>
       <Route element={<Auth />} path={`${URLS.LOGIN}*`} />
