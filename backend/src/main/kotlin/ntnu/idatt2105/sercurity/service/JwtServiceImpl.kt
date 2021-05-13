@@ -13,10 +13,12 @@ import ntnu.idatt2105.sercurity.validator.TokenValidator
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.user.service.UserDetailsImpl
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 
 
 @Service
@@ -33,7 +35,7 @@ class JwtServiceImpl(
 
 
     override fun refreshToken(header: String): JwtTokenResponse {
-        val currentJwtRefreshToken: JwtRefreshToken =  getCurrentJwtRefreshToken(header)
+        val currentJwtRefreshToken: JwtRefreshToken = getCurrentJwtRefreshToken(header)
         doValidateToken(currentJwtRefreshToken)
         val userDetails = getUserFromToken(currentJwtRefreshToken) as UserDetailsImpl
 
@@ -46,7 +48,7 @@ class JwtServiceImpl(
 
     private fun getCurrentJwtRefreshToken(header: String): JwtRefreshToken {
         val token = tokenExtractor.extract(header)
-        return jwtUtil.parseToken(token) ?: TODO()
+        return jwtUtil.parseToken(token) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient scopes for refresh token.")
     }
 
     private fun getUserFromToken(refreshToken: JwtRefreshToken): UserDetails {

@@ -2,8 +2,7 @@ package ntnu.idatt2105.section.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import ntnu.idatt2105.section.dto.SectionCreateDto
-import ntnu.idatt2105.section.dto.SectionDto
-import ntnu.idatt2105.section.factory.SectionFactory
+import ntnu.idatt2105.factories.SectionFactory
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
 import ntnu.idatt2105.user.model.RoleType
@@ -49,7 +48,6 @@ class SectionControllerTest {
     fun setUp(){
         section = SectionFactory().`object`
         section = sectionRepository.save(section)
-
 
     }
 
@@ -146,7 +144,7 @@ class SectionControllerTest {
                 .andExpect(status().isCreated)
                 .andExpect(jsonPath("\$.name").value(section.name))
 
-        assertThat(sectionRepository.findById(section.id).get().children?.isNotEmpty())
+        assertThat(sectionRepository.findById(section.id).get().children.isNotEmpty())
 
 
 

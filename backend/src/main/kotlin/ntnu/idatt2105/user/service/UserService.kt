@@ -2,6 +2,7 @@ package ntnu.idatt2105.user.service
 
 import ntnu.idatt2105.sercurity.dto.ForgotPassword
 import ntnu.idatt2105.sercurity.dto.ResetPasswordDto
+import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
 import org.springframework.data.domain.Page
@@ -16,4 +17,5 @@ interface UserService {
     fun forgotPassword(email: ForgotPassword)
     fun resetPassword(resetDto: ResetPasswordDto, id: UUID)
     fun <T> getUser(id: UUID, mapTo: Class<T>): T
+    fun deleteUser(id: UUID): Response
 }

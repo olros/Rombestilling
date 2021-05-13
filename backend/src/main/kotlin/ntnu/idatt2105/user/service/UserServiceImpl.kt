@@ -1,6 +1,7 @@
 package ntnu.idatt2105.user.service
 
 import ntnu.idatt2105.dto.response.ResponseError
+import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
@@ -73,6 +74,12 @@ class UserServiceImpl(
                 image = user.image,
             )
         return modelMapper.map(userRepository.save(updatedUser), UserDto::class.java)
+    }
+
+    override fun deleteUser(id: UUID): Response {
+        val user = getUserById(id)
+        userRepository.delete(user)
+        return Response("The user has been deleted")
     }
 
     private fun getUserById(id: UUID): User =

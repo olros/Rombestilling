@@ -4,4 +4,5 @@ enum class EntityType {
     USER,
     SECTION,
     TOKEN
+    RESERVATION
 }
