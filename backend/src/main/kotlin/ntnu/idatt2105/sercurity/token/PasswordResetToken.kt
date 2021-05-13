@@ -5,6 +5,7 @@ import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
 
+@Entity
 data class PasswordResetToken(
     @Id @Column(columnDefinition = "CHAR(32)")
     var id: UUID = UUID.randomUUID(),
