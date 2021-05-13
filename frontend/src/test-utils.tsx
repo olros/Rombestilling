@@ -9,6 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { API_URL } from 'constant';
 import nock from 'nock';
 import { User, LoginRequestResponse, PaginationResponse } from 'types/Types';
+import { UserRole } from 'types/Enums';
 
 interface AllProvidersProps {
   children?: ReactNode;
@@ -44,6 +45,11 @@ export const mockUser = (id?: string): User => ({
   id: id || '123',
   image: '',
   surname: 'Normann',
+  roles: [
+    {
+      name: UserRole.ADMIN,
+    },
+  ],
 });
 
 export const mockLoginResponse = (refreshToken: string, token: string): LoginRequestResponse => ({

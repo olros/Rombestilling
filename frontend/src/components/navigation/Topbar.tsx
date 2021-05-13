@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
-import { useIsAuthenticated, useUser } from 'hooks/User';
+import { useIsAuthenticated, useUser, useIsAdmin } from 'hooks/User';
 
 // Material UI Components
 import { makeStyles, AppBar, Toolbar, Hidden, Button, IconButton, Avatar } from '@material-ui/core';
@@ -99,6 +99,7 @@ const TopBarItem = ({ text, to }: TopBarItemProps) => {
 const Topbar = () => {
   const isAuthenticated = useIsAuthenticated();
   const { data: user } = useUser();
+  const isAdmin = useIsAdmin();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const classes = useStyles();
   const [scrollLength, setScrollLength] = useState(0);
@@ -116,10 +117,7 @@ const Topbar = () => {
   const items = useMemo(
     () =>
       (isAuthenticated
-        ? [
-            { text: 'Finn rom', to: URLS.ROOMS },
-            { text: 'Administrer brukere', to: URLS.PROFILE },
-          ]
+        ? [{ text: 'Finn rom', to: URLS.ROOMS }, ...(isAdmin ? [{ text: 'Administrer brukere', to: URLS.PROFILE }] : [])]
         : []) as Array<TopBarItemProps>,
     [isAuthenticated],
   );

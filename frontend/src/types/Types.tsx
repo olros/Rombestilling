@@ -1,3 +1,5 @@
+import { UserRole } from './Enums';
+
 export type RequestResponse = {
   message: string;
 };
@@ -28,6 +30,9 @@ export type User = {
   email: string;
   phoneNumber: string;
   image: string;
+  roles: Array<{
+    name: UserRole;
+  }>;
 };
 
 export type UserList = Pick<User, 'id' | 'firstName' | 'surname' | 'email' | 'image'>;
