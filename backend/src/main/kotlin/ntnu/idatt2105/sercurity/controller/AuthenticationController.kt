@@ -5,10 +5,10 @@ import ntnu.idatt2105.sercurity.dto.ForgotPassword
 import ntnu.idatt2105.sercurity.dto.JwtTokenResponse
 import ntnu.idatt2105.sercurity.dto.ResetPasswordDto
 import ntnu.idatt2105.sercurity.service.JwtService
+import ntnu.idatt2105.user.service.UserServiceImpl
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.util.*
 import javax.servlet.http.HttpServletRequest
 
 
