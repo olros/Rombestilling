@@ -34,7 +34,7 @@ const Navigation = ({ isLoading = false, noFooter = false, maxWidth, banner, chi
   return (
     <>
       <Helmet>
-        <title>Rombestilling - Bestill et rom nå!</title>
+        <title>Rombestilling - Reserver et rom nå!</title>
       </Helmet>
       <Topbar />
       <main className={classes.main}>

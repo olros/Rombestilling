@@ -155,7 +155,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
     }
   }, [setFilters, currentViewName, currentDate]);
 
-  const isTouchScreen = matchMedia('(hover: none)').matches;
+  const isTouchScreen = useMemo(() => matchMedia('(pointer: coarse)').matches, []);
 
   const stopReservation = () => {
     setReservationOpen(false);

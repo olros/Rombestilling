@@ -15,8 +15,8 @@ export const useUser = (userId?: string) => {
 };
 
 export const useIsAdmin = (userId?: string) => {
-  const { data: user } = useUser(userId);
-  return user ? user.roles.some((role) => role.name === UserRole.ADMIN) : false;
+  const { data: user, isLoading } = useUser(userId);
+  return { isAdmin: user ? user.roles.some((role) => role.name === UserRole.ADMIN) : false, isLoading };
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

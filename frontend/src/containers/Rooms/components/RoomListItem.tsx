@@ -55,7 +55,7 @@ const RoomListItem = ({ room, reserve }: RoomListItemProps) => {
           <Typography variant='caption'>{`${isRoom ? 'Rom' : 'Del av rom'} | Kapasitet: ${room.capacity}`}</Typography>
         </div>
         <Button endIcon={<ArrowIcon />} onClick={() => reserve(room.id)} variant='outlined'>
-          Bestill
+          Reserver
         </Button>
       </div>
       <div className={classnames(classes.actions, classes.grid)}>
@@ -76,7 +76,7 @@ const RoomListItem = ({ room, reserve }: RoomListItemProps) => {
                 <ListItemText primary={section.name} secondary={`Kapasitet: ${section.capacity}`} />
                 <ListItemSecondaryAction>
                   <Button className={classes.button} endIcon={<ArrowIcon />} onClick={() => reserve(section.id)} variant='outlined'>
-                    Bestill
+                    Reserver
                   </Button>
                 </ListItemSecondaryAction>
               </ListItem>

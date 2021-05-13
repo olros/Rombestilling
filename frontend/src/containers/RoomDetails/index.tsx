@@ -3,6 +3,7 @@ import Helmet from 'react-helmet';
 import URLS from 'URLS';
 import { Link, useParams } from 'react-router-dom';
 import { useSectionById } from 'hooks/Section';
+import { useIsAdmin } from 'hooks/User';
 import classnames from 'classnames';
 
 // Material UI Components
@@ -58,6 +59,7 @@ export type RoomFilters = {
 
 const RoomDetails = () => {
   const classes = useStyles();
+  const { isAdmin } = useIsAdmin();
   const { id } = useParams();
   const { data, isLoading, isError } = useSectionById(id);
   const calendarTab = { value: 'calendar', label: 'Kalender', icon: CalendarIcon };
@@ -86,9 +88,11 @@ const RoomDetails = () => {
                   </Typography>
                 )}
               </div>
-              <EditRoom room={data} sectionType='room'>
-                Endre rom
-              </EditRoom>
+              {isAdmin && (
+                <EditRoom room={data} sectionType='room'>
+                  Endre rom
+                </EditRoom>
+              )}
             </div>
             <div className={classnames(classes.grid, classes.content)}>
               <div className={classes.grid}>
@@ -102,7 +106,8 @@ const RoomDetails = () => {
                       {data.children.map((section) => (
                         <RoomSection key={section.id} section={section} />
                       ))}
-                      <CreateRoom parentId={id}>Opprett ny del av rom</CreateRoom>
+                      {!data.children.length && <Typography variant='subtitle1'>Dette rommet har ingen deler</Typography>}
+                      {isAdmin && <CreateRoom parentId={id}>Opprett ny del av rom</CreateRoom>}
                     </Paper>
                   </Collapse>
                 </div>

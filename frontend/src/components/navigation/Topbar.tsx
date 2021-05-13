@@ -99,7 +99,7 @@ const TopBarItem = ({ text, to }: TopBarItemProps) => {
 const Topbar = () => {
   const isAuthenticated = useIsAuthenticated();
   const { data: user } = useUser();
-  const isAdmin = useIsAdmin();
+  const { isAdmin } = useIsAdmin();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const classes = useStyles();
   const [scrollLength, setScrollLength] = useState(0);
@@ -119,7 +119,7 @@ const Topbar = () => {
       (isAuthenticated
         ? [{ text: 'Finn rom', to: URLS.ROOMS }, ...(isAdmin ? [{ text: 'Administrer brukere', to: URLS.PROFILE }] : [])]
         : []) as Array<TopBarItemProps>,
-    [isAuthenticated],
+    [isAuthenticated, isAdmin],
   );
 
   return (

@@ -160,7 +160,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
             className={classes.red}
             closeText='Avbryt'
             confirmText='Slett brukeren min'
-            contentText='Sikker på at du vil slette brukeren din? Du kan ikke angre dette. Dine bestillinger vil slettes og kan ikke gjennopprettes.'
+            contentText='Sikker på at du vil slette brukeren din? Du kan ikke angre dette. Dine reserveringer vil slettes og kan ikke gjenopprettes.'
             onConfirm={confirmedDeleteUser}>
             Slett bruker
           </VerifyDialog>

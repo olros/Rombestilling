@@ -9,25 +9,16 @@ import { makeStyles, Typography, Button } from '@material-ui/core';
 // Project Components
 import Navigation from 'components/navigation/Navigation';
 import Logo from 'components/miscellaneous/Logo';
-import Container from 'components/layout/Container';
 
 const useStyles = makeStyles((theme) => ({
   cover: {
     position: 'relative',
-    height: '100vh',
+    minHeight: '90vh',
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  img: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: -1,
   },
   activityContainer: {
     textAlign: 'center',
@@ -68,12 +59,11 @@ const Landing = () => {
   const isAuthenticated = useIsAuthenticated();
 
   return (
-    <Navigation maxWidth={false}>
+    <Navigation noFooter>
       <Helmet>
         <title>Forsiden - Rombestilling</title>
       </Helmet>
       <div className={classes.cover}>
-        <div className={classes.img} />
         <div className={classes.logoWrapper}>
           <Logo />
         </div>
@@ -81,7 +71,7 @@ const Landing = () => {
           Rombestilling
         </Typography>
         <Typography align='center' color='inherit' variant='h3'>
-          Finn ditt rom nå!
+          Reserver et rom nå!
         </Typography>
         {!isAuthenticated && (
           <div className={classes.btnGroup}>
@@ -94,11 +84,6 @@ const Landing = () => {
           </div>
         )}
       </div>
-      <Container className={classes.activityContainer}>
-        <Typography gutterBottom variant='h1'>
-          Bestill rom
-        </Typography>
-      </Container>
     </Navigation>
   );
 };
