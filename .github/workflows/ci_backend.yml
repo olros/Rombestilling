@@ -6,7 +6,7 @@ defaults:
   run:
     working-directory: backend
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
