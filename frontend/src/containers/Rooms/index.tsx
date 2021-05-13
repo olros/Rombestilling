@@ -81,7 +81,7 @@ const Rooms = () => {
         open={reservationOpen}
         swipeAreaWidth={56}>
         <div className={classes.list}>
-          {selectedSectionId && filters && <ReserveForm from={filters.from} sectionId={selectedSectionId} to={filters.to} />}
+          {selectedSectionId && filters && <ReserveForm from={filters.from} onConfirm={stopReservation} sectionId={selectedSectionId} to={filters.to} />}
           <Button onClick={stopReservation} variant='text'>
             Avbryt
           </Button>

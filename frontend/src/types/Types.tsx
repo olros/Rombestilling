@@ -61,10 +61,11 @@ export type Reservation = {
   fromTime: string;
   toTime: string;
   text: string;
-  numberOfPeople: number;
+  nrOfPeople: number;
+  user: UserList;
 };
 
-export type ReservationCreate = Pick<Reservation, 'numberOfPeople' | 'text' | 'fromTime' | 'toTime'> & {
+export type ReservationCreate = Pick<Reservation, 'nrOfPeople' | 'text' | 'fromTime' | 'toTime'> & {
   userId: string;
 };
 

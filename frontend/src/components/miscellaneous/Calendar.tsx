@@ -7,7 +7,7 @@ import URLS from 'URLS';
 import { Link } from 'react-router-dom';
 import { parseISO, endOfWeek, startOfWeek, endOfDay, startOfDay, endOfMonth, startOfMonth } from 'date-fns';
 import { formatTime, urlEncode } from 'utils';
-import { ViewState, AppointmentModel, EditingState, IntegratedEditing, ChangeSet } from '@devexpress/dx-react-scheduler';
+import { ViewState, AppointmentModel, EditingState, IntegratedEditing, ChangeSet, SchedulerDateTime } from '@devexpress/dx-react-scheduler';
 import {
   Scheduler,
   MonthView,
@@ -99,10 +99,7 @@ export const UserCalendar = ({ userId }: UserCalendarProps) => {
   });
   const { data, isLoading } = useUserReservations(userId, filters);
 
-  if (!data) {
-    return <Calendar data={data} isLoading={isLoading} setFilters={setFilters} />;
-  }
-  return null;
+  return <Calendar data={data} isLoading={isLoading} setFilters={setFilters} />;
 };
 
 export type SectionCalendarProps = {
@@ -116,10 +113,7 @@ export const SectionCalendar = ({ sectionId }: SectionCalendarProps) => {
   });
   const { data, isLoading } = useSectionReservations(sectionId, filters);
 
-  if (!data) {
-    return <Calendar data={data} isLoading={isLoading} sectionId={sectionId} setFilters={setFilters} />;
-  }
-  return null;
+  return <Calendar data={data} isLoading={isLoading} sectionId={sectionId} setFilters={setFilters} />;
 };
 
 export type CalendarProps = {
@@ -145,8 +139,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
     () => [
       ...(addedAppointment ? [addedAppointment] : []),
       ...reservations.map(
-        (reservation) =>
-          ({ ...reservation, startDate: reservation.fromTime, endDate: reservation.toTime, title: String(reservation.numberOfPeople) } as AppointmentModel),
+        (reservation) => ({ ...reservation, startDate: reservation.fromTime, endDate: reservation.toTime, title: 'Reservert' } as AppointmentModel),
       ),
     ],
     [reservations, addedAppointment],
@@ -169,6 +162,16 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
     setAddedAppointment(undefined);
   };
 
+  const schedulerDateTimeToDate = (time: SchedulerDateTime) => {
+    if (time instanceof Date) {
+      return time;
+    } else if (typeof time === 'number') {
+      return new Date(time);
+    } else {
+      return parseISO(time);
+    }
+  };
+
   type AppointmentProps = {
     data: AppointmentModel;
   };
@@ -181,7 +184,11 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
         </Typography>
         <br />
         <Typography color='inherit' variant='caption'>
-          {`${formatTime(data.startDate as Date)} - ${formatTime(data.endDate as Date)}`}
+          {`${formatTime(schedulerDateTimeToDate(data.startDate))} - ${formatTime(schedulerDateTimeToDate(data.endDate))}`}
+        </Typography>
+        <br />
+        <Typography color='inherit' variant='caption'>
+          {data.text}
         </Typography>
       </Appointments.Appointment>
     </Link>
@@ -277,7 +284,12 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
           swipeAreaWidth={56}>
           <div className={classes.list}>
             {addedAppointment && (
-              <ReserveForm from={(addedAppointment.startDate as Date).toJSON()} sectionId={sectionId} to={(addedAppointment.endDate as Date).toJSON()} />
+              <ReserveForm
+                from={schedulerDateTimeToDate(addedAppointment.startDate).toJSON()}
+                onConfirm={stopReservation}
+                sectionId={sectionId}
+                to={schedulerDateTimeToDate(addedAppointment.endDate).toJSON()}
+              />
             )}
             <Button onClick={stopReservation} variant='text'>
               Avbryt
