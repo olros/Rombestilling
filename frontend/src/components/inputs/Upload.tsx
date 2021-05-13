@@ -1,4 +1,5 @@
 import { forwardRef, useState } from 'react';
+import classnames from 'classnames';
 import { UseFormReturn, UseFormRegisterReturn, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import API from 'api/api';
 import { useSnackbar } from 'hooks/Snackbar';
@@ -30,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: 150,
     maxWidth: '90%',
     borderRadius: theme.shape.borderRadius,
+  },
+  gutters: {
+    margin: theme.spacing(1, 0, 2),
   },
 }));
 
@@ -115,11 +119,12 @@ export type SingleImageUploadProps = ButtonProps &
     name: string;
     register: UseFormRegisterReturn;
     label?: string;
+    gutters?: boolean;
   };
 
 export const SingleImageUpload = forwardRef(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ({ register, watch, setValue, name, formState, label = 'Last opp bilde', ...props }: SingleImageUploadProps, ref) => {
+  ({ register, watch, setValue, name, formState, label = 'Last opp bilde', gutters, ...props }: SingleImageUploadProps, ref) => {
     const classes = useStyles();
     const showSnackbar = useSnackbar();
     const image: string | undefined = watch(name);
@@ -145,7 +150,7 @@ export const SingleImageUpload = forwardRef(
     };
 
     return (
-      <div className={classes.root}>
+      <div className={classnames(classes.root, gutters && classes.gutters)}>
         {image ? (
           <List className={classes.root}>
             <ListItem component={Paper} noPadding>

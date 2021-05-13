@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import Helmet from 'react-helmet';
 import { useSections } from 'hooks/Section';
+import classnames from 'classnames';
 
 // Material UI Components
 import { makeStyles, Typography, SwipeableDrawer, Button } from '@material-ui/core';
@@ -11,12 +12,16 @@ import ReserveForm from 'components/miscellaneous/ReserveForm';
 import RoomFilterBox from 'containers/Rooms/components/RoomFilterBox';
 import RoomListItem from 'containers/Rooms/components/RoomListItem';
 import Pagination from 'components/layout/Pagination';
+import CreateRoom from 'components/miscellaneous/CreateRoom';
 import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
 
 const useStyles = makeStyles((theme) => ({
   list: {
     display: 'grid',
     gap: theme.spacing(1),
+  },
+  top: {
+    gridTemplateColumns: '1fr auto',
   },
   reservationPaper: {
     maxWidth: theme.breakpoints.values.md,
@@ -55,7 +60,10 @@ const Rooms = () => {
         <title>Finn rom - Rombestilling</title>
       </Helmet>
       <div className={classes.list}>
-        <Typography variant='h1'>Finn rom</Typography>
+        <div className={classnames(classes.list, classes.top)}>
+          <Typography variant='h1'>Finn rom</Typography>
+          <CreateRoom>Opprett rom</CreateRoom>
+        </div>
         <RoomFilterBox filters={filters} updateFilters={setFilters} />
         <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
           <div className={classes.list}>

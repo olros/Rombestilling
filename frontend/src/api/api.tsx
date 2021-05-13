@@ -13,11 +13,8 @@ import {
   UserCreate,
   UserList,
   SectionCreate,
-  Section,
-  Room,
   SectionList,
-  RoomList,
-  RoomBase,
+  Section,
 } from 'types/Types';
 
 export const USERS = 'users';
@@ -56,11 +53,11 @@ export default {
   deleteUser: () => IFetch<RequestResponse>({ method: 'DELETE', url: `${USERS}/me/` }),
 
   // Section
-  getSection: (sectionId: string) => IFetch<Room | Section>({ method: 'GET', url: `${SECTIONS}/${sectionId}/` }),
-  getSections: (filters?: any) => IFetch<PaginationResponse<RoomList | SectionList>>({ method: 'GET', url: `${SECTIONS}/`, data: filters || {} }),
-  createSection: (newPost: SectionCreate) => IFetch<Room | Section>({ method: 'POST', url: `${SECTIONS}/`, data: newPost }),
-  updateSection: (sectionId: string, updatedSection: Partial<RoomBase>) =>
-    IFetch<Room | Section>({ method: 'PUT', url: `${SECTIONS}/${sectionId}/`, data: updatedSection }),
+  getSection: (sectionId: string) => IFetch<Section>({ method: 'GET', url: `${SECTIONS}/${sectionId}/` }),
+  getSections: (filters?: any) => IFetch<PaginationResponse<SectionList>>({ method: 'GET', url: `${SECTIONS}/`, data: filters || {} }),
+  createSection: (newPost: SectionCreate) => IFetch<Section>({ method: 'POST', url: `${SECTIONS}/`, data: newPost }),
+  updateSection: (sectionId: string, updatedSection: Partial<Section>) =>
+    IFetch<Section>({ method: 'PUT', url: `${SECTIONS}/${sectionId}/`, data: updatedSection }),
   deleteSection: (sectionId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${SECTIONS}/${sectionId}/` }),
   // User
   getUser: (userId?: string) => IFetch<User>({ method: 'GET', url: `${USERS}/${userId || ME}/` }),

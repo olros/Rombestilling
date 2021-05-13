@@ -63,7 +63,7 @@ const ReserveForm = ({ onConfirm, sectionId, from, to, className }: ReserveFormP
         required
         {...register('amount', { required: 'Du må oppgi antall personer' })}
       />
-      <TextField formState={formState} label='Beskrivelse' {...register('description')} />
+      <TextField formState={formState} label='Beskrivelse' maxRows={5} minRows={2} multiline {...register('description')} />
       <SubmitButton formState={formState}>Reserver</SubmitButton>
     </form>
   );
