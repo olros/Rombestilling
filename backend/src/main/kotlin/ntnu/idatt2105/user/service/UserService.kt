@@ -9,7 +9,6 @@ import java.util.*
 
 interface UserService {
     fun registerUser(user: UserRegistrationDto): UserDto
-    fun registerUserAsAdmin(user: UserRegistrationDto)
     fun updateUser(id: UUID, user: UserDto): UserDto
     fun getUsers(pageable: Pageable): Page<UserDto>
     fun getUser(id: UUID): UserDto

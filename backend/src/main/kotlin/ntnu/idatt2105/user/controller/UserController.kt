@@ -25,14 +25,6 @@ class UserController(val userService: UserService) {
     fun registerUser(@RequestBody @Valid userRegistrationDto: UserRegistrationDto): ResponseEntity<UserDto>  =
             ResponseEntity(userService.registerUser(userRegistrationDto), HttpStatus.CREATED)
 
-    @PostMapping
-    fun registerUserAsAdmin(@RequestBody @Valid userRegistrationDto: UserRegistrationDto, authentication: Authentication?): ResponseEntity<Any> {
-        return if(authentication != null && authentication.principal != null) {
-            val user = authentication.principal as UserDetailsImpl
-            ResponseEntity(userService.registerUserAsAdmin(userRegistrationDto), HttpStatus.CREATED)
-        } else ResponseEntity(Response("You do not have the correct rights to create a user"), HttpStatus.FORBIDDEN)
-    }
-
     @GetMapping("me/")
     fun getMe(authentication: Authentication?): ResponseEntity<Any> {
         return if(authentication != null && authentication.principal != null){

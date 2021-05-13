@@ -5,6 +5,9 @@ import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
+import ntnu.idatt2105.user.model.Role
+import ntnu.idatt2105.user.model.RoleType
+import ntnu.idatt2105.user.model.RoleType.USER
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.UserRepository
 import org.modelmapper.ModelMapper
@@ -24,6 +27,7 @@ class UserServiceImpl(val userRepository: UserRepository, val modelMapper: Model
 
         val userObj: User = modelMapper.map(user, User::class.java)
         userObj.id = UUID.randomUUID()
+        userObj.roles.plus(USER)
 
         return modelMapper.map(userRepository.save(userObj), UserDto::class.java)
     }
