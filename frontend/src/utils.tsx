@@ -7,18 +7,12 @@ export const urlEncode = (text = '') => slugify(text, { lower: true, strict: tru
 // Add leading zero to numbers below 10. Ex: 2 -> 02, 12 -> 12
 const addLeadingZero = (number: number) => (number < 10 ? '0' + number : number);
 
+export const formatTime = (date: Date) => {
+  return `${addLeadingZero(date.getHours())}:${addLeadingZero(date.getMinutes())}`;
+};
+
 export const formatDate = (date: Date) => {
-  return (
-    getDay(date.getDay()) +
-    ' ' +
-    date.getDate() +
-    ' ' +
-    getMonth(date.getMonth()) +
-    ' - kl. ' +
-    addLeadingZero(date.getHours()) +
-    ':' +
-    addLeadingZero(date.getMinutes())
-  );
+  return `${getDay(date.getDay())} ${date.getDate()} ${getMonth(date.getMonth())} - kl. ${formatTime(date)}`;
 };
 
 export const getTimeSince = (date: Date) => {
