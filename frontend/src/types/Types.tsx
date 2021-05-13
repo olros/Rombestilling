@@ -36,29 +36,22 @@ export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname' | 'phoneNu
   password: string;
 };
 
-export type RoomBase = {
+export type Section = {
   id: string;
   name: string;
   capacity: number;
   description: string;
   image: string;
+  type: 'room' | 'section';
+  parent: SectionChild;
+  children: Array<SectionChild>;
 };
 
-export type Room = RoomBase & {
-  type: 'room';
-  children: Array<Omit<SectionList, 'parent'>>;
-};
-
-export type RoomList = Omit<Room, 'description' | 'image'>;
-
-export type Section = RoomBase & {
-  type: 'section';
-  parent: Omit<RoomList, 'children'>;
-};
+export type SectionChild = Omit<SectionList, 'parent' | 'children'>;
 
 export type SectionList = Omit<Section, 'description' | 'image'>;
 
-export type SectionCreate = Omit<RoomBase, 'id'> & {
+export type SectionCreate = Omit<Section, 'id'> & {
   parentId?: string;
 };
 

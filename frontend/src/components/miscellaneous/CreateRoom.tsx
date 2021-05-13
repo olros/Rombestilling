@@ -30,10 +30,8 @@ const CreateRoom = ({ parentId, children, ...props }: CreateRoomProps) => {
       { ...data, parentId },
       {
         onSuccess: (data) => {
-          showSnackbar('Rommet ble opprettet', 'success');
-          if (!parentId) {
-            navigate(`${URLS.ROOMS}${data.id}/`);
-          }
+          showSnackbar(parentId ? 'Delen ble opprettet' : 'Rommet ble opprettet', 'success');
+          navigate(`${URLS.ROOMS}${data.id}/`);
         },
         onError: (e) => {
           showSnackbar(e.message, 'error');

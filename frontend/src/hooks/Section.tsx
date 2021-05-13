@@ -1,7 +1,7 @@
 import { useMutation, useInfiniteQuery, useQuery, useQueryClient, UseMutationResult } from 'react-query';
 import API from 'api/api';
 import { getNextPaginationPage } from 'utils';
-import { SectionCreate, Section, Room, SectionList, RoomList, RoomBase, PaginationResponse, RequestResponse } from 'types/Types';
+import { SectionCreate, SectionList, Section, PaginationResponse, RequestResponse } from 'types/Types';
 export const SECTION_QUERY_KEY = 'section';
 export const SECTION_ALL_QUERY_KEY = 'all_sections';
 
@@ -10,7 +10,7 @@ export const SECTION_ALL_QUERY_KEY = 'all_sections';
  * @param sectionId - Id of section
  */
 export const useSectionById = (sectionId: string) => {
-  return useQuery<Section | Room, RequestResponse>([SECTION_QUERY_KEY, sectionId], () => API.getSection(sectionId), { enabled: sectionId !== '' });
+  return useQuery<Section, RequestResponse>([SECTION_QUERY_KEY, sectionId], () => API.getSection(sectionId), { enabled: sectionId !== '' });
 };
 
 /**
@@ -19,7 +19,7 @@ export const useSectionById = (sectionId: string) => {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useSections = (filters?: any) => {
-  return useInfiniteQuery<PaginationResponse<SectionList | RoomList>, RequestResponse>(
+  return useInfiniteQuery<PaginationResponse<SectionList>, RequestResponse>(
     [SECTION_QUERY_KEY, SECTION_ALL_QUERY_KEY, filters],
     ({ pageParam = 0 }) => API.getSections({ sort: 'name,ASC', ...filters, page: pageParam }),
     {
@@ -31,7 +31,7 @@ export const useSections = (filters?: any) => {
 /**
  * Create a new section
  */
-export const useCreateSection = (): UseMutationResult<Section | Room, RequestResponse, SectionCreate, unknown> => {
+export const useCreateSection = (): UseMutationResult<Section, RequestResponse, SectionCreate, unknown> => {
   const queryClient = useQueryClient();
   return useMutation((newSection) => API.createSection(newSection), {
     onSuccess: (data) => {
@@ -45,7 +45,7 @@ export const useCreateSection = (): UseMutationResult<Section | Room, RequestRes
  * Update a section
  * @param sectionId - Id of section
  */
-export const useUpdateSection = (sectionId: string): UseMutationResult<Section | Room, RequestResponse, Partial<RoomBase>, unknown> => {
+export const useUpdateSection = (sectionId: string): UseMutationResult<Section, RequestResponse, Partial<Section>, unknown> => {
   const queryClient = useQueryClient();
   return useMutation((updatedSection) => API.updateSection(sectionId, updatedSection), {
     onSuccess: (data) => {

@@ -10,9 +10,10 @@ data class Section(
         @Column(columnDefinition = "CHAR(32)")
         var id: UUID = UUID.randomUUID(),
         var name: String = "",
+        @Column(columnDefinition = "TEXT")
         var description: String = "",
         var capacity: Int = 0,
-        var picture: String,
+        var image: String,
         @OneToMany(fetch = FetchType.EAGER,mappedBy = "parent" , cascade =[CascadeType.ALL])
         var children: MutableList<Section> = mutableListOf(),
         @ManyToOne

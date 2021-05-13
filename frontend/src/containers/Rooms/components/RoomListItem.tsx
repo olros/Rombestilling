@@ -2,7 +2,7 @@ import { useState } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
-import { RoomList, SectionList } from 'types/Types';
+import { SectionList } from 'types/Types';
 
 // Material UI Components
 import { makeStyles, Button, Typography, Collapse, List, ListItem, ListItemText, ListItemSecondaryAction } from '@material-ui/core';
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export type RoomListItemProps = {
-  room: RoomList | SectionList;
+  room: SectionList;
   reserve: (sectionId: string) => void;
 };
 
