@@ -61,7 +61,7 @@ export type SectionCreate = Omit<Section, 'id'> & {
 
 export type Reservation = {
   id: string;
-  section: SectionList;
+  section: Omit<SectionList, 'parent' | 'children'>;
   fromTime: string;
   toTime: string;
   text: string;
