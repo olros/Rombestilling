@@ -13,6 +13,7 @@ import Collapse from '@material-ui/core/Collapse';
 // Icons
 import EditIcon from '@material-ui/icons/EditRounded';
 import PostsIcon from '@material-ui/icons/ViewAgendaRounded';
+import ListIcon from '@material-ui/icons/ViewStreamRounded';
 
 // Project Components
 import Navigation from 'components/navigation/Navigation';
@@ -21,6 +22,7 @@ import Tabs from 'components/layout/Tabs';
 import Http404 from 'containers/Http404';
 import EditProfile from 'containers/Profile/components/EditProfile';
 import { UserCalendar } from 'components/miscellaneous/Calendar';
+import { UserReservations } from 'containers/RoomDetails/components/RoomReservations';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -61,10 +63,11 @@ const Profile = () => {
   const classes = useStyles();
   const { data: user, isLoading, isError } = useUser();
   const logout = useLogout();
-  const bookings = { value: 'bookings', label: 'Mine bestillinger', icon: PostsIcon };
+  const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
+  const bookings = { value: 'bookings', label: 'Kalender', icon: PostsIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
-  const tabs = [bookings, editTab];
-  const [tab, setTab] = useState(bookings.value);
+  const tabs = [reservationsTab, bookings, editTab];
+  const [tab, setTab] = useState(reservationsTab.value);
 
   if (isError) {
     return <Http404 />;
@@ -96,6 +99,9 @@ const Profile = () => {
         <div className={classes.grid}>
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
           <div>
+            <Collapse in={tab === reservationsTab.value} mountOnEnter>
+              <UserReservations />
+            </Collapse>
             <Collapse in={tab === bookings.value} mountOnEnter>
               <UserCalendar />
             </Collapse>

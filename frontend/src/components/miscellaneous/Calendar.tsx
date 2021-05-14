@@ -3,10 +3,8 @@ import { InfiniteData } from 'react-query';
 import { Reservation, PaginationResponse } from 'types/Types';
 import { useUserReservations, useSectionReservations } from 'hooks/Reservation';
 import { useSnackbar } from 'hooks/Snackbar';
-import URLS from 'URLS';
-import { Link } from 'react-router-dom';
 import { parseISO, endOfWeek, startOfWeek, endOfDay, startOfDay, endOfMonth, startOfMonth } from 'date-fns';
-import { formatTime, urlEncode } from 'utils';
+import { formatTime } from 'utils';
 import { ViewState, AppointmentModel, EditingState, IntegratedEditing, ChangeSet, SchedulerDateTime } from '@devexpress/dx-react-scheduler';
 import {
   Scheduler,
@@ -28,6 +26,7 @@ import { Button, Typography, LinearProgress, makeStyles, SwipeableDrawer, Slide 
 // Project components
 import Paper from 'components/layout/Paper';
 import ReserveForm from 'components/miscellaneous/ReserveForm';
+import { ReservationInfoDialog } from 'components/miscellaneous/ReservationInfo';
 import Container from 'components/layout/Container';
 
 // Styles
@@ -51,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.get<string>({ light: theme.palette.common.black, dark: theme.palette.common.white }),
     background: theme.palette.background.paper,
     '&:hover': {
-      background: `${theme.palette.background.paper}aa`,
+      background: `${theme.palette.background.paper}cc`,
     },
   },
   toolbarRoot: {
@@ -80,6 +79,9 @@ const useStyles = makeStyles((theme) => ({
     left: 0,
     right: 0,
     paddingBottom: theme.spacing(1),
+  },
+  text: {
+    padding: theme.spacing(0, 1),
   },
 }));
 
@@ -155,7 +157,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
     }
   }, [setFilters, currentViewName, currentDate]);
 
-  const isTouchScreen = matchMedia('(hover: none)').matches;
+  const isTouchScreen = useMemo(() => matchMedia('(pointer: coarse)').matches, []);
 
   const stopReservation = () => {
     setReservationOpen(false);
@@ -176,23 +178,29 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
     data: AppointmentModel;
   };
 
-  const Appointment = ({ data }: AppointmentProps) => (
-    <Link to={`${URLS.ROOMS}${data.id}/${urlEncode(data.title)}/`}>
-      <Appointments.Appointment className={classes.appointment} data={data} draggable={false} resources={[]}>
-        <Typography color='inherit' variant='caption'>
-          {data.title}
-        </Typography>
-        <br />
-        <Typography color='inherit' variant='caption'>
-          {`${formatTime(schedulerDateTimeToDate(data.startDate))} - ${formatTime(schedulerDateTimeToDate(data.endDate))}`}
-        </Typography>
-        <br />
-        <Typography color='inherit' variant='caption'>
-          {data.text}
-        </Typography>
-      </Appointments.Appointment>
-    </Link>
-  );
+  const Appointment = ({ data }: AppointmentProps) => {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Appointments.Appointment className={classes.appointment} data={data} draggable={false} onClick={() => setOpen(true)} resources={[]}>
+          <Typography color='inherit' variant='caption'>
+            {data.title}
+          </Typography>
+          <br />
+          <Typography color='inherit' variant='caption'>
+            {`${formatTime(schedulerDateTimeToDate(data.startDate))} - ${formatTime(schedulerDateTimeToDate(data.endDate))}`}
+          </Typography>
+          <br />
+          <Typography color='inherit' variant='caption'>
+            {data.text}
+          </Typography>
+        </Appointments.Appointment>
+        {open && data.id && sectionId && (
+          <ReservationInfoDialog onClose={() => setOpen(false)} open={open} reservationId={String(data.id)} sectionId={String(sectionId)} />
+        )}
+      </>
+    );
+  };
 
   const DayViewTableCell = ({ onDoubleClick, ...restProps }: DayView.TimeTableCellProps) => (
     <DayView.TimeTableCell {...(isTouchScreen ? { onClick: onDoubleClick } : { onDoubleClick })} {...restProps} />
@@ -234,6 +242,11 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
 
   return (
     <Paper className={classes.root} noPadding>
+      {sectionId && (
+        <Typography className={classes.text} variant='subtitle2'>
+          {`${isTouchScreen ? 'Klikk' : 'Dobbelklikk'} på et tidspunkt for å opprette en reservasjon, dra på reservasjonen for å endre tiden.`}
+        </Typography>
+      )}
       <Scheduler data={displayedReservations} firstDayOfWeek={1} locale='no-NB'>
         <ViewState
           currentDate={currentDate}

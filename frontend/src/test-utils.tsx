@@ -6,9 +6,10 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from 'hooks/ThemeContext';
 import { SnackbarProvider } from 'hooks/Snackbar';
 import { BrowserRouter } from 'react-router-dom';
-import { API_URL } from 'constant';
+import { API_URL, ACCESS_TOKEN, REFRESH_TOKEN } from 'constant';
 import nock from 'nock';
 import { User, LoginRequestResponse, PaginationResponse } from 'types/Types';
+import { UserRole } from 'types/Enums';
 
 interface AllProvidersProps {
   children?: ReactNode;
@@ -37,14 +38,25 @@ const headers = {
 };
 const getRegex = (url: string) => new RegExp(`${url}.`, 'gi');
 
-export const mockUser = (id?: string): User => ({
-  phoneNumber: '99887766',
-  email: 'test@example.com',
-  firstName: 'Ola',
-  id: id || '123',
-  image: '',
-  surname: 'Normann',
-});
+export const mockUser = (id?: string): User => {
+  Object.defineProperty(window.document, 'cookie', {
+    writable: true,
+    value: `${REFRESH_TOKEN}=ey12345;${ACCESS_TOKEN}=123456789`,
+  });
+  return {
+    phoneNumber: '99887766',
+    email: 'test@example.com',
+    firstName: 'Ola',
+    id: id || '123',
+    image: '',
+    surname: 'Normann',
+    roles: [
+      {
+        name: UserRole.ADMIN,
+      },
+    ],
+  };
+};
 
 export const mockLoginResponse = (refreshToken: string, token: string): LoginRequestResponse => ({
   refreshToken,

@@ -5,12 +5,19 @@ import { User, UserList, UserCreate, PaginationResponse, LoginRequestResponse, R
 import { getCookie, setCookie, removeCookie } from 'api/cookie';
 import { ACCESS_TOKEN, REFRESH_TOKEN, ACCESS_TOKEN_DURATION, REFRESH_TOKEN_DURATION } from 'constant';
 import { getNextPaginationPage } from 'utils';
+import { UserRole } from 'types/Enums';
 
 export const USER_QUERY_KEY = 'user';
 export const USERS_QUERY_KEY = 'users';
 
 export const useUser = (userId?: string) => {
-  return useQuery<User | undefined, RequestResponse>([USER_QUERY_KEY, userId], () => API.getUser(userId));
+  const isAuthenticated = useIsAuthenticated();
+  return useQuery<User | undefined, RequestResponse>([USER_QUERY_KEY, userId], () => (isAuthenticated ? API.getUser(userId) : undefined));
+};
+
+export const useIsAdmin = (userId?: string) => {
+  const { data: user, isLoading } = useUser(userId);
+  return { isAdmin: user ? user.roles.some((role) => role.name === UserRole.ADMIN) : false, isLoading };
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

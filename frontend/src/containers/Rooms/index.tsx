@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import Helmet from 'react-helmet';
 import { useSections } from 'hooks/Section';
 import classnames from 'classnames';
+import { startOfHour, addHours } from 'date-fns';
 
 // Material UI Components
 import { makeStyles, Typography, SwipeableDrawer, Button } from '@material-ui/core';
@@ -33,14 +34,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export type RoomFilters = {
-  name: string;
+  name?: string;
   from: string;
   to: string;
 };
 
 const Rooms = () => {
   const classes = useStyles();
-  const [filters, setFilters] = useState<RoomFilters | undefined>(undefined);
+  const defaultFilters: RoomFilters = {
+    from: startOfHour(addHours(new Date(), 1)).toJSON(),
+    to: startOfHour(addHours(new Date(), 2)).toJSON(),
+  };
+  const [filters, setFilters] = useState<RoomFilters>(defaultFilters);
   const { data, error, hasNextPage, fetchNextPage, isFetching } = useSections(filters);
   const results = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !results.length && !isFetching, [results, isFetching]);
@@ -64,11 +69,13 @@ const Rooms = () => {
           <Typography variant='h1'>Finn rom</Typography>
           <CreateRoom>Opprett rom</CreateRoom>
         </div>
-        <RoomFilterBox filters={filters} updateFilters={setFilters} />
+        <RoomFilterBox defaultFilters={defaultFilters} filters={filters} updateFilters={setFilters} />
         <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
           <div className={classes.list}>
             {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen ledige rom'} />}
-            {filters && results.map((room) => <RoomListItem key={room.id} reserve={startReservation} room={room} />)}
+            {results.map((room) => (
+              <RoomListItem key={room.id} reserve={startReservation} room={room} />
+            ))}
           </div>
         </Pagination>
       </div>

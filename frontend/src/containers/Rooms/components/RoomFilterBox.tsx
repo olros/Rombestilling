@@ -20,8 +20,8 @@ const useStyles = makeStyles((theme) => ({
   },
   filter: {
     display: 'grid',
-    gap: theme.spacing(1),
-    gridTemplateColumns: '1fr auto 1fr auto 1fr auto 1fr',
+    gap: theme.spacing(0.5),
+    gridTemplateColumns: '2fr auto 3fr auto 3fr auto 2fr',
     [theme.breakpoints.down('md')]: {
       gridTemplateColumns: '1fr',
     },
@@ -32,34 +32,37 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export type RoomFilterBoxProps = {
-  updateFilters: (newFilters: RoomFilters | undefined) => void;
-  filters: RoomFilters | undefined;
+  updateFilters: (newFilters: RoomFilters) => void;
+  defaultFilters: RoomFilters;
+  filters: RoomFilters;
 };
 type FormValues = Pick<RoomFilters, 'name'> & {
   from: Date;
   to: Date;
 };
 
-const RoomFilterBox = ({ filters, updateFilters }: RoomFilterBoxProps) => {
+const RoomFilterBox = ({ defaultFilters, filters, updateFilters }: RoomFilterBoxProps) => {
   const classes = useStyles();
   const [isOpen, setIsOpen] = useState(true);
   const mdDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
-  const { control, formState, handleSubmit, register, reset } = useForm<FormValues>();
+  const { control, formState, handleSubmit, register, reset } = useForm<FormValues>({
+    defaultValues: { from: parseISO(filters.from), to: parseISO(filters.to) },
+  });
   const submit = async (data: FormValues) => {
     updateFilters({ ...data, to: data.to.toJSON(), from: data.from.toJSON() });
     setIsOpen(false);
   };
   const resetFilters = async () => {
-    updateFilters(undefined);
     setIsOpen(true);
     reset();
+    updateFilters(defaultFilters);
   };
   return (
     <Paper blurred border className={classes.paper}>
       <Collapse in={!isOpen}>
         {filters && (
           <>
-            <Typography>{`Søkeord: "${filters.name}"`}</Typography>
+            {Boolean(filters.name?.length) && <Typography>{`Søkeord: "${filters.name}"`}</Typography>}
             <Typography>{`Fra ${formatDate(parseISO(filters.from))}`}</Typography>
             <Typography>{`Til ${formatDate(parseISO(filters.to))}`}</Typography>
           </>
@@ -68,20 +71,12 @@ const RoomFilterBox = ({ filters, updateFilters }: RoomFilterBoxProps) => {
           Endre søk
         </Button>
         <Button color='secondary' fullWidth onClick={resetFilters} variant='text'>
-          Reset
+          Nullstill
         </Button>
       </Collapse>
       <Collapse in={isOpen}>
         <form className={classes.filter} onSubmit={handleSubmit(submit)}>
-          <TextField
-            formState={formState}
-            label='Navn'
-            margin='dense'
-            noDefaultShrink
-            noOutline
-            required
-            {...register('name', { required: 'Du må oppgi et søkeord' })}
-          />
+          <TextField formState={formState} label='Navn' margin='dense' noDefaultShrink noOutline {...register('name')} />
           <Divider orientation={mdDown ? 'horizontal' : 'vertical'} />
           <DatePicker
             control={control}
