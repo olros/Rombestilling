@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   listContent: {
-    padding: theme.spacing(1),
+    padding: theme.spacing(1, 2, 2),
   },
 }));
 
