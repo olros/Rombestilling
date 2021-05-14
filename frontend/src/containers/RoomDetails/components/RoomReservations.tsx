@@ -39,7 +39,7 @@ export type UserReservationsProps = {
 };
 
 export const UserReservations = ({ userId }: UserReservationsProps) => {
-  const filters = useMemo(() => ({ fromTime: startOfDay(new Date()).toJSON() }), []);
+  const filters = useMemo(() => ({ fromTimeAfter: startOfDay(new Date()).toJSON() }), []);
   const result = useUserReservations(userId, filters);
   return <Reservations result={result} />;
 };
@@ -49,7 +49,7 @@ export type SectionReservationsProps = {
 };
 
 export const SectionReservations = ({ sectionId }: SectionReservationsProps) => {
-  const filters = useMemo(() => ({ fromTime: startOfDay(new Date()).toJSON() }), []);
+  const filters = useMemo(() => ({ fromTimeAfter: startOfDay(new Date()).toJSON() }), []);
   const result = useSectionReservations(sectionId, filters);
   return <Reservations result={result} />;
 };

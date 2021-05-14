@@ -86,8 +86,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Filters = {
-  fromTime: string;
-  toTime: string;
+  fromTimeAfter: string;
+  toTimeBefore: string;
 };
 
 export type UserCalendarProps = {
@@ -96,8 +96,8 @@ export type UserCalendarProps = {
 
 export const UserCalendar = ({ userId }: UserCalendarProps) => {
   const [filters, setFilters] = useState<Filters>({
-    fromTime: startOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
-    toTime: endOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
+    fromTimeAfter: startOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
+    toTimeBefore: endOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
   });
   const { data, isLoading } = useUserReservations(userId, filters);
 
@@ -110,8 +110,8 @@ export type SectionCalendarProps = {
 
 export const SectionCalendar = ({ sectionId }: SectionCalendarProps) => {
   const [filters, setFilters] = useState<Filters>({
-    fromTime: startOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
-    toTime: endOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
+    fromTimeAfter: startOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
+    toTimeBefore: endOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
   });
   const { data, isLoading } = useSectionReservations(sectionId, filters);
 
@@ -149,11 +149,11 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
 
   useEffect(() => {
     if (currentViewName === 'Day') {
-      setFilters({ fromTime: startOfDay(currentDate).toJSON(), toTime: endOfDay(currentDate).toJSON() });
+      setFilters({ fromTimeAfter: startOfDay(currentDate).toJSON(), toTimeBefore: endOfDay(currentDate).toJSON() });
     } else if (currentViewName === 'Week') {
-      setFilters({ fromTime: startOfWeek(currentDate, { weekStartsOn: 1 }).toJSON(), toTime: endOfWeek(currentDate, { weekStartsOn: 1 }).toJSON() });
+      setFilters({ fromTimeAfter: startOfWeek(currentDate, { weekStartsOn: 1 }).toJSON(), toTimeBefore: endOfWeek(currentDate, { weekStartsOn: 1 }).toJSON() });
     } else {
-      setFilters({ fromTime: startOfMonth(currentDate).toJSON(), toTime: endOfMonth(currentDate).toJSON() });
+      setFilters({ fromTimeAfter: startOfMonth(currentDate).toJSON(), toTimeBefore: endOfMonth(currentDate).toJSON() });
     }
   }, [setFilters, currentViewName, currentDate]);
 

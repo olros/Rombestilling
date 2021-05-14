@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 
 type ResetPasswordData = {
   email: string;
-  newPassword: string;
+  password: string;
 };
 
 const ResetPassword = () => {
@@ -40,7 +40,7 @@ const ResetPassword = () => {
 
   const onSubmit = async (data: ResetPasswordData) => {
     resetPassword.mutate(
-      { email: data.email, newPassword: data.newPassword, token },
+      { email: data.email, password: data.password, token },
       {
         onSuccess: () => {
           showSnackbar('Passordet ble oppdatert', 'success');
@@ -78,7 +78,7 @@ const ResetPassword = () => {
           disabled={resetPassword.isLoading}
           formState={formState}
           label='Nytt passord'
-          {...register('newPassword', {
+          {...register('password', {
             required: 'Feltet er påkrevd',
           })}
           required

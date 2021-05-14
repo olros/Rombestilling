@@ -3,12 +3,12 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
 import classnames from 'classnames';
-import { formatDate } from 'utils';
+import { formatDate, isUserAdmin } from 'utils';
 import { parseISO } from 'date-fns';
 import { Reservation } from 'types/Types';
 import { useReservationById, useUpdateReservation, useDeleteReservation } from 'hooks/Reservation';
 import { useSnackbar } from 'hooks/Snackbar';
-import { useIsAdmin, useUser } from 'hooks/User';
+import { useUser } from 'hooks/User';
 
 // Material UI Components
 import { makeStyles, Button, ButtonProps, Typography } from '@material-ui/core';
@@ -49,10 +49,9 @@ const ReservationInfo = ({ sectionId, reservationId, onDelete }: ReservationInfo
   const classes = useStyles();
   const { data } = useReservationById(sectionId, reservationId);
   const { data: user } = useUser();
-  const { isAdmin } = useIsAdmin();
   const showSnackbar = useSnackbar();
   const deleteReservation = useDeleteReservation(sectionId, reservationId);
-  const canEdit = useMemo(() => isAdmin || Boolean(data && user && data?.user.id === user?.id), [data, isAdmin, user]);
+  const canEdit = useMemo(() => isUserAdmin(user) || Boolean(data && user && data?.user.id === user?.id), [data, user]);
   const removeReservation = async () =>
     deleteReservation.mutate(null, {
       onSuccess: () => {
