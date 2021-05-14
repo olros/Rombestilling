@@ -11,6 +11,7 @@ import { makeStyles, Button, ButtonProps, Typography } from '@material-ui/core';
 // Project components
 import Expand from 'components/layout/Expand';
 import Dialog from 'components/layout/Dialog';
+import DatePicker from 'components/inputs/DatePicker';
 import TextField from 'components/inputs/TextField';
 import SubmitButton from 'components/inputs/SubmitButton';
 import { SingleFileSelect } from 'components/inputs/Upload';
@@ -38,6 +39,7 @@ const CreateUser = ({ children, ...props }: ButtonProps) => {
     setValue: batchSetValue,
     watch: batchWatch,
     reset: batchReset,
+    control,
   } = useForm<BatchFormValues>();
 
   const submit = async (data: UserCreate) => {
@@ -115,6 +117,15 @@ const CreateUser = ({ children, ...props }: ButtonProps) => {
                 {...register('phoneNumber', { required: 'Feltet er påkrevd' })}
                 required
               />
+              <DatePicker
+                control={control}
+                disabled={createUser.isLoading}
+                formState={formState}
+                fullWidth
+                label='Aktiv til'
+                name='expirationDate'
+                type='date'
+              />
               <SubmitButton disabled={createUser.isLoading} formState={formState}>
                 Opprett bruker
               </SubmitButton>
@@ -122,7 +133,7 @@ const CreateUser = ({ children, ...props }: ButtonProps) => {
           </Expand>
           <Expand primary='Opprett flere brukere' secondary='Opprett flere brukere samtidig ved å laste opp en CSV-fil'>
             <form className={classes.grid} onSubmit={batchHandleSubmit(batchCreate)}>
-              <Typography variant='subtitle2'>{`Last opp en CSV-fil med feltene: "firstName,surname,email,phoneNumber"`}</Typography>
+              <Typography variant='subtitle2'>{`Last opp en CSV-fil med feltene: "firstName,surname,email,phoneNumber,expirationDate"`}</Typography>
               <SingleFileSelect
                 disabled={batchCreateUser.isLoading}
                 formState={batchFormState}
