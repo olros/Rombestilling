@@ -173,10 +173,6 @@ class SectionControllerTest {
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test section controller GET all returns OK and page of sections with time filter`() {
-        var reservation = ReservationFactory().`object`
-        userRepository.save(reservation.user!!)
-        sectionRepository.save(reservation.section!!)
-         reservationRepository.save(reservation)
         var newReservation = ReservationFactory().`object`
         userRepository.save(newReservation.user!!)
         sectionRepository.save(newReservation.section!!)
