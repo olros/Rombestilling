@@ -1,5 +1,6 @@
 package ntnu.idatt2105.user.model
 
+import ntnu.idatt2105.security.token.PasswordResetToken
 import java.time.LocalDate
 import java.util.*
 import javax.persistence.*
@@ -20,5 +21,7 @@ data class User(@Id
                 @JoinTable(name = "user_roles",
                     joinColumns = [JoinColumn(name = "USER_ID", referencedColumnName = "id")],
                     inverseJoinColumns = [JoinColumn(name = "ROLE_ID", referencedColumnName = "id")])
-                val roles: Set<Role> = mutableSetOf()
+                val roles: Set<Role> = mutableSetOf(),
+                @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL])
+                val pwdToken: PasswordResetToken? = null
                 )

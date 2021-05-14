@@ -37,6 +37,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	implementation("io.github.serpro69:kotlin-faker:1.6.0")
+	implementation("com.opencsv:opencsv:5.0")
+
 }
 
 tasks.withType<KotlinCompile> {

@@ -7,11 +7,13 @@ import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 
 interface UserService {
     fun registerUser(user: UserRegistrationDto): UserDto
+    fun registerUserBatch(file: MultipartFile): Response
     fun updateUser(id: UUID, user: UserDto): UserDto
     fun getUsers(pageable: Pageable): Page<UserDto>
     fun forgotPassword(email: ForgotPassword)
