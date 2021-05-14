@@ -63,8 +63,8 @@ const Profile = () => {
   const classes = useStyles();
   const { data: user, isLoading, isError } = useUser();
   const logout = useLogout();
-  const bookings = { value: 'bookings', label: 'Mine reservasjoner', icon: PostsIcon };
   const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
+  const bookings = { value: 'bookings', label: 'Kalender', icon: PostsIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
   const tabs = [reservationsTab, bookings, editTab];
   const [tab, setTab] = useState(reservationsTab.value);
