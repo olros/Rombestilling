@@ -23,7 +23,7 @@ data class Section(
         var children: MutableList<Section> = mutableListOf(),
         @ManyToOne
         var parent: Section? = null,
-        @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.MERGE],mappedBy = "section")
+        @OneToMany(fetch = FetchType.EAGER, mappedBy = "section")
         var reservation: MutableList<Reservation> = mutableListOf()
 ){
         fun getType(): String{
@@ -34,10 +34,10 @@ data class Section(
         @Transient
         @QueryType(PropertyType.DATETIME)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        var fromTimeAfter: ZonedDateTime? = null;
+        var fromTimeAfter: ZonedDateTime? = null
         @Transient
         @QueryType(PropertyType.DATETIME)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        var toTimeBefore: ZonedDateTime? = null;
+        var toTimeBefore: ZonedDateTime? = null
 }
 

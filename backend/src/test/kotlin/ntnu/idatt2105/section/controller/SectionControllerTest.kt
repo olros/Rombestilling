@@ -207,4 +207,20 @@ class SectionControllerTest {
                 .andExpect(jsonPath("$.content.[*].name", Matchers.not(newSection.name)))
 
     }
+
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test section controller GET all returns OK and page of sections with partial serach on name`() {
+        val newSection =  SectionFactory().`object`
+        newSection.parent = section
+        sectionRepository.save(newSection)
+        val length = section.name.length
+        this.mvc.perform(get(URL)
+                .param("name", section.name.substring(0, length -1)))
+                .andExpect(status().isOk)
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content.[*].name", hasItem(section.name)))
+                .andExpect(jsonPath("$.content.[*].name", Matchers.not(newSection.name)))
+
+    }
 }
