@@ -15,7 +15,7 @@ interface SectionRepository: JpaRepository<Section, UUID>, QuerydslPredicateExec
     @JvmDefault
     override fun customize(bindings: QuerydslBindings, section: QSection) {
         bindings.bind(section.name).first { path, value -> section.name.contains(value) }
-        bindings.bind(section.fromTimeAfter).first { path, value -> !section.reservation.any().fromTime.after(value) }
-        bindings.bind(section.toTimeBefore).first { path, value -> !section.reservation.any().toTime.before(value) }
+        bindings.bind(section.from).first { path, value -> !section.reservation.any().fromTime.after(value) }
+        bindings.bind(section.to).first { path, value -> !section.reservation.any().toTime.before(value) }
     }
 }
