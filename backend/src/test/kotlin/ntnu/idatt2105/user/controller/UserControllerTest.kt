@@ -5,17 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.factories.RoleFactory
 import ntnu.idatt2105.factories.UserFactory
-import ntnu.idatt2105.sercurity.config.JWTConfig
+import ntnu.idatt2105.security.config.JWTConfig
 import ntnu.idatt2105.user.dto.UserRegistrationDto
-import ntnu.idatt2105.user.model.Role
 import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.UserRepository
-import ntnu.idatt2105.user.service.UserDetailsImplBuilder
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -29,14 +26,12 @@ import org.springframework.http.MediaType
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.time.LocalDate
 import java.util.*
 import java.util.stream.Stream
 

@@ -1,12 +1,11 @@
 package ntnu.idatt2105.user.service
 
-import ntnu.idatt2105.dto.response.ResponseError
 import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
-import ntnu.idatt2105.sercurity.dto.ForgotPassword
-import ntnu.idatt2105.sercurity.token.PasswordResetToken
+import ntnu.idatt2105.security.dto.ForgotPassword
+import ntnu.idatt2105.security.token.PasswordResetToken
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
 import ntnu.idatt2105.user.model.User
@@ -14,8 +13,8 @@ import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.mailer.HtmlTemplate
 import ntnu.idatt2105.mailer.Mail
 import ntnu.idatt2105.mailer.MailService
-import ntnu.idatt2105.sercurity.repository.PasswordResetTokenRepository
-import ntnu.idatt2105.sercurity.dto.ResetPasswordDto
+import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
+import ntnu.idatt2105.security.dto.ResetPasswordDto
 import ntnu.idatt2105.user.model.RoleType.USER
 import org.modelmapper.ModelMapper
 import org.springframework.data.domain.Page
