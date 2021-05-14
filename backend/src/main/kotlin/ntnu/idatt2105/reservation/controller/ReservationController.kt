@@ -23,10 +23,11 @@ class ReservationController(val reservationService: ReservationService) {
 
 
     @GetMapping
-    fun getAllReservations(@QuerydslPredicate(root = Reservation::class) predicate: Predicate,
-                           @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
+    fun getAllReservations(
+            @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
+            @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
             sort= ["fromTime"], direction = Sort.Direction.DESC) pageable: Pageable,
-                           @PathVariable sectionId: UUID) =
+            @PathVariable sectionId: UUID) =
         reservationService.getAllReservation(sectionId, pageable, predicate)
 
 

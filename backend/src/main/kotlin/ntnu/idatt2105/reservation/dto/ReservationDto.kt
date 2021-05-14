@@ -1,5 +1,6 @@
 package ntnu.idatt2105.reservation.dto
 
+import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.section.dto.SectionChildrenDto
 import ntnu.idatt2105.section.dto.SectionListDto
 import ntnu.idatt2105.user.dto.UserDto

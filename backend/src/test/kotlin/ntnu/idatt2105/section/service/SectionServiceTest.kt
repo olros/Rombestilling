@@ -1,6 +1,7 @@
 package ntnu.idatt2105.section.service;
 
 
+import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.section.dto.SectionCreateDto
 import ntnu.idatt2105.section.dto.SectionDto
 import ntnu.idatt2105.factories.SectionFactory
@@ -51,10 +52,12 @@ class SectionServiceTest {
     @Test
     fun `test section service get all returns page of sections`(){
         val testList: List<Section> = mutableListOf(section)
+        val page = JpaUtils().getDefaultPageable()
+        val predicate = JpaUtils().getEmptyPredicate()
         val sections: Page<Section> = PageImpl(testList, JpaUtils().getDefaultPageable(), testList.size.toLong())
-        lenient().`when`(sectionRepository.findAll(any(Pageable::class.java))).thenReturn(sections)
-        assert(sectionService.getAllSections(JpaUtils().getDefaultPageable()).content.isNotEmpty())
-        assertThat(sectionService.getAllSections(JpaUtils().getDefaultPageable()).content.size == testList.size)
+        lenient().`when`(sectionRepository.findAll(any(Predicate::class.java),any(Pageable::class.java))).thenReturn(sections)
+        assert(sectionService.getAllSections(page, predicate).content.isNotEmpty())
+        assertThat(sectionService.getAllSections(JpaUtils().getDefaultPageable(), predicate).content.size == testList.size)
 
     }
 
