@@ -9,7 +9,6 @@ import javax.persistence.*
 data class PasswordResetToken(
     @Id @Column(columnDefinition = "CHAR(32)")
     var id: UUID = UUID.randomUUID(),
-    //@OneToOne(targetEntity = User::class, fetch = FetchType.EAGER)
     @OneToOne
     @JoinColumn(nullable = true, referencedColumnName = "id")
     val user: User,

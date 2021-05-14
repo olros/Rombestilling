@@ -85,13 +85,13 @@ class UserServiceImpl(
         try {
             fileReader!!.close()
         } catch (ex: IOException) {
-            throw Exception("Error during csv import")
+            throw RuntimeException("Error during csv import")
         }
     }
 
     private fun throwIfFileEmpty(file: MultipartFile) {
         if (file.isEmpty)
-            throw Exception("Empty file")
+            throw RuntimeException("Empty file")
     }
 
     private fun existsByEmail(email: String): Boolean {
