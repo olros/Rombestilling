@@ -12,7 +12,8 @@ export const formatTime = (date: Date) => {
 };
 
 export const formatDate = (date: Date) => {
-  return `${getDay(date.getDay())} ${date.getDate()} ${getMonth(date.getMonth())} - kl. ${formatTime(date)}`;
+  const isDifferentYear = date.getFullYear() !== new Date().getFullYear();
+  return `${getDay(date.getDay())} ${date.getDate()} ${getMonth(date.getMonth())} ${isDifferentYear ? date.getFullYear() : ''} - kl. ${formatTime(date)}`;
 };
 
 export const getTimeSince = (date: Date) => {

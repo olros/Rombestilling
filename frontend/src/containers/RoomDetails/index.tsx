@@ -12,6 +12,7 @@ import { makeStyles, Typography, Collapse } from '@material-ui/core';
 // Icons
 import CalendarIcon from '@material-ui/icons/EventRounded';
 import SectionsIcon from '@material-ui/icons/ViewModuleRounded';
+import ListIcon from '@material-ui/icons/ViewStreamRounded';
 
 // Project Components
 import Http404 from 'containers/Http404';
@@ -19,6 +20,7 @@ import Navigation from 'components/navigation/Navigation';
 import Paper from 'components/layout/Paper';
 import Tabs from 'components/layout/Tabs';
 import RoomSection from 'containers/RoomDetails/components/RoomSection';
+import { SectionReservations } from 'containers/RoomDetails/components/RoomReservations';
 import CreateRoom from 'components/miscellaneous/CreateRoom';
 import EditRoom from 'components/miscellaneous/EditRoom';
 import { SectionCalendar } from 'components/miscellaneous/Calendar';
@@ -63,8 +65,9 @@ const RoomDetails = () => {
   const { id } = useParams();
   const { data, isLoading, isError } = useSectionById(id);
   const calendarTab = { value: 'calendar', label: 'Kalender', icon: CalendarIcon };
+  const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
   const sectionsTab = { value: 'sections', label: 'Deler', icon: SectionsIcon };
-  const tabs = [calendarTab, ...(data?.type === 'room' ? [sectionsTab] : [])];
+  const tabs = [calendarTab, reservationsTab, ...(data?.type === 'room' ? [sectionsTab] : [])];
   const [tab, setTab] = useState(calendarTab.value);
 
   if (isError) {
@@ -100,6 +103,9 @@ const RoomDetails = () => {
                 <div>
                   <Collapse in={tab === calendarTab.value} mountOnEnter>
                     <SectionCalendar sectionId={id} />
+                  </Collapse>
+                  <Collapse in={tab === reservationsTab.value} mountOnEnter>
+                    <SectionReservations sectionId={id} />
                   </Collapse>
                   <Collapse in={tab === sectionsTab.value} mountOnEnter>
                     <Paper className={classes.grid}>

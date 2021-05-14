@@ -26,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
   top: {
     gridTemplateColumns: '1fr auto',
   },
+  header: {
+    alignSelf: 'center',
+  },
   remove: {
     color: theme.palette.error.main,
   },
@@ -68,7 +71,9 @@ const ReservationInfo = ({ sectionId, reservationId, onDelete }: ReservationInfo
   return (
     <div className={classes.grid}>
       <div className={classnames(classes.grid, classes.top)}>
-        <Typography variant='h3'>{data.section.name}</Typography>
+        <Typography className={classes.header} variant='h3'>
+          {data.section.name}
+        </Typography>
         {canEdit && (
           <VerifyDialog iconButton onConfirm={removeReservation} titleText='Slett reservasjon'>
             <DeleteIcon className={classes.remove} />

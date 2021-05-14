@@ -13,6 +13,7 @@ import Collapse from '@material-ui/core/Collapse';
 // Icons
 import EditIcon from '@material-ui/icons/EditRounded';
 import PostsIcon from '@material-ui/icons/ViewAgendaRounded';
+import ListIcon from '@material-ui/icons/ViewStreamRounded';
 
 // Project Components
 import Navigation from 'components/navigation/Navigation';
@@ -21,6 +22,7 @@ import Tabs from 'components/layout/Tabs';
 import Http404 from 'containers/Http404';
 import EditProfile from 'containers/Profile/components/EditProfile';
 import { UserCalendar } from 'components/miscellaneous/Calendar';
+import { UserReservations } from 'containers/RoomDetails/components/RoomReservations';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -62,8 +64,9 @@ const Profile = () => {
   const { data: user, isLoading, isError } = useUser();
   const logout = useLogout();
   const bookings = { value: 'bookings', label: 'Mine reservasjoner', icon: PostsIcon };
+  const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
-  const tabs = [bookings, editTab];
+  const tabs = [bookings, reservationsTab, editTab];
   const [tab, setTab] = useState(bookings.value);
 
   if (isError) {
@@ -98,6 +101,9 @@ const Profile = () => {
           <div>
             <Collapse in={tab === bookings.value} mountOnEnter>
               <UserCalendar />
+            </Collapse>
+            <Collapse in={tab === reservationsTab.value} mountOnEnter>
+              <UserReservations />
             </Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <Paper>

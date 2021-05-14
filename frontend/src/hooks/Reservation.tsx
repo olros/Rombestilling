@@ -26,7 +26,7 @@ export const useReservationById = (sectionId: string, reservationId: string) => 
 export const useSectionReservations = (sectionId: string, filters?: any) => {
   return useInfiniteQuery<PaginationResponse<Reservation>, RequestResponse>(
     [RESERVATION_QUERY_KEY, filters],
-    ({ pageParam = 0 }) => API.getSectionReservations(sectionId, { ...filters, page: pageParam }),
+    ({ pageParam = 0 }) => API.getSectionReservations(sectionId, { sort: 'fromTime,ASC', ...filters, page: pageParam }),
     {
       getNextPageParam: getNextPaginationPage,
     },
@@ -42,7 +42,7 @@ export const useSectionReservations = (sectionId: string, filters?: any) => {
 export const useUserReservations = (userId?: string, filters?: any) => {
   return useInfiniteQuery<PaginationResponse<Reservation>, RequestResponse>(
     [RESERVATION_QUERY_KEY, filters],
-    ({ pageParam = 0 }) => API.getUserReservations(userId, { ...filters, page: pageParam }),
+    ({ pageParam = 0 }) => API.getUserReservations(userId, { sort: 'fromTime,ASC', ...filters, page: pageParam }),
     {
       getNextPageParam: getNextPaginationPage,
     },
