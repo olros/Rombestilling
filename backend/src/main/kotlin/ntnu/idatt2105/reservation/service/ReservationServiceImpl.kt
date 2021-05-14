@@ -1,10 +1,13 @@
 package ntnu.idatt2105.reservation.service
 
+import com.querydsl.core.types.ExpressionUtils
+import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
+import ntnu.idatt2105.reservation.model.QReservation
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
 import ntnu.idatt2105.section.repository.SectionRepository
@@ -24,10 +27,14 @@ class ReservationServiceImpl(
     val userService: UserService,
     val sectionRepository: SectionRepository) : ReservationService {
 
-    override fun getAllReservation(sectionId: UUID, pageable: Pageable): Page<ReservationDto> =
-            reservationRepository.findReservationsBySectionId(sectionId, pageable).run {
+    override fun getAllReservation(sectionId: UUID, pageable: Pageable, predicate: Predicate): Page<ReservationDto> {
+        val reservation = QReservation.reservation
+        val newPredicate = ExpressionUtils.allOf(predicate, reservation.section.id.eq(sectionId))!!
+        reservationRepository.findAll(newPredicate, pageable).run {
             return this.map { modelMapper.map(it, ReservationDto::class.java) }
+        }
     }
+
 
     override fun createReservation(sectionId: UUID, reservation: ReservationCreateDto) : ReservationDto {
         if (reservationRepository.existsInterval(reservation.fromTime!!, reservation.toTime!!)){
@@ -51,10 +58,14 @@ class ReservationServiceImpl(
         return modelMapper.map(newReservation, ReservationDto::class.java)
     }
 
-    override fun getUserReservation(userId: UUID, pageable: Pageable): Page<ReservationDto> =
-        reservationRepository.findReservationsByUserId(userId, pageable).run {
+    override fun getUserReservation(userId: UUID, pageable: Pageable, predicate: Predicate): Page<ReservationDto> {
+        val reservation = QReservation.reservation
+        val newPredicate = ExpressionUtils.allOf(predicate, reservation.user.id.eq(userId))!!
+        reservationRepository.findAll(newPredicate, pageable).run {
             return this.map { modelMapper.map(it, ReservationDto::class.java) }
         }
+    }
+
 
     override fun getReservation(sectionId: UUID, reservationId: UUID): ReservationDto =
         reservationRepository.findById(reservationId).orElseThrow { throw ApplicationException.throwException(

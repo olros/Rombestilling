@@ -1,12 +1,17 @@
 package ntnu.idatt2105.reservation.model
 
+import com.querydsl.core.annotations.PropertyType
+import com.querydsl.core.annotations.QueryEntity
+import com.querydsl.core.annotations.QueryType
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.user.model.User
+import org.springframework.format.annotation.DateTimeFormat
 import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
 
 @Entity
+@QueryEntity
 data class Reservation(
         @Id
         @Column(columnDefinition = "CHAR(32)")
@@ -24,6 +29,14 @@ data class Reservation(
         var text : String = "",
         var nrOfPeople: Int = -1,
 
-
-        )
+        ){
+        @Transient
+        @QueryType(PropertyType.DATETIME)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+        lateinit var fromTimeAfter: ZonedDateTime;
+        @Transient
+        @QueryType(PropertyType.DATETIME)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+        lateinit var toTimeBefore: ZonedDateTime;
+}
 
