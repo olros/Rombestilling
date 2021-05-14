@@ -7,27 +7,31 @@ import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.user.model.User
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.ZonedDateTime
-import java.util.*
-import javax.persistence.*
+import java.util.UUID
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 
 @Entity
 @QueryEntity
 data class Reservation(
-        @Id
-        @Column(columnDefinition = "CHAR(32)")
-        var id: UUID = UUID.randomUUID(),
-        @ManyToOne
-        @JoinColumn(name="user_id", referencedColumnName = "id")
-        var user: User? = null,
+    @Id
+	   @Column(columnDefinition = "CHAR(32)")
+	   var id: UUID = UUID.randomUUID(),
+    @ManyToOne
+	   @JoinColumn(name = "user_id", referencedColumnName = "id")
+	   var user: User? = null,
 
-        @ManyToOne
-        @JoinColumn(name="section_id", referencedColumnName = "id")
-        var section: Section? = null,
+    @ManyToOne
+	   @JoinColumn(name = "section_id", referencedColumnName = "id")
+	   var section: Section? = null,
 
-        var fromTime : ZonedDateTime? = null,
-        var toTime : ZonedDateTime? = null,
-        var text : String = "",
-        var nrOfPeople: Int = -1,
+    var fromTime: ZonedDateTime? = null,
+    var toTime: ZonedDateTime? = null,
+    var text: String = "",
+    var nrOfPeople: Int = -1,
 
         ){
         @Transient
@@ -39,4 +43,3 @@ data class Reservation(
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         var toTimeBefore: ZonedDateTime? = null
 }
-

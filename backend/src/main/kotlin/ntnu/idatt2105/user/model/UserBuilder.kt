@@ -1,7 +1,7 @@
 package ntnu.idatt2105.user.model
 
-import java.util.UUID
 import java.time.LocalDate
+import java.util.UUID
 
 data class UserBuilder(
     val id: UUID = UUID.randomUUID(),
@@ -13,16 +13,16 @@ data class UserBuilder(
     val password: String = "",
     val roles: Set<Role> = setOf()
 ) {
-    fun build(): User {
-        return User(
-            id = id,
-            firstName = firstName,
-            surname = surname,
-            email = email,
-            phoneNumber = phoneNumber,
-            expirationDate = expirationDate,
-            password = password,
-            roles = roles
-        )
-    }
+	fun build(): User {
+		return User(
+			id = id,
+			firstName = firstName,
+			surname = surname,
+			email = email,
+			phoneNumber = phoneNumber,
+			expirationDate = expirationDate,
+			password = password,
+			roles = roles
+		)
+	}
 }

@@ -25,85 +25,85 @@ import java.util.List
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class WebSecurity(val refreshTokenService: RefreshTokenService,
-                  private val bCryptPasswordEncoder: BCryptPasswordEncoder,
-                  private val jwtUtil: JwtUtil,
-                  private val jwtConfig: JWTConfig) : WebSecurityConfigurerAdapter() {
+class WebSecurity(
+    val refreshTokenService: RefreshTokenService,
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+    private val jwtUtil: JwtUtil,
+    private val jwtConfig: JWTConfig
+) : WebSecurityConfigurerAdapter() {
 
+	private val DOCS_WHITELIST = arrayOf(
+		"/v2/api-docs",
+		"/configuration/ui",
+		"/swagger-resources/**",
+		"/configuration/security",
+		"/swagger-ui.html",
+		"/swagger-ui/**",
+		"/webjars/**"
+	)
 
-    private val DOCS_WHITELIST = arrayOf(
-            "/v2/api-docs",
-            "/configuration/ui",
-            "/swagger-resources/**",
-            "/configuration/security",
-            "/swagger-ui.html",
-            "/swagger-ui/**",
-            "/webjars/**"
-    )
+	@Throws(Exception::class)
+	override fun configure(httpSecurity: HttpSecurity) {
+		if (jwtConfig != null) {
+			httpSecurity.cors().configurationSource { request: HttpServletRequest? ->
+				val cors = CorsConfiguration()
+				cors.allowedOrigins = List.of("*")
+				cors.allowedMethods = List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
+				cors.allowedHeaders = List.of("*")
+				cors
+			}
+				.and()
+				.csrf()
+				.disable()
+				.authorizeRequests()
+				.antMatchers(*DOCS_WHITELIST).permitAll()
+				.antMatchers(HttpMethod.POST, jwtConfig.uri + "/login").permitAll()
+				.antMatchers(HttpMethod.POST, "/auth/forgot-password/").permitAll()
+				.antMatchers(HttpMethod.POST, "/auth/reset-password/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/auth/refresh-token/").permitAll()
+				.antMatchers(HttpMethod.GET, "/users/me/").hasRole(RoleType.USER)
+				.antMatchers(HttpMethod.GET, "/users/me/reservations/").hasRole(RoleType.USER)
+				.antMatchers(HttpMethod.PUT, "/users/{userId}/").hasRole(RoleType.USER)
+				.antMatchers(HttpMethod.GET, "/sections/", "/sections/{sectionId}/").hasRole(RoleType.USER)
+				.antMatchers(HttpMethod.POST, "/sections/{sectionId}/reservations/").hasRole(RoleType.USER)
+				.antMatchers(HttpMethod.GET, "/sections/{sectionId}/reservations/").hasRole(RoleType.USER)
 
-    @Throws(Exception::class)
-    override fun configure(httpSecurity: HttpSecurity) {
-        if (jwtConfig != null) {
-            httpSecurity.cors().configurationSource { request: HttpServletRequest? ->
-                val cors = CorsConfiguration()
-                cors.allowedOrigins = List.of("*")
-                cors.allowedMethods = List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                cors.allowedHeaders = List.of("*")
-                cors
-            }
-                    .and()
-                    .csrf()
-                    .disable()
-                    .authorizeRequests()
-                    .antMatchers(*DOCS_WHITELIST).permitAll()
-                    .antMatchers(HttpMethod.POST, jwtConfig.uri + "/login").permitAll()
-                    .antMatchers(HttpMethod.POST, "/auth/forgot-password/").permitAll()
-                    .antMatchers(HttpMethod.POST, "/auth/reset-password/**").permitAll()
-                    .antMatchers(HttpMethod.GET, "/auth/refresh-token/").permitAll()
-                    .antMatchers(HttpMethod.GET, "/users/me/").hasRole(RoleType.USER)
-                    .antMatchers(HttpMethod.GET, "/users/me/reservations/").hasRole(RoleType.USER)
-                    .antMatchers(HttpMethod.PUT, "/users/{userId}/").hasRole(RoleType.USER)
-                    .antMatchers(HttpMethod.GET, "/sections/", "/sections/{sectionId}/").hasRole(RoleType.USER)
-                    .antMatchers(HttpMethod.POST, "/sections/{sectionId}/reservations/").hasRole(RoleType.USER)
-                    .antMatchers(HttpMethod.GET, "/sections/{sectionId}/reservations/").hasRole(RoleType.USER)
+				.antMatchers("/**").hasAnyRole(RoleType.ADMIN)
+				.anyRequest()
+				.authenticated()
+				.and()
+				.exceptionHandling()
+				.authenticationEntryPoint { req: HttpServletRequest?, res: HttpServletResponse, e: AuthenticationException? ->
+					res.contentType = "application/json"
+					res.status = HttpServletResponse.SC_UNAUTHORIZED
+					res.outputStream.println("{ \"message\": \"Brukernavn eller passord er feil\"}")
+				}
+				.and()
+				.addFilter(JWTUsernamePasswordAuthenticationFilter(refreshTokenService, authenticationManager(), jwtConfig))
+				.addFilterAfter(JWTAuthenticationFilter(jwtConfig, jwtUtil), UsernamePasswordAuthenticationFilter::class.java)
+				.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		}
+	}
 
-                    .antMatchers( "/**").hasAnyRole(RoleType.ADMIN)
-                    .anyRequest()
-                    .authenticated()
-                    .and()
-                    .exceptionHandling()
-                        .authenticationEntryPoint { req: HttpServletRequest?, res: HttpServletResponse, e: AuthenticationException? ->
-                        res.contentType = "application/json"
-                        res.status = HttpServletResponse.SC_UNAUTHORIZED
-                        res.outputStream.println("{ \"message\": \"Brukernavn eller passord er feil\"}")
-                    }
-                    .and()
-                    .addFilter(JWTUsernamePasswordAuthenticationFilter(refreshTokenService, authenticationManager(), jwtConfig))
-                    .addFilterAfter(JWTAuthenticationFilter(jwtConfig, jwtUtil), UsernamePasswordAuthenticationFilter::class.java)
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        }
-    }
+	@Throws(Exception::class)
+	override fun configure(auth: AuthenticationManagerBuilder) {
+		auth.userDetailsService(userDetailsService())
+			.passwordEncoder(bCryptPasswordEncoder)
+	}
 
-    @Throws(Exception::class)
-    override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userDetailsService())
-                .passwordEncoder(bCryptPasswordEncoder)
-    }
+	@Bean
+	fun corsConfigurationSource(): CorsConfigurationSource? {
+		val source = UrlBasedCorsConfigurationSource()
+		val corsConfiguration = CorsConfiguration().applyPermitDefaultValues()
+		source.registerCorsConfiguration("/**", corsConfiguration)
+		return source
+	}
 
-    @Bean
-    fun corsConfigurationSource(): CorsConfigurationSource? {
-        val source = UrlBasedCorsConfigurationSource()
-        val corsConfiguration = CorsConfiguration().applyPermitDefaultValues()
-        source.registerCorsConfiguration("/**", corsConfiguration)
-        return source
-    }
-
-    @Bean
-    override fun userDetailsService(): UserDetailsService {
-        return UserDetailsServiceImpl()
-    }
+	@Bean
+	override fun userDetailsService(): UserDetailsService {
+		return UserDetailsServiceImpl()
+	}
 }

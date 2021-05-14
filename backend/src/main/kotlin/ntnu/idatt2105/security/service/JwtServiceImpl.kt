@@ -18,7 +18,6 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 
-
 @Service
 class JwtServiceImpl(
     val jwtUtil: JwtUtil,
@@ -28,41 +27,38 @@ class JwtServiceImpl(
     val tokenValidator: TokenValidator,
     val refreshTokenService: RefreshTokenService,
     val userDetailsService: UserDetailsService
-): JwtService {
+) : JwtService {
 
+	override fun refreshToken(header: String): JwtTokenResponse {
+		val currentJwtRefreshToken: JwtRefreshToken = getCurrentJwtRefreshToken(header)
+		doValidateToken(currentJwtRefreshToken)
+		val userDetails = getUserFromToken(currentJwtRefreshToken) as UserDetailsImpl
 
+		val accessToken: JwtAccessToken = tokenFactory.createAccessToken(userDetails)
+		val refreshToken: JwtRefreshToken = tokenFactory.createRefreshToken(userDetails) as JwtRefreshToken
+		refreshTokenService.rotateRefreshToken(currentJwtRefreshToken, refreshToken)
+		return JwtTokenResponse(accessToken.getToken(), refreshToken.getToken())
+	}
 
-    override fun refreshToken(header: String): JwtTokenResponse {
-        val currentJwtRefreshToken: JwtRefreshToken = getCurrentJwtRefreshToken(header)
-        doValidateToken(currentJwtRefreshToken)
-        val userDetails = getUserFromToken(currentJwtRefreshToken) as UserDetailsImpl
+	private fun getCurrentJwtRefreshToken(header: String): JwtRefreshToken {
+		val token = tokenExtractor.extract(header)
+		return jwtUtil.parseToken(token) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient scopes for refresh token.")
+	}
 
-        val accessToken: JwtAccessToken = tokenFactory.createAccessToken(userDetails)
-        val refreshToken: JwtRefreshToken = tokenFactory.createRefreshToken(userDetails) as JwtRefreshToken
-        refreshTokenService.rotateRefreshToken(currentJwtRefreshToken, refreshToken)
-        return JwtTokenResponse(accessToken.getToken(), refreshToken.getToken())
+	private fun getUserFromToken(refreshToken: JwtRefreshToken): UserDetails {
+		val subject: String = refreshToken.getSubject()
+		return userDetailsService.loadUserByUsername(subject)
+	}
 
-    }
-
-    private fun getCurrentJwtRefreshToken(header: String): JwtRefreshToken {
-        val token = tokenExtractor.extract(header)
-        return jwtUtil.parseToken(token) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient scopes for refresh token.")
-    }
-
-    private fun getUserFromToken(refreshToken: JwtRefreshToken): UserDetails {
-        val subject: String = refreshToken.getSubject()
-        return userDetailsService.loadUserByUsername(subject)
-    }
-
-    private fun doValidateToken(refreshToken: JwtRefreshToken) {
-        try {
-            tokenValidator.validate(refreshToken.getJti())
-        } catch (ex: InvalidJwtToken) {
-            refreshTokenService.invalidateSubsequentTokens(refreshToken.getJti())
-            throw BadCredentialsException("Invalid refresh token", ex)
-        } catch (ex: RefreshTokenNotFound) {
-            refreshTokenService.invalidateSubsequentTokens(refreshToken.getJti())
-            throw BadCredentialsException("Invalid refresh token", ex)
-        }
-    }
+	private fun doValidateToken(refreshToken: JwtRefreshToken) {
+		try {
+			tokenValidator.validate(refreshToken.getJti())
+		} catch (ex: InvalidJwtToken) {
+			refreshTokenService.invalidateSubsequentTokens(refreshToken.getJti())
+			throw BadCredentialsException("Invalid refresh token", ex)
+		} catch (ex: RefreshTokenNotFound) {
+			refreshTokenService.invalidateSubsequentTokens(refreshToken.getJti())
+			throw BadCredentialsException("Invalid refresh token", ex)
+		}
+	}
 }

@@ -1,7 +1,7 @@
 package ntnu.idatt2105.user.dto
 
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 data class DetailedUserDto(
     val id: UUID = UUID.randomUUID(),

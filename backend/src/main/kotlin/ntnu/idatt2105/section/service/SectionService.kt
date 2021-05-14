@@ -7,7 +7,7 @@ import ntnu.idatt2105.section.dto.SectionListDto
 import ntnu.idatt2105.section.model.Section
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import java.util.*
+import java.util.UUID
 
 interface SectionService {
     fun getAllSections(pageable: Pageable, predicate: Predicate): Page<SectionListDto>

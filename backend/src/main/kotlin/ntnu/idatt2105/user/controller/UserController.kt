@@ -17,31 +17,43 @@ import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import java.util.*
+import java.util.UUID
 import javax.validation.Valid
-
 
 @RestController
 @RequestMapping("/users/")
-class UserController(val userService: UserService, val reservationService: ReservationService) {
+class UserController(
+    val userService: UserService,
+    val reservationService: ReservationService
+) {
 
-    @PostMapping
-    fun registerUser(@RequestBody @Valid userRegistrationDto: UserRegistrationDto): ResponseEntity<UserDto>  =
-            ResponseEntity(userService.registerUser(userRegistrationDto), HttpStatus.CREATED)
+	@PostMapping
+	fun registerUser(
+	    @RequestBody @Valid userRegistrationDto: UserRegistrationDto
+	): ResponseEntity<UserDto> =
+		ResponseEntity(userService.registerUser(userRegistrationDto), HttpStatus.CREATED)
 
-    @PostMapping("/batch-users/")
-    fun registerUserBatch(@RequestParam("file") file: MultipartFile) =
-        ResponseEntity(userService.registerUserBatch(file), HttpStatus.CREATED)
+	@PostMapping("/batch-users/")
+	fun registerUserBatch(@RequestParam("file") file: MultipartFile) =
+		ResponseEntity(userService.registerUserBatch(file), HttpStatus.CREATED)
 
-    @GetMapping("me/")
-    fun getMe(@AuthenticationPrincipal principal: UserDetailsImpl)=
-            ResponseEntity.ok(userService.getUser(principal.getId(), mapTo=DetailedUserDto::class.java))
+	@GetMapping("me/")
+	fun getMe(@AuthenticationPrincipal principal: UserDetailsImpl) =
+		ResponseEntity.ok(userService.getUser(principal.getId(), mapTo = DetailedUserDto::class.java))
 
-    @GetMapping("{userId}/")
-    fun getUser(@PathVariable userId: UUID) =
-        ResponseEntity.ok(userService.getUser(userId, mapTo=UserDto::class.java))
+	@GetMapping("{userId}/")
+	fun getUser(@PathVariable userId: UUID) =
+		ResponseEntity.ok(userService.getUser(userId, mapTo = UserDto::class.java))
 
     @GetMapping
     fun getUsers(
@@ -50,18 +62,22 @@ class UserController(val userService: UserService, val reservationService: Reser
     ) =
         ResponseEntity(userService.getUsers(pageable, predicate), HttpStatus.OK)
 
-    @PutMapping("{userId}/")
-    fun updateUser(@PathVariable userId: UUID, @Valid @RequestBody user: UserDto) =
-            ResponseEntity.ok(userService.updateUser(userId, user))
+	@PutMapping("{userId}/")
+	fun updateUser(
+	    @PathVariable userId: UUID,
+	    @Valid @RequestBody user: UserDto
+	) =
+		ResponseEntity.ok(userService.updateUser(userId, user))
 
-    @DeleteMapping("{userId}/")
-    fun deleteUser(@PathVariable userId: UUID) =
-        ResponseEntity.ok(userService.deleteUser(userId))
+	@DeleteMapping("{userId}/")
+	fun deleteUser(@PathVariable userId: UUID) =
+		ResponseEntity.ok(userService.deleteUser(userId))
 
-    @GetMapping("me/reservations/")
-    fun getUserReservations(
-            @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
-            @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
-            @AuthenticationPrincipal principal: UserDetailsImpl)=
-           reservationService.getUserReservation(principal.getId(), pageable, predicate)
+	@GetMapping("me/reservations/")
+	fun getUserReservations(
+	    @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
+	    @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort = ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
+	    @AuthenticationPrincipal principal: UserDetailsImpl
+	) =
+		reservationService.getUserReservation(principal.getId(), pageable, predicate)
 }

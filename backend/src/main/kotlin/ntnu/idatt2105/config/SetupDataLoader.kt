@@ -10,39 +10,38 @@ import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 import java.time.LocalDate
-import java.util.*
-
+import java.util.UUID
 
 @Component
 class SetupDataLoader(
     val userRepository: UserRepository,
     val roleRepository: RoleRepository,
     val passwordEncoder: BCryptPasswordEncoder
-): ApplicationListener<ContextRefreshedEvent?> {
-    private var alreadySetup = false
+) : ApplicationListener<ContextRefreshedEvent?> {
+	private var alreadySetup = false
 
+	override fun onApplicationEvent(event: ContextRefreshedEvent) {
+		if (!alreadySetup) {
 
-    override fun onApplicationEvent(event: ContextRefreshedEvent) {
-        if (!alreadySetup) {
+			val userRole = roleRepository.findByName(RoleType.USER)
+				?: roleRepository.save(Role(id = UUID.randomUUID(), name = RoleType.USER))
 
-            val userRole = roleRepository.findByName(RoleType.USER)
-                ?: roleRepository.save(Role(id = UUID.randomUUID(), name = RoleType.USER))
+			val adminRole = roleRepository.findByName(RoleType.ADMIN)
+				?: roleRepository.save(Role(id = UUID.randomUUID(), name = RoleType.ADMIN))
 
-            val adminRole = roleRepository.findByName(RoleType.ADMIN)
-                ?: roleRepository.save(Role(id = UUID.randomUUID(), name = RoleType.ADMIN))
-
-            userRepository.findByEmail("admin@test.com") ?: userRepository.save(
-                User(id=UUID.randomUUID(),
-                    firstName="hei",
-                    surname="hei",
-                    email="admin@test.com",
-                    phoneNumber="+4712345678",
-                    password=passwordEncoder.encode("admin"),
-                    expirationDate = LocalDate.EPOCH,
-                    roles = setOf(userRole, adminRole)
-                ))
-        }
-        alreadySetup = true
-
-    }
+			userRepository.findByEmail("admin@test.com") ?: userRepository.save(
+				User(
+					id = UUID.randomUUID(),
+					firstName = "hei",
+					surname = "hei",
+					email = "admin@test.com",
+					phoneNumber = "+4712345678",
+					password = passwordEncoder.encode("admin"),
+					expirationDate = LocalDate.EPOCH,
+					roles = setOf(userRole, adminRole)
+				)
+			)
+		}
+		alreadySetup = true
+	}
 }

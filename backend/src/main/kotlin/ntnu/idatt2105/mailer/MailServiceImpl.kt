@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service
 class MailServiceImpl(
     private val emailSender: JavaMailSender
 ) : MailService {
-    override fun sendMail(mail: Mail) {
-        val message = SimpleMailMessage()
-        message.setTo(mail.to)
-        message.setFrom(mail.from)
-        message.setSubject(mail.subject)
-        mail.htmlTemplate.props.get(2)?.let { message.setText(it) }
-        emailSender.send(message)
-    }
+	override fun sendMail(mail: Mail) {
+		val message = SimpleMailMessage()
+		message.setTo(mail.to)
+		message.setFrom(mail.from)
+		message.setSubject(mail.subject)
+		mail.htmlTemplate.props.get(2)?.let { message.setText(it) }
+		emailSender.send(message)
+	}
 }

@@ -1,10 +1,11 @@
 package ntnu.idatt2105.section.dto
 
 import ntnu.idatt2105.util.SectionType
-import java.util.*
+import java.util.UUID
 
 data class SectionChildrenDto(
     var id: UUID = UUID.randomUUID(),
     var name: String = "",
     var capacity: Int = 0,
-    var type: String = SectionType.ROOM)
+    var type: String = SectionType.ROOM
+)
