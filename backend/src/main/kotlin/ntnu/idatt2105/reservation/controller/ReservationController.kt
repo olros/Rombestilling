@@ -14,6 +14,7 @@ import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import javax.validation.Valid
 
 
 @RestController
@@ -34,7 +35,7 @@ class ReservationController(val reservationService: ReservationService) {
             reservationService.getReservation(sectionId, reservationId)
 
     @PostMapping
-    fun createReservation(@PathVariable sectionId: UUID, @RequestBody reservation: ReservationCreateDto) =
+    fun createReservation(@PathVariable sectionId: UUID, @Valid @RequestBody reservation: ReservationCreateDto) =
         reservationService.createReservation(sectionId, reservation)
 
     @PutMapping("{userId}/")
