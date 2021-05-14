@@ -28,7 +28,6 @@ class UserController(val userService: UserService, val reservationService: Reser
     fun registerUser(@RequestBody @Valid userRegistrationDto: UserRegistrationDto): ResponseEntity<UserDto>  =
             ResponseEntity(userService.registerUser(userRegistrationDto), HttpStatus.CREATED)
 
-    //TODO: Implement authentication check?
     @PostMapping("/batch-users/")
     fun registerUserBatch(@RequestParam("file") file: MultipartFile) =
         ResponseEntity(userService.registerUserBatch(file), HttpStatus.CREATED)
