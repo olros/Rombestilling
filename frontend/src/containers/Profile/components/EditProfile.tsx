@@ -7,8 +7,7 @@ import { parseISO } from 'date-fns';
 import { dateAsUTC } from 'utils';
 
 // Material UI
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import { makeStyles, Typography } from '@material-ui/core';
 
 // Project components
 import Paper from 'components/layout/Paper';

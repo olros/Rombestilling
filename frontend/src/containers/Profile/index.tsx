@@ -8,11 +8,7 @@ import { useUser, useLogout, useUpdateUser } from 'hooks/User';
 import { isUserAdmin, urlEncode } from 'utils';
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
-import Collapse from '@material-ui/core/Collapse';
+import { makeStyles, Typography, Button, Avatar, Collapse } from '@material-ui/core';
 
 // Icons
 import EditIcon from '@material-ui/icons/EditRounded';

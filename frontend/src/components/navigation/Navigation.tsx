@@ -2,8 +2,7 @@ import { ReactNode, ReactElement } from 'react';
 import Helmet from 'react-helmet';
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import { makeStyles, LinearProgress } from '@material-ui/core';
 
 // Project Components
 import Footer from 'components/navigation/Footer';

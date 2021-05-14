@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { UseInfiniteQueryResult } from 'react-query';
 import { Reservation, PaginationResponse, RequestResponse } from 'types/Types';
 import { useSectionReservations, useUserReservations } from 'hooks/Reservation';
@@ -6,14 +6,10 @@ import { parseISO, startOfDay } from 'date-fns';
 import { formatDate } from 'utils';
 
 // Material UI Components
-import { makeStyles, Collapse, Divider, List, ListItem, ListItemText } from '@material-ui/core';
-
-// Icons
-import ExpandMoreIcon from '@material-ui/icons/ExpandMoreRounded';
-import ExpandLessIcon from '@material-ui/icons/ExpandLessRounded';
+import { makeStyles, List } from '@material-ui/core';
 
 // Project Components
-import Paper from 'components/layout/Paper';
+import Expand from 'components/layout/Expand';
 import ReservationInfo from 'components/miscellaneous/ReservationInfo';
 import Pagination from 'components/layout/Pagination';
 import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
@@ -30,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   listContent: {
-    padding: theme.spacing(1, 2, 2),
+    padding: theme.spacing(1),
   },
 }));
 
@@ -60,27 +56,16 @@ export type ReservationsProps = {
 
 const Reservations = ({ result: { data, error, hasNextPage, fetchNextPage, isFetching } }: ReservationsProps) => {
   const classes = useStyles();
-  // const { data, error, hasNextPage, fetchNextPage, isFetching } = useSectionReservations(sectionId, {});
   const reservations = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !reservations.length && !isFetching, [reservations, isFetching]);
 
-  const Reservation = ({ reservation }: { reservation: Reservation }) => {
-    const [expanded, setExpanded] = useState(false);
-    return (
-      <Paper className={classes.paper} noPadding>
-        <ListItem button className={classes.wrapper} onClick={() => setExpanded((prev) => !prev)}>
-          <ListItemText primary={`${formatDate(parseISO(reservation.fromTime))} - ${formatDate(parseISO(reservation.toTime))}`} />
-          {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </ListItem>
-        <Collapse in={expanded} mountOnEnter unmountOnExit>
-          <Divider />
-          <div className={classes.listContent}>
-            <ReservationInfo reservationId={reservation.id} sectionId={reservation.section.id} />
-          </div>
-        </Collapse>
-      </Paper>
-    );
-  };
+  const Reservation = ({ reservation }: { reservation: Reservation }) => (
+    <Expand primary={`${formatDate(parseISO(reservation.fromTime))} - ${formatDate(parseISO(reservation.toTime))}`}>
+      <div className={classes.listContent}>
+        <ReservationInfo reservationId={reservation.id} sectionId={reservation.section.id} />
+      </div>
+    </Expand>
+  );
 
   return (
     <div className={classes.grid}>

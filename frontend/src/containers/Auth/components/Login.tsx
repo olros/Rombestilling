@@ -6,9 +6,7 @@ import { useLogin } from 'hooks/User';
 import { EMAIL_REGEX } from 'constant';
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import { makeStyles, Typography, Button } from '@material-ui/core';
 
 // Project Components
 import SubmitButton from 'components/inputs/SubmitButton';

@@ -3,9 +3,7 @@ import { Link } from 'react-router-dom';
 import { useIsAuthenticated, useLogout } from 'hooks/User';
 
 // Material UI Components
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import Button from '@material-ui/core/Button';
+import { makeStyles, useTheme, Drawer, Button } from '@material-ui/core';
 
 // Project components
 import ThemeSettings from 'components/miscellaneous/ThemeSettings';
