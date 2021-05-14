@@ -11,7 +11,8 @@ export const USER_QUERY_KEY = 'user';
 export const USERS_QUERY_KEY = 'users';
 
 export const useUser = (userId?: string) => {
-  return useQuery<User | undefined, RequestResponse>([USER_QUERY_KEY, userId], () => API.getUser(userId));
+  const isAuthenticated = useIsAuthenticated();
+  return useQuery<User | undefined, RequestResponse>([USER_QUERY_KEY, userId], () => (isAuthenticated ? API.getUser(userId) : undefined));
 };
 
 export const useIsAdmin = (userId?: string) => {
