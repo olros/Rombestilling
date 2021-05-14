@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Helmet from 'react-helmet';
+import { useParams, useNavigate } from 'react-router-dom';
 import classnames from 'classnames';
-import { useUser, useLogout } from 'hooks/User';
+import URLS from 'URLS';
+import { useUser, useLogout, useIsAdmin } from 'hooks/User';
+import { urlEncode } from 'utils';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
@@ -61,13 +64,31 @@ const useStyles = makeStyles((theme) => ({
 
 const Profile = () => {
   const classes = useStyles();
-  const { data: user, isLoading, isError } = useUser();
+  const { userId }: { userId?: string } = useParams();
+  const { isAdmin, isLoading: isAdminLoading } = useIsAdmin();
+  const { data: signedInUser } = useUser();
+  const { data: user, isLoading, isError } = useUser(userId);
   const logout = useLogout();
   const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
   const bookings = { value: 'bookings', label: 'Kalender', icon: PostsIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
-  const tabs = [reservationsTab, bookings, editTab];
+  const tabs = [reservationsTab, bookings, ...(userId ? [] : [editTab])];
   const [tab, setTab] = useState(reservationsTab.value);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && signedInUser && user.id === signedInUser.id) {
+      navigate(`${URLS.PROFILE}`, { replace: true });
+    } else if (userId && user) {
+      navigate(`${URLS.USERS}${user.id}/${urlEncode(`${user.firstName} ${user.surname}`)}/`, { replace: true });
+    }
+  }, [user, signedInUser, navigate]);
+
+  useEffect(() => {
+    if (userId && !isAdminLoading && !isAdmin) {
+      navigate(URLS.LANDING, { replace: true });
+    }
+  }, [isAdmin, isAdminLoading, userId]);
 
   if (isError) {
     return <Http404 />;
@@ -100,10 +121,10 @@ const Profile = () => {
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
           <div>
             <Collapse in={tab === reservationsTab.value} mountOnEnter>
-              <UserReservations />
+              <UserReservations userId={userId} />
             </Collapse>
             <Collapse in={tab === bookings.value} mountOnEnter>
-              <UserCalendar />
+              <UserCalendar userId={userId} />
             </Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <Paper>

@@ -27,7 +27,7 @@ export const RESERVATIONS = 'reservations';
 
 export default {
   // Auth
-  createUser: (item: UserCreate) => IFetch<RequestResponse>({ method: 'POST', url: `${USERS}/`, data: item, withAuth: false, tryAgain: false }),
+  createUser: (item: UserCreate) => IFetch<RequestResponse>({ method: 'POST', url: `${USERS}/`, data: item, tryAgain: false }),
   authenticate: (email: string, password: string) =>
     IFetch<LoginRequestResponse>({
       method: 'POST',
@@ -81,8 +81,22 @@ export default {
   getUser: (userId?: string) => IFetch<User>({ method: 'GET', url: `${USERS}/${userId || ME}/` }),
   getUsers: (filters?: any) => IFetch<PaginationResponse<UserList>>({ method: 'GET', url: `${USERS}/`, data: filters || {} }),
   updateUser: (userId: string, item: Partial<User>) => IFetch<User>({ method: 'PUT', url: `${USERS}/${userId}/`, data: item }),
+  batchAddUser: (csvFile: File | Blob) => {
+    const formData = new FormData();
+    formData.append('file', csvFile);
+    return IFetch<RequestResponse>({ method: 'POST', url: `${USERS}/batch-users/`, formData });
+  },
 
   // Upload file
-  uploadFile: (file: File | Blob) =>
-    IFetch<FileUploadResponse>({ method: 'POST', url: 'https://api.imgbb.com/1/upload?key=909df01fa93bd63405c9a36d662523f3', file, withAuth: false }),
+  uploadFile: (file: File | Blob) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    return IFetch<FileUploadResponse>({
+      method: 'POST',
+      baseUrl: 'https://api.imgbb.com/1/',
+      url: 'upload?key=909df01fa93bd63405c9a36d662523f3',
+      formData,
+      withAuth: false,
+    });
+  },
 };

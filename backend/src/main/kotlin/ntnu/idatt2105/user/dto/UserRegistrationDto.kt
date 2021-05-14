@@ -18,7 +18,7 @@ data class UserRegistrationDto(
     @CsvBindByName(column = "email")
     val email: String,
     @get:NotBlank(message = "Field must not be blank")
-    @CsvBindByName(column = "phone")
+    @CsvBindByName(column = "phoneNumber")
     val phoneNumber: String
 ) {
     constructor() : this("", "", "", "")

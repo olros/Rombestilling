@@ -1,5 +1,4 @@
 import { useForm } from 'react-hook-form';
-import classnames from 'classnames';
 import { Link, useNavigate } from 'react-router-dom';
 import Helmet from 'react-helmet';
 import URLS from 'URLS';
@@ -16,16 +15,8 @@ import SubmitButton from 'components/inputs/SubmitButton';
 import TextField from 'components/inputs/TextField';
 
 const useStyles = makeStyles((theme) => ({
-  grid: {
-    margin: theme.spacing(1, 'auto'),
-    display: 'grid',
-  },
-  buttons: {
-    gap: theme.spacing(1),
-    gridTemplateColumns: '1fr 1fr',
-  },
   button: {
-    marginTop: theme.spacing(2),
+    margin: theme.spacing(1, 'auto'),
   },
 }));
 
@@ -59,7 +50,7 @@ const LogIn = () => {
       <Helmet>
         <title>Logg inn</title>
       </Helmet>
-      <form className={classes.grid} onSubmit={handleSubmit(onLogin)}>
+      <form onSubmit={handleSubmit(onLogin)}>
         <Typography variant='h2'>Logg inn</Typography>
         <TextField
           disabled={logIn.isLoading}
@@ -87,14 +78,9 @@ const LogIn = () => {
           Logg inn
         </SubmitButton>
       </form>
-      <div className={classnames(classes.grid, classes.buttons)}>
-        <Button color='secondary' component={Link} disabled={logIn.isLoading} fullWidth to={URLS.SIGNUP} variant='outlined'>
-          Opprett bruker
-        </Button>
-        <Button color='secondary' component={Link} disabled={logIn.isLoading} fullWidth to={URLS.FORGOT_PASSWORD} variant='outlined'>
-          Glemt passord?
-        </Button>
-      </div>
+      <Button className={classes.button} color='secondary' component={Link} disabled={logIn.isLoading} fullWidth to={URLS.FORGOT_PASSWORD} variant='outlined'>
+        Glemt passord?
+      </Button>
     </>
   );
 };
