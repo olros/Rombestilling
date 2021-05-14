@@ -132,7 +132,7 @@ class UserControllerTest {
         val length = user.email.length
         mockMvc.perform(
                 get(URI)
-                        .param("name", user.email.substring(0, length -1))
+                        .param("search", user.email.substring(0, length -1))
                         .with(user(adminUserDetails))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
@@ -145,7 +145,7 @@ class UserControllerTest {
         val length = user.surname.length
         mockMvc.perform(
                 get(URI)
-                        .param("name", user.surname.substring(0, length -1))
+                        .param("search", user.surname.substring(0, length -1))
                         .with(user(adminUserDetails))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
@@ -158,7 +158,7 @@ class UserControllerTest {
         val length = user.firstName.length
         mockMvc.perform(
                 get(URI)
-                        .param("name", user.firstName.substring(0, length -1))
+                        .param("search", user.firstName.substring(0, length -1))
                         .with(user(adminUserDetails))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
@@ -166,11 +166,11 @@ class UserControllerTest {
     }
     @Test
     @WithMockUser(value = "spring")
-    fun `test list users as admin returns all users with serach filter on phoneNumber`() {
+    fun `test list users as admin returns all users with search filter on phoneNumber`() {
         val length = user.phoneNumber.length
         mockMvc.perform(
                 get(URI)
-                        .param("name", user.phoneNumber.substring(0, length -1))
+                        .param("search", user.phoneNumber.substring(0, length -1))
                         .with(user(adminUserDetails))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
