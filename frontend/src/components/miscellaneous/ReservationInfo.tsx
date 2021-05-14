@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
+import URLS from 'URLS';
 import classnames from 'classnames';
 import { formatDate } from 'utils';
 import { parseISO } from 'date-fns';
@@ -72,7 +74,7 @@ const ReservationInfo = ({ sectionId, reservationId, onDelete }: ReservationInfo
     <div className={classes.grid}>
       <div className={classnames(classes.grid, classes.top)}>
         <Typography className={classes.header} variant='h3'>
-          {data.section.name}
+          <Link to={`${URLS.ROOMS}${data.section.id}/`}>{data.section.name}</Link>
         </Typography>
         {canEdit && (
           <VerifyDialog iconButton onConfirm={removeReservation} titleText='Slett reservasjon'>
