@@ -1,52 +1,62 @@
 package ntnu.idatt2105.section.controller
 
 import com.querydsl.core.types.Predicate
+import io.swagger.annotations.Api
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.section.dto.SectionCreateDto
 import ntnu.idatt2105.section.dto.SectionDto
-import ntnu.idatt2105.section.service.SectionService
-import ntnu.idatt2105.util.PaginationConstants
-import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.section.dto.SectionListDto
 import ntnu.idatt2105.section.model.Section
+import ntnu.idatt2105.util.PaginationConstants
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.web.PageableDefault
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort
 import org.springframework.data.querydsl.binding.QuerydslPredicate
-
+import org.springframework.data.web.PageableDefault
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
 
-
-@RestController
+@Api(value = "Section services", tags = ["Section Services"], description = "Section Services")
 @RequestMapping("/sections/")
-class SectionController(val sectionService: SectionService) {
+interface SectionController {
 
+    @Operation(summary = "Fetch sections", responses = [ApiResponse(responseCode = "200", description = "Success")])
     @GetMapping
-    fun getAllSections(
-            @QuerydslPredicate(root = Section::class) predicate: Predicate,
-            @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
-            sort= ["name"], direction = Sort.Direction.DESC) pageable: Pageable) =
-            sectionService.getAllSections(pageable,predicate)
+    fun getAllSections(@QuerydslPredicate(root = Section::class) predicate: Predicate,
+                       @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
+                        sort= ["name"], direction = Sort.Direction.DESC) pageable: Pageable
+    ): Page<SectionListDto>
 
-
+    @Operation(summary = "Create a new section", responses = [
+        ApiResponse(responseCode = "201", description = "Created: new section was created"),
+        ApiResponse(responseCode = "400", description = "Bad request: new section was not created"),
+    ])
     @PostMapping
-    fun createSection(@RequestBody sectionCreateDto: @Valid SectionCreateDto) =
-            ResponseEntity(sectionService.createSection(sectionCreateDto), HttpStatus.CREATED)
+    fun createSection(@RequestBody sectionCreateDto: @Valid SectionCreateDto): ResponseEntity<SectionDto>
 
+    @Operation(summary = "Fetch section details for the given section id", responses = [
+        ApiResponse(responseCode = "200", description = "Success"),
+        ApiResponse(responseCode = "404", description = "Not found: section with the given id does not exist")
+    ])
     @GetMapping("{sectionId}/")
-    fun getSection(@PathVariable sectionId: UUID): ResponseEntity<SectionDto> {
-        return ResponseEntity(sectionService.getSectionById(sectionId), HttpStatus.OK)
-    }
+    fun getSection(@PathVariable sectionId: UUID): ResponseEntity<SectionDto>
 
+    @Operation(summary = "Update existing section", responses = [
+        ApiResponse(responseCode = "200", description = "Success: section was updated"),
+        ApiResponse(responseCode = "400", description = "Bad request: existing section was not updated"),
+        ApiResponse(responseCode = "404", description = "Not found: section with the given id does not exist"),
+    ])
     @PutMapping("{sectionId}/")
-    fun updateSection(@PathVariable sectionId: UUID, @RequestBody section: SectionDto) =
-            ResponseEntity(sectionService.updateSection(sectionId, section), HttpStatus.OK)
+    fun updateSection(@PathVariable sectionId: UUID, @RequestBody section: SectionDto): ResponseEntity<SectionDto>
 
+    @Operation(summary = "Delete existing section", responses = [
+        ApiResponse(responseCode = "200", description = "Success: section was deleted"),
+        ApiResponse(responseCode = "404", description = "Not found: section with the given id does not exist"),
+    ])
     @DeleteMapping("{sectionId}/")
-    fun deleteSection(@PathVariable sectionId: UUID): ResponseEntity<Response> {
-        sectionService.deleteSection(sectionId)
-        return ResponseEntity(Response("Section has been deleted"), HttpStatus.OK)
-    }
+    fun deleteSection(@PathVariable sectionId: UUID): ResponseEntity<Response>
 }

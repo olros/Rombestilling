@@ -30,7 +30,7 @@ import java.time.ZonedDateTime
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ReservationControllerTest {
+class ReservationControllerImplTest {
 
     private fun getURL(section: Section) = "/sections/${section.id}/reservations/"
 
