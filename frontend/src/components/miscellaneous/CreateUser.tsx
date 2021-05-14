@@ -30,13 +30,14 @@ const CreateUser = ({ children, ...props }: ButtonProps) => {
   const showSnackbar = useSnackbar();
   const createUser = useCreateUser();
   const batchCreateUser = useBatchCreateUser();
-  const { register, formState, handleSubmit } = useForm<UserCreate>();
+  const { register, formState, handleSubmit, reset } = useForm<UserCreate>();
   const {
     register: batchRegister,
     formState: batchFormState,
     handleSubmit: batchHandleSubmit,
     setValue: batchSetValue,
     watch: batchWatch,
+    reset: batchReset,
   } = useForm<BatchFormValues>();
 
   const submit = async (data: UserCreate) => {
@@ -44,6 +45,7 @@ const CreateUser = ({ children, ...props }: ButtonProps) => {
       onSuccess: () => {
         showSnackbar('Brukeren ble opprettet og har mottatt en epost med link for opprettelse av passord', 'success');
         setOpen(false);
+        reset();
       },
       onError: (e) => {
         showSnackbar(e.message, 'error');
@@ -57,6 +59,7 @@ const CreateUser = ({ children, ...props }: ButtonProps) => {
         onSuccess: () => {
           showSnackbar('Brukerne ble opprettet og har mottatt en epost med link for opprettelse av passord', 'success');
           setOpen(false);
+          batchReset();
         },
         onError: (e) => {
           showSnackbar(e.message, 'error');
@@ -119,7 +122,7 @@ const CreateUser = ({ children, ...props }: ButtonProps) => {
           </Expand>
           <Expand primary='Opprett flere brukere' secondary='Opprett flere brukere samtidig ved å laste opp en CSV-fil'>
             <form className={classes.grid} onSubmit={batchHandleSubmit(batchCreate)}>
-              <Typography variant='subtitle2'>{`Last opp en CSV-fil med formatet: "fornavn,etternavn,epost,telefonnummer"`}</Typography>
+              <Typography variant='subtitle2'>{`Last opp en CSV-fil med feltene: "firstName,surname,email,phoneNumber"`}</Typography>
               <SingleFileSelect
                 disabled={batchCreateUser.isLoading}
                 formState={batchFormState}
