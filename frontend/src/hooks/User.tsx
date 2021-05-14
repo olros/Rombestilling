@@ -95,8 +95,9 @@ export const useCreateUser = (): UseMutationResult<RequestResponse, RequestRespo
 export const useUpdateUser = (): UseMutationResult<User, RequestResponse, { userId: string; user: Partial<User> }, unknown> => {
   const queryClient = useQueryClient();
   return useMutation(({ userId, user }) => API.updateUser(userId, user), {
-    onSuccess: () => {
+    onSuccess: (user) => {
       queryClient.invalidateQueries([USER_QUERY_KEY, undefined]);
+      queryClient.invalidateQueries([USER_QUERY_KEY, user.id]);
       queryClient.invalidateQueries(USERS_QUERY_KEY);
     },
   });

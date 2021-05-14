@@ -76,7 +76,7 @@ const Profile = () => {
   const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
   const bookings = { value: 'bookings', label: 'Kalender', icon: PostsIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
-  const tabs = [reservationsTab, bookings, ...(userId ? [] : [editTab])];
+  const tabs = [reservationsTab, bookings, editTab];
   const [tab, setTab] = useState(reservationsTab.value);
   const navigate = useNavigate();
 
@@ -154,7 +154,7 @@ const Profile = () => {
             </Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <Paper>
-                <EditProfile user={user} />
+                <EditProfile isAdmin={isUserAdmin(signedInUser)} user={user} />
               </Paper>
             </Collapse>
           </div>

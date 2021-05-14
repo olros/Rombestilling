@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSnackbar } from 'hooks/Snackbar';
 import { useUpdateUser, useChangePassword, useLogout, useDeleteUser } from 'hooks/User';
 import { User } from 'types/Types';
-import { useState } from 'react';
+import { parseISO } from 'date-fns';
+import { dateAsUTC } from 'utils';
 
 // Material UI
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 // Project components
 import Paper from 'components/layout/Paper';
 import VerifyDialog from 'components/layout/VerifyDialog';
+import DatePicker from 'components/inputs/DatePicker';
 import TextField from 'components/inputs/TextField';
 import SubmitButton from 'components/inputs/SubmitButton';
 import { Button } from '@material-ui/core';
@@ -37,9 +40,12 @@ const useStyles = makeStyles((theme) => ({
 
 export type EditProfileProps = {
   user: User;
+  isAdmin?: boolean;
 };
 
-type UserEditData = Pick<User, 'firstName' | 'surname' | 'email' | 'image' | 'phoneNumber'>;
+type UserEditData = Pick<User, 'firstName' | 'surname' | 'email' | 'image' | 'phoneNumber'> & {
+  expirationDate: Date;
+};
 
 type ChangePasswordData = {
   oldPassword: string;
@@ -47,7 +53,7 @@ type ChangePasswordData = {
   repeatNewPassword: string;
 };
 
-const EditProfile = ({ user }: EditProfileProps) => {
+const EditProfile = ({ user, isAdmin = false }: EditProfileProps) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const { getValues, register: passwordRegister, formState: passwordFormState, handleSubmit: passwordHandleSubmit } = useForm<ChangePasswordData>();
@@ -56,18 +62,19 @@ const EditProfile = ({ user }: EditProfileProps) => {
   const logout = useLogout();
   const deleteUser = useDeleteUser();
   const showSnackbar = useSnackbar();
-  const { register, formState, handleSubmit, setValue, watch } = useForm<UserEditData>({
+  const { control, register, formState, handleSubmit, setValue, watch } = useForm<UserEditData>({
     defaultValues: {
       firstName: user.firstName,
       surname: user.surname,
       email: user.email,
       phoneNumber: user.phoneNumber,
       image: user.image,
+      expirationDate: parseISO(user.expirationDate),
     },
   });
   const submit = async (data: UserEditData) => {
     updateUser.mutate(
-      { userId: user.id, user: { ...data } },
+      { userId: user.id, user: { ...data, expirationDate: dateAsUTC(data.expirationDate).toJSON() } },
       {
         onSuccess: () => {
           showSnackbar('Profilen ble oppdatert', 'success');
@@ -146,6 +153,9 @@ const EditProfile = ({ user }: EditProfileProps) => {
           variant='outlined'
           watch={watch}
         />
+        {isAdmin && (
+          <DatePicker control={control} disabled={updateUser.isLoading} formState={formState} fullWidth label='Aktiv til' name='expirationDate' type='date' />
+        )}
         <div className={classes.btnRow}>
           <SubmitButton disabled={updateUser.isLoading} formState={formState}>
             Oppdater bruker

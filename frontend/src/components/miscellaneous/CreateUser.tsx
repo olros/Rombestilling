@@ -4,6 +4,7 @@ import { UserCreate } from 'types/Types';
 import { useSnackbar } from 'hooks/Snackbar';
 import { useCreateUser, useBatchCreateUser } from 'hooks/User';
 import { EMAIL_REGEX } from 'constant';
+import { dateAsUTC } from 'utils';
 
 // Material UI Components
 import { makeStyles, Button, ButtonProps, Typography } from '@material-ui/core';
@@ -23,6 +24,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+type FormValues = Omit<UserCreate, 'expirationDate'> & {
+  expirationDate: Date | null;
+};
 type BatchFormValues = { file?: File };
 
 const CreateUser = ({ children, ...props }: ButtonProps) => {
@@ -31,7 +35,7 @@ const CreateUser = ({ children, ...props }: ButtonProps) => {
   const showSnackbar = useSnackbar();
   const createUser = useCreateUser();
   const batchCreateUser = useBatchCreateUser();
-  const { register, formState, handleSubmit, reset } = useForm<UserCreate>();
+  const { register, formState, handleSubmit, reset, control } = useForm<FormValues>();
   const {
     register: batchRegister,
     formState: batchFormState,
@@ -39,20 +43,22 @@ const CreateUser = ({ children, ...props }: ButtonProps) => {
     setValue: batchSetValue,
     watch: batchWatch,
     reset: batchReset,
-    control,
   } = useForm<BatchFormValues>();
 
-  const submit = async (data: UserCreate) => {
-    createUser.mutate(data, {
-      onSuccess: () => {
-        showSnackbar('Brukeren ble opprettet og har mottatt en epost med link for opprettelse av passord', 'success');
-        setOpen(false);
-        reset();
+  const submit = async (data: FormValues) => {
+    createUser.mutate(
+      { ...data, expirationDate: data.expirationDate ? dateAsUTC(data.expirationDate).toJSON() : undefined },
+      {
+        onSuccess: () => {
+          showSnackbar('Brukeren ble opprettet og har mottatt en epost med link for opprettelse av passord', 'success');
+          setOpen(false);
+          reset();
+        },
+        onError: (e) => {
+          showSnackbar(e.message, 'error');
+        },
       },
-      onError: (e) => {
-        showSnackbar(e.message, 'error');
-      },
-    });
+    );
   };
 
   const batchCreate = async (data: BatchFormValues) => {
@@ -120,7 +126,7 @@ const CreateUser = ({ children, ...props }: ButtonProps) => {
               <DatePicker
                 control={control}
                 disabled={createUser.isLoading}
-                formState={formState}
+                formState={batchFormState}
                 fullWidth
                 label='Aktiv til'
                 name='expirationDate'
