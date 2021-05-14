@@ -100,7 +100,6 @@ export const UserCalendar = ({ userId }: UserCalendarProps) => {
     toTimeBefore: endOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
   });
   const { data, isLoading } = useUserReservations(userId, filters);
-
   return <Calendar data={data} isLoading={isLoading} setFilters={setFilters} />;
 };
 
@@ -114,7 +113,6 @@ export const SectionCalendar = ({ sectionId }: SectionCalendarProps) => {
     toTimeBefore: endOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
   });
   const { data, isLoading } = useSectionReservations(sectionId, filters);
-
   return <Calendar data={data} isLoading={isLoading} sectionId={sectionId} setFilters={setFilters} />;
 };
 
@@ -195,7 +193,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
             {data.text}
           </Typography>
         </Appointments.Appointment>
-        {open && data.id && sectionId && (
+        {open && data.id && data.id !== NEW_APPOINTMENT.id && sectionId && (
           <ReservationInfoDialog onClose={() => setOpen(false)} open={open} reservationId={String(data.id)} sectionId={String(sectionId)} />
         )}
       </>
@@ -216,7 +214,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
   const ToolbarWithLoading = ({ children, ...restProps }: ToolbarWithLoadingProps) => (
     <div className={classes.toolbarRoot}>
       <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
-      <LinearProgress className={classes.progress} />
+      {isLoading && <LinearProgress className={classes.progress} />}
     </div>
   );
 
@@ -240,6 +238,41 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
   const isOverlap = (appointment: NewAppointmentType) =>
     reservations.some((reservation) => parseISO(reservation.fromTime) < appointment.endDate && parseISO(reservation.toTime) >= appointment.startDate);
 
+  const Cal = () => (
+    <Scheduler data={displayedReservations} firstDayOfWeek={1} locale='no-NB'>
+      <ViewState
+        currentDate={currentDate}
+        currentViewName={currentViewName}
+        onCurrentDateChange={setCurrentDate}
+        onCurrentViewNameChange={(newView) => setCurrentViewName(newView as ViewTypes)}
+      />
+      <DayView cellDuration={60} timeTableCellComponent={DayViewTableCell} />
+      <WeekView timeTableCellComponent={WeekViewTableCell} />
+      <MonthView />
+      <Toolbar rootComponent={ToolbarWithLoading} />
+      <ViewSwitcher />
+      <DateNavigator
+        openButtonComponent={({ text, onVisibilityToggle }) => (
+          <Button className={classes.button} onClick={onVisibilityToggle} variant='text'>
+            {text}
+          </Button>
+        )}
+      />
+      <EditingState
+        addedAppointment={addedAppointment}
+        onAddedAppointmentChange={(e) => addAppointment(e as NewAppointmentType)}
+        onCommitChanges={commitChanges}
+      />
+      <IntegratedEditing />
+      <Appointments appointmentComponent={Appointment} />
+      <DragDropProvider
+        allowDrag={(appointment) => Boolean(sectionId) && appointment.id === NEW_APPOINTMENT.id}
+        allowResize={(appointment) => Boolean(sectionId) && appointment.id === NEW_APPOINTMENT.id}
+      />
+      {currentViewName !== 'Month' && <AppointmentForm visible={false} />}
+    </Scheduler>
+  );
+
   return (
     <Paper className={classes.root} noPadding>
       {sectionId && (
@@ -247,38 +280,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
           {`${isTouchScreen ? 'Klikk' : 'Dobbelklikk'} på et tidspunkt for å opprette en reservasjon, dra på reservasjonen for å endre tiden.`}
         </Typography>
       )}
-      <Scheduler data={displayedReservations} firstDayOfWeek={1} locale='no-NB'>
-        <ViewState
-          currentDate={currentDate}
-          currentViewName={currentViewName}
-          onCurrentDateChange={setCurrentDate}
-          onCurrentViewNameChange={(newView) => setCurrentViewName(newView as ViewTypes)}
-        />
-        <DayView cellDuration={60} timeTableCellComponent={DayViewTableCell} />
-        <WeekView timeTableCellComponent={WeekViewTableCell} />
-        <MonthView />
-        <Toolbar {...(isLoading ? { rootComponent: ToolbarWithLoading } : null)} />
-        <ViewSwitcher />
-        <DateNavigator
-          openButtonComponent={({ text, onVisibilityToggle }) => (
-            <Button className={classes.button} onClick={onVisibilityToggle} variant='text'>
-              {text}
-            </Button>
-          )}
-        />
-        <EditingState
-          addedAppointment={addedAppointment}
-          onAddedAppointmentChange={(e) => addAppointment(e as NewAppointmentType)}
-          onCommitChanges={commitChanges}
-        />
-        <IntegratedEditing />
-        <Appointments appointmentComponent={Appointment} />
-        <DragDropProvider
-          allowDrag={(appointment) => Boolean(sectionId) && appointment.id === NEW_APPOINTMENT.id}
-          allowResize={(appointment) => Boolean(sectionId) && appointment.id === NEW_APPOINTMENT.id}
-        />
-        {currentViewName !== 'Month' && <AppointmentForm visible={false} />}
-      </Scheduler>
+      <Cal />
       <Slide direction='up' in={Boolean(addedAppointment)}>
         <Container className={classes.fixedBottom} maxWidth='md'>
           <Button fullWidth onClick={() => setReservationOpen(true)}>
