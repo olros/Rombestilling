@@ -59,8 +59,13 @@ class UserServiceImpl(
             fileReader = BufferedReader(InputStreamReader(file.inputStream))
             val csvToBean = createCSVToBean(fileReader)
             val list: List<UserRegistrationDto> = csvToBean.parse()
+            val list2 = mutableListOf<User>()
             list.forEach {
-                registerUser(it)
+                list2.add(modelMapper.map(it, User::class.java))
+            }
+            userRepository.saveAll(list2)
+            list2.forEach{
+                forgotPassword(ForgotPassword(it.email))
             }
         } catch (ex: Exception) {
             throw Exception("Something went wrong during parsing users", ex)
@@ -73,7 +78,6 @@ class UserServiceImpl(
     private fun createCSVToBean(fileReader: BufferedReader?): CsvToBean<UserRegistrationDto> =
         CsvToBeanBuilder<UserRegistrationDto>(fileReader)
             .withType(UserRegistrationDto::class.java)
-            .withSkipLines(1)
             .withIgnoreLeadingWhiteSpace(true)
             .build()
 
