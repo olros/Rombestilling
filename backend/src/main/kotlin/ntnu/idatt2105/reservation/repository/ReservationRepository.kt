@@ -26,9 +26,6 @@ interface ReservationRepository : JpaRepository<Reservation, UUID>, QuerydslPred
     override fun customize(bindings: QuerydslBindings, reservation: QReservation) {
         bindings.bind(reservation.fromTimeAfter).first { path, value -> reservation.fromTime.after(value) }
         bindings.bind(reservation.toTimeBefore).first { path, value -> reservation.toTime.before(value) }
-
-
-
     }
 
 
