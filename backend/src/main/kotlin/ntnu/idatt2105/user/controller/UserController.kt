@@ -1,5 +1,7 @@
 package ntnu.idatt2105.user.controller
 
+import com.querydsl.core.types.Predicate
+import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.service.ReservationService
 import ntnu.idatt2105.user.dto.DetailedUserDto
 import ntnu.idatt2105.user.dto.UserDto
@@ -9,10 +11,10 @@ import ntnu.idatt2105.user.service.UserService
 import ntnu.idatt2105.util.PaginationConstants
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.querydsl.binding.QuerydslPredicate
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -54,7 +56,9 @@ class UserController(val userService: UserService, val reservationService: Reser
         ResponseEntity.ok(userService.deleteUser(userId))
 
     @GetMapping("me/reservations/")
-    fun getUserReservations(@PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
-                            @AuthenticationPrincipal principal: UserDetailsImpl)=
-           reservationService.getUserReservation(principal.getId(), pageable)
+    fun getUserReservations(
+            @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
+            @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
+            @AuthenticationPrincipal principal: UserDetailsImpl)=
+           reservationService.getUserReservation(principal.getId(), pageable, predicate)
 }

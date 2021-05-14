@@ -24,6 +24,7 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import java.time.ZonedDateTime
 
 
 @SpringBootTest
@@ -81,6 +82,17 @@ class ReservationControllerTest {
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].text", Matchers.hasItem(reservation.text)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].text", Matchers.hasItem(newReservation.text)))
+
+    }
+
+
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test reservation controller GET returns OK and reservation`() {
+        this.mvc.perform(MockMvcRequestBuilders.get("${getURL(reservation.section!!)}${reservation.id}/"))
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.text").value(reservation.text))
 
     }
 
@@ -175,6 +187,25 @@ class ReservationControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(reservationCreate)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest)
+
+    }
+
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test reservation controller GET all returns OK and page of reservation for given section with time filter`() {
+        var newReservation = ReservationFactory().`object`
+        userRepository.save(newReservation.user!!)
+        sectionRepository.save(newReservation.section!!)
+        newReservation.fromTime = ZonedDateTime.now().minusDays(50)
+        newReservation.toTime = ZonedDateTime.now().minusDays(25)
+        newReservation = reservationRepository.save(newReservation)
+        this.mvc.perform(MockMvcRequestBuilders.get(getURL(reservation.section!!))
+                .param("toTimeBefore", reservation.toTime?.plusHours(1).toString())
+                .param("fromTimeAfter", reservation.fromTime?.minusHours(1).toString()))
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].text", Matchers.hasItem(reservation.text)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].text", Matchers.not(newReservation.text)))
 
     }
 }

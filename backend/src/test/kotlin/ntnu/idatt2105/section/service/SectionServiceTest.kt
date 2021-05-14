@@ -11,23 +11,22 @@ import ntnu.idatt2105.util.SectionType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.any
 import org.mockito.Mockito.lenient
 import org.mockito.Spy
+import org.mockito.junit.jupiter.MockitoExtension
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import java.util.*
 
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@ExtendWith(MockitoExtension::class)
 class SectionServiceTest {
 
     @InjectMocks
@@ -51,7 +50,7 @@ class SectionServiceTest {
 
     @Test
     fun `test section service get all returns page of sections`(){
-        val testList: List<Section> =mutableListOf(section)
+        val testList: List<Section> = mutableListOf(section)
         val sections: Page<Section> = PageImpl(testList, JpaUtils().getDefaultPageable(), testList.size.toLong())
         lenient().`when`(sectionRepository.findAll(any(Pageable::class.java))).thenReturn(sections)
         assert(sectionService.getAllSections(JpaUtils().getDefaultPageable()).content.isNotEmpty())

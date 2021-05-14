@@ -1,16 +1,13 @@
 package ntnu.idatt2105.reservation.service
 
+import com.querydsl.core.types.Predicate
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.factories.ReservationFactory
-import ntnu.idatt2105.factories.SectionFactory
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
-import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
-import ntnu.idatt2105.section.service.SectionServiceImpl
 import ntnu.idatt2105.user.model.User
-import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.user.service.UserService
 import ntnu.idatt2105.util.JpaUtils
 import org.junit.jupiter.api.BeforeEach
@@ -21,17 +18,18 @@ import org.mockito.Mockito
 import org.mockito.Spy
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.mockito.Mockito.any
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.Mockito.any
+import org.springframework.data.domain.Pageable
 import java.util.*
 
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@ExtendWith(MockitoExtension::class)
 class ReservationServiceTest {
 
 
@@ -70,11 +68,13 @@ class ReservationServiceTest {
     @Test
     fun `test get all reservation gets a list of reservations`(){
         val page = JpaUtils().getDefaultPageable()
+        val predicate = JpaUtils().getEmptyPredicate()
         val testList: List<Reservation> = mutableListOf(reservation)
         val reservations: Page<Reservation> = PageImpl(testList, page, testList.size.toLong())
-        Mockito.lenient().`when`(reservationRepository.findReservationsBySectionId(reservation.section?.id!!, page)).thenReturn(reservations)
-        assertThat(reservationService.getAllReservation(reservation.section?.id!!,page).content.size).isEqualTo(testList.size)
+        Mockito.lenient().`when`(reservationRepository.findAll(any(Predicate::class.java), any(Pageable::class.java))).thenReturn(reservations)
+        assertThat(reservationService.getAllReservation(reservation.section?.id!!, page, predicate).content.size).isEqualTo(testList.size)
     }
+
 
     @Test
     fun `test create reservation creates a reservation`(){
