@@ -73,11 +73,11 @@ internal class UserServiceImplTest {
     fun `test get users returns all users`() {
         val users = IntRange(1, 4).map { userFactory.`object` }
         val expectedPage: Page<User> = PageImpl(users, JpaUtils().getDefaultPageable(), users.size.toLong())
-
-        `when`(userRepository.findAll(defaultPageable))
+        val predicate = JpaUtils().getEmptyPredicate()
+        `when`(userRepository.findAll(predicate, defaultPageable))
             .thenReturn(expectedPage)
 
-        val actualUsers = userService.getUsers(defaultPageable)
+        val actualUsers = userService.getUsers(defaultPageable, predicate)
 
         assertThat(actualUsers.size).isEqualTo(expectedPage.size)
         assertThat(actualUsers.content).doesNotContainNull()

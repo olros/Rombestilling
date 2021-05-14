@@ -6,6 +6,7 @@ import ntnu.idatt2105.reservation.service.ReservationService
 import ntnu.idatt2105.user.dto.DetailedUserDto
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
+import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.service.UserDetailsImpl
 import ntnu.idatt2105.user.service.UserService
 import ntnu.idatt2105.util.PaginationConstants
@@ -43,9 +44,11 @@ class UserController(val userService: UserService, val reservationService: Reser
         ResponseEntity.ok(userService.getUser(userId, mapTo=UserDto::class.java))
 
     @GetMapping
-    fun getUsers(@PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["firstName"], direction = Sort.Direction.ASC) pageable: Pageable
+    fun getUsers(
+            @QuerydslPredicate(root = User::class) predicate: Predicate,
+            @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["firstName"], direction = Sort.Direction.ASC) pageable: Pageable
     ) =
-        ResponseEntity(userService.getUsers(pageable), HttpStatus.OK)
+        ResponseEntity(userService.getUsers(pageable, predicate), HttpStatus.OK)
 
     @PutMapping("{userId}/")
     fun updateUser(@PathVariable userId: UUID, @Valid @RequestBody user: UserDto) =
