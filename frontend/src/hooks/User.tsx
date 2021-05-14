@@ -24,10 +24,9 @@ export const useIsAdmin = (userId?: string) => {
 export const useUsers = (filters?: any) => {
   return useInfiniteQuery<PaginationResponse<UserList>, RequestResponse>(
     [USERS_QUERY_KEY, filters],
-    ({ pageParam = 0 }) => API.getUsers({ ...filters, page: pageParam }),
+    ({ pageParam = 0 }) => API.getUsers({ sort: 'firstName,surname,ASC', ...filters, page: pageParam }),
     {
       getNextPageParam: getNextPaginationPage,
-      enabled: Boolean(filters.search),
     },
   );
 };
@@ -82,15 +81,20 @@ export const useIsAuthenticated = () => {
 };
 
 export const useCreateUser = (): UseMutationResult<RequestResponse, RequestResponse, UserCreate, unknown> => {
-  return useMutation((user) => API.createUser(user));
+  const queryClient = useQueryClient();
+  return useMutation((user) => API.createUser(user), {
+    onSuccess: () => {
+      queryClient.invalidateQueries(USERS_QUERY_KEY);
+    },
+  });
 };
 
 export const useUpdateUser = (): UseMutationResult<User, RequestResponse, { userId: string; user: Partial<User> }, unknown> => {
   const queryClient = useQueryClient();
   return useMutation(({ userId, user }) => API.updateUser(userId, user), {
-    onSuccess: (data) => {
+    onSuccess: () => {
+      queryClient.invalidateQueries([USER_QUERY_KEY, undefined]);
       queryClient.invalidateQueries(USERS_QUERY_KEY);
-      queryClient.setQueryData([USER_QUERY_KEY, null], data);
     },
   });
 };

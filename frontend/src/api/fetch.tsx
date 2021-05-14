@@ -8,19 +8,20 @@ type RequestMethodType = 'GET' | 'POST' | 'PUT' | 'DELETE';
 type FetchProps = {
   method: RequestMethodType;
   url: string;
+  baseUrl?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: Record<string, unknown | any>;
   withAuth?: boolean;
-  file?: File | Blob;
+  formData?: FormData;
   refreshAccess?: boolean;
   tryAgain?: boolean;
 };
 
 // eslint-disable-next-line comma-spacing
-export const IFetch = <T,>({ method, url, data = {}, withAuth = true, refreshAccess = false, tryAgain = true, file }: FetchProps): Promise<T> => {
-  const urlAddress = API_URL + url;
+export const IFetch = <T,>({ method, baseUrl, url, data = {}, withAuth = true, refreshAccess = false, tryAgain = true, formData }: FetchProps): Promise<T> => {
+  const urlAddress = (baseUrl || API_URL) + url;
   const headers = new Headers();
-  if (!file) {
+  if (!formData) {
     headers.append('Content-Type', 'application/json');
   }
 
@@ -30,12 +31,12 @@ export const IFetch = <T,>({ method, url, data = {}, withAuth = true, refreshAcc
     headers.append('authorization', `Bearer ${getCookie(ACCESS_TOKEN)}`);
   }
 
-  return fetch(request(method, file ? url : urlAddress, headers, data, file)).then(async (response) => {
+  return fetch(request(method, urlAddress, headers, data, formData)).then(async (response) => {
     const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json') || !response.ok || response.json === undefined) {
       if (response.status === 401 && Boolean(getCookie(REFRESH_TOKEN)) && !refreshAccess && tryAgain) {
         await API.refreshAccessToken();
-        return IFetch<T>({ method, url, data, withAuth, file, tryAgain: false });
+        return IFetch<T>({ method, url, data, withAuth, formData, tryAgain: false });
       } else if (response.json) {
         return response.json().then((responseData: RequestResponse) => {
           throw responseData;
@@ -47,12 +48,10 @@ export const IFetch = <T,>({ method, url, data = {}, withAuth = true, refreshAcc
     return response.json().then((responseData: T) => responseData);
   });
 };
-const request = (method: RequestMethodType, url: string, headers: Headers, data: Record<string, unknown>, file?: File | Blob) => {
+const request = (method: RequestMethodType, url: string, headers: Headers, data: Record<string, unknown>, formData?: FormData) => {
   const getBody = () => {
-    if (file) {
-      const data = new FormData();
-      data.append('image', file);
-      return data;
+    if (formData) {
+      return formData;
     } else {
       return method !== 'GET' ? JSON.stringify(data) : undefined;
     }

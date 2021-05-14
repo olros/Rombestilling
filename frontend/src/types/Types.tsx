@@ -35,11 +35,9 @@ export type User = {
   }>;
 };
 
-export type UserList = Pick<User, 'id' | 'firstName' | 'surname' | 'email' | 'image'>;
+export type UserList = Pick<User, 'id' | 'firstName' | 'surname' | 'email' | 'image' | 'phoneNumber'>;
 
-export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname' | 'phoneNumber'> & {
-  password: string;
-};
+export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname' | 'phoneNumber'>;
 
 export type Section = {
   id: string;

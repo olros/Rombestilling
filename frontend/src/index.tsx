@@ -29,6 +29,7 @@ const Auth = lazy(() => import('containers/Auth'));
 const Profile = lazy(() => import('containers/Profile'));
 const Rooms = lazy(() => import('containers/Rooms'));
 const RoomDetails = lazy(() => import('containers/RoomDetails'));
+const Users = lazy(() => import('containers/Users'));
 
 type AuthRouteProps = {
   path: string;
@@ -107,6 +108,10 @@ const AppRoutes = () => {
       </AuthRoute>
       <Route element={<Auth />} path={`${URLS.LOGIN}*`} />
       <AuthRoute element={<Profile />} path={URLS.PROFILE} />
+      <AuthRoute onlyAdmin path={URLS.USERS}>
+        <Route element={<Profile />} path=':userId/*' />
+        <Route element={<Users />} path='' />
+      </AuthRoute>
 
       <Route element={<Http404 />} path='*' />
     </Routes>

@@ -24,13 +24,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     paddingTop: theme.spacing(2),
   },
-  btnGroup: {
-    display: 'grid',
-    gap: theme.spacing(1),
-    paddingTop: theme.spacing(1),
-    gridTemplateColumns: 'auto auto',
-  },
   button: {
+    paddingTop: theme.spacing(1),
     color: theme.palette.common.white,
     borderColor: theme.palette.common.white,
   },
@@ -74,14 +69,9 @@ const Landing = () => {
           Reserver et rom nå!
         </Typography>
         {!isAuthenticated && (
-          <div className={classes.btnGroup}>
-            <Button className={classes.button} component={Link} to={URLS.LOGIN} variant='outlined'>
-              Logg inn
-            </Button>
-            <Button className={classes.button} component={Link} to={URLS.SIGNUP} variant='outlined'>
-              Registrer deg
-            </Button>
-          </div>
+          <Button className={classes.button} component={Link} to={URLS.LOGIN} variant='outlined'>
+            Logg inn
+          </Button>
         )}
       </div>
     </Navigation>
