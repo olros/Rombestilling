@@ -21,11 +21,15 @@ class MethodArgumentInvalidHandler  {
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationExceptions(exception: MethodArgumentNotValidException): ResponseError? {
         val errorMessages: MutableMap<String, String?> = HashMap()
-        exception.bindingResult.fieldErrors.forEach(Consumer { error: FieldError ->
-            errorMessages[error.field] = error.defaultMessage
-        })
+        exception.bindingResult
+            .fieldErrors
+            .forEach { errorMessages[it.field] = it.defaultMessage }
 
-        val message = "One or more method arguments are invalid"
+        exception.bindingResult
+            .allErrors
+            .forEach { errorMessages["object"] += it.defaultMessage + ", " }
+
+        val message = "One or more arguments are invalid"
 
         return ResponseError.validationError(message, errorMessages)
     }

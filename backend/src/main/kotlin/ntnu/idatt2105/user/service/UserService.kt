@@ -1,5 +1,6 @@
 package ntnu.idatt2105.user.service
 
+import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.security.dto.ForgotPassword
 import ntnu.idatt2105.security.dto.ResetPasswordDto
 import ntnu.idatt2105.dto.response.Response
@@ -15,7 +16,7 @@ interface UserService {
     fun registerUser(user: UserRegistrationDto): UserDto
     fun registerUserBatch(file: MultipartFile): Response
     fun updateUser(id: UUID, user: UserDto): UserDto
-    fun getUsers(pageable: Pageable): Page<UserDto>
+    fun getUsers(pageable: Pageable, predicate: Predicate): Page<UserDto>
     fun forgotPassword(email: ForgotPassword)
     fun resetPassword(resetDto: ResetPasswordDto, id: UUID)
     fun <T> getUser(id: UUID, mapTo: Class<T>): T
