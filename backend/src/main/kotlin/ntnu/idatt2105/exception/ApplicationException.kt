@@ -20,13 +20,6 @@ class ApplicationException (propertiesConfig: PropertiesConfig) {
         private lateinit var propertiesConfig: PropertiesConfig
 
         /**
-         * Returns new RuntimeException based on template and args
-         */
-        fun throwException(messageTemplate: String, vararg args: String): RuntimeException {
-            return RuntimeException(format(messageTemplate, *args))
-        }
-
-        /**
          * Returns new RuntimeException based on EntityType, ExceptionType and args
          */
         fun throwException(
@@ -35,31 +28,6 @@ class ApplicationException (propertiesConfig: PropertiesConfig) {
             vararg args: String
         ): RuntimeException {
             val messageTemplate = getMessageTemplate(entityType, exceptionType)
-            return throwException(exceptionType, messageTemplate, *args)
-        }
-
-        /**
-         * Returns new RuntimeException based on EntityType, ExceptionType and args
-         */
-        fun throwExceptionWithId(
-            entityType: EntityType,
-            exceptionType: ExceptionType,
-            id: String,
-            vararg args: String
-        ): RuntimeException {
-            val messageTemplate = getMessageTemplate(entityType, exceptionType).plus(".").plus(id)
-            return throwException(exceptionType, messageTemplate, *args)
-        }
-
-        /**
-         * Returns new RuntimeException based on EntityType, ExceptionType, messageTemplate and args
-         */
-        fun throwExceptionWithTemplate(
-            entityType: EntityType?,
-            exceptionType: ExceptionType?,
-            messageTemplate: String,
-            vararg args: String
-        ): RuntimeException {
             return throwException(exceptionType, messageTemplate, *args)
         }
 

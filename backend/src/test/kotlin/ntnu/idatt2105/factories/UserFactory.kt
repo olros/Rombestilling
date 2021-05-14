@@ -2,6 +2,8 @@ package ntnu.idatt2105.factories
 
 
 import io.github.serpro69.kfaker.Faker
+import io.github.serpro69.kfaker.FakerConfig
+import io.github.serpro69.kfaker.create
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.model.UserBuilder
 import org.springframework.beans.factory.FactoryBean
@@ -13,12 +15,17 @@ import java.util.*
 
 class UserFactory : FactoryBean<User> {
 
-    private val faker = Faker()
+    private val config = FakerConfig.builder().create {
+        uniqueGeneratorRetryLimit = 10000
+    }
+
+    private val faker = Faker(config)
 
     private val encoder = BCryptPasswordEncoder()
 
     @Throws(Exception::class)
     override fun getObject(): User {
+        faker.unique.clearAll()
         faker.unique.configuration { enable(faker::internet) }
         faker.unique.configuration { enable(faker::name) }
         val userRole = RoleFactory().`object`
