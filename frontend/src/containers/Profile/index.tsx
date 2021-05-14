@@ -3,7 +3,7 @@ import Helmet from 'react-helmet';
 import { useParams, useNavigate } from 'react-router-dom';
 import classnames from 'classnames';
 import URLS from 'URLS';
-import { useUser, useLogout } from 'hooks/User';
+import { useUser, useLogout, useIsAdmin } from 'hooks/User';
 import { urlEncode } from 'utils';
 
 // Material UI Components
@@ -65,6 +65,7 @@ const useStyles = makeStyles((theme) => ({
 const Profile = () => {
   const classes = useStyles();
   const { userId }: { userId?: string } = useParams();
+  const { isAdmin, isLoading: isAdminLoading } = useIsAdmin();
   const { data: signedInUser } = useUser();
   const { data: user, isLoading, isError } = useUser(userId);
   const logout = useLogout();
@@ -82,6 +83,12 @@ const Profile = () => {
       navigate(`${URLS.USERS}${user.id}/${urlEncode(`${user.firstName} ${user.surname}`)}/`, { replace: true });
     }
   }, [user, signedInUser, navigate]);
+
+  useEffect(() => {
+    if (userId && !isAdminLoading && !isAdmin) {
+      navigate(URLS.LANDING, { replace: true });
+    }
+  }, [isAdmin, isAdminLoading, userId]);
 
   if (isError) {
     return <Http404 />;
