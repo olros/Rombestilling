@@ -25,7 +25,7 @@ class UserFactory : FactoryBean<User> {
         
         return UserBuilder(
             id=UUID.randomUUID(),
-            email=faker.internet.email(faker.name.neutralFirstName()),
+            email=faker.internet.email(),
             firstName=faker.name.firstName(),
             surname=faker.name.lastName(),
             password=encoder.encode(faker.rickAndMorty.locations()),
