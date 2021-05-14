@@ -3,7 +3,7 @@ name: CD - Backend
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 defaults:
