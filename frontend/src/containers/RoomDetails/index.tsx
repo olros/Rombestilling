@@ -64,11 +64,11 @@ const RoomDetails = () => {
   const { isAdmin } = useIsAdmin();
   const { id } = useParams();
   const { data, isLoading, isError } = useSectionById(id);
-  const calendarTab = { value: 'calendar', label: 'Kalender', icon: CalendarIcon };
   const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
+  const calendarTab = { value: 'calendar', label: 'Kalender', icon: CalendarIcon };
   const sectionsTab = { value: 'sections', label: 'Deler', icon: SectionsIcon };
-  const tabs = [calendarTab, reservationsTab, ...(data?.type === 'room' ? [sectionsTab] : [])];
-  const [tab, setTab] = useState(calendarTab.value);
+  const tabs = [reservationsTab, calendarTab, ...(data?.type === 'room' ? [sectionsTab] : [])];
+  const [tab, setTab] = useState(reservationsTab.value);
 
   if (isError) {
     return <Http404 />;
@@ -101,11 +101,11 @@ const RoomDetails = () => {
               <div className={classes.grid}>
                 <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
                 <div>
-                  <Collapse in={tab === calendarTab.value} mountOnEnter>
-                    <SectionCalendar sectionId={id} />
-                  </Collapse>
                   <Collapse in={tab === reservationsTab.value} mountOnEnter>
                     <SectionReservations sectionId={id} />
+                  </Collapse>
+                  <Collapse in={tab === calendarTab.value} mountOnEnter>
+                    <SectionCalendar sectionId={id} />
                   </Collapse>
                   <Collapse in={tab === sectionsTab.value} mountOnEnter>
                     <Paper className={classes.grid}>

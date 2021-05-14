@@ -66,8 +66,8 @@ const Profile = () => {
   const bookings = { value: 'bookings', label: 'Mine reservasjoner', icon: PostsIcon };
   const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
-  const tabs = [bookings, reservationsTab, editTab];
-  const [tab, setTab] = useState(bookings.value);
+  const tabs = [reservationsTab, bookings, editTab];
+  const [tab, setTab] = useState(reservationsTab.value);
 
   if (isError) {
     return <Http404 />;
@@ -99,11 +99,11 @@ const Profile = () => {
         <div className={classes.grid}>
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
           <div>
-            <Collapse in={tab === bookings.value} mountOnEnter>
-              <UserCalendar />
-            </Collapse>
             <Collapse in={tab === reservationsTab.value} mountOnEnter>
               <UserReservations />
+            </Collapse>
+            <Collapse in={tab === bookings.value} mountOnEnter>
+              <UserCalendar />
             </Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <Paper>
