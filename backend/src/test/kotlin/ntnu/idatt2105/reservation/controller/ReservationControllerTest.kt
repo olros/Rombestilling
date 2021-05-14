@@ -89,7 +89,6 @@ class ReservationControllerTest {
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test reservation controller GET returns OK and reservation`() {
-        println("${reservation.fromTime.toString()} hdsjfdsfdsfdsfdsjfdsfdsijfdslkjfdsfdlkjfds")
         this.mvc.perform(MockMvcRequestBuilders.get("${getURL(reservation.section!!)}${reservation.id}/"))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
