@@ -18,11 +18,16 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
+import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.http.MediaType
+import org.springframework.mail.SimpleMailMessage
+import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.test.context.support.WithMockUser
@@ -34,6 +39,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 import java.util.stream.Stream
+import javax.mail.internet.MimeMessage
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
@@ -58,6 +64,9 @@ class UserControllerTest {
     @Autowired
     private lateinit var userDetailsService: UserDetailsService
 
+    @SpyBean
+    private val mailSender: JavaMailSender? = null
+
     private lateinit var user: User
 
     private lateinit var adminUser: User
@@ -81,6 +90,12 @@ class UserControllerTest {
 
         userDetails = userDetailsService.loadUserByUsername(user.email)
         adminUserDetails = userDetailsService.loadUserByUsername(adminUser.email)
+
+        Mockito.doNothing().`when`<JavaMailSender>(mailSender).send(
+            ArgumentMatchers.any(
+                SimpleMailMessage::class.java
+            )
+        )
     }
 
     @AfterEach
