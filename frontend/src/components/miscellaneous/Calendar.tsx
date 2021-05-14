@@ -36,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
       maxHeight: 600,
     },
     '& div:first-child': {
-      overflowY: 'hidden',
       whiteSpace: 'break-spaces',
     },
     '& table': {
@@ -90,15 +89,17 @@ type Filters = {
   toTimeBefore: string;
 };
 
+const DEFAULT_FILTERS: Filters = {
+  fromTimeAfter: startOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
+  toTimeBefore: endOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
+};
+
 export type UserCalendarProps = {
   userId?: string;
 };
 
 export const UserCalendar = ({ userId }: UserCalendarProps) => {
-  const [filters, setFilters] = useState<Filters>({
-    fromTimeAfter: startOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
-    toTimeBefore: endOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
-  });
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const { data, isLoading } = useUserReservations(userId, filters);
   return <Calendar data={data} isLoading={isLoading} setFilters={setFilters} />;
 };
@@ -108,10 +109,7 @@ export type SectionCalendarProps = {
 };
 
 export const SectionCalendar = ({ sectionId }: SectionCalendarProps) => {
-  const [filters, setFilters] = useState<Filters>({
-    fromTimeAfter: startOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
-    toTimeBefore: endOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
-  });
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const { data, isLoading } = useSectionReservations(sectionId, filters);
   return <Calendar data={data} isLoading={isLoading} sectionId={sectionId} setFilters={setFilters} />;
 };
@@ -131,7 +129,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
   const classes = useStyles();
   const showSnackbar = useSnackbar();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [currentViewName, setCurrentViewName] = useState<ViewTypes>('Week');
+  const [currentViewName, setCurrentViewName] = useState<ViewTypes>('Day');
   const [addedAppointment, setAddedAppointment] = useState<AppointmentModel | undefined>();
   const [reservationOpen, setReservationOpen] = useState(false);
   const reservations = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
@@ -238,7 +236,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
   const isOverlap = (appointment: NewAppointmentType) =>
     reservations.some((reservation) => parseISO(reservation.fromTime) < appointment.endDate && parseISO(reservation.toTime) >= appointment.startDate);
 
-  const Cal = () => (
+  const ReactiveCalendar = () => (
     <Scheduler data={displayedReservations} firstDayOfWeek={1} locale='no-NB'>
       <ViewState
         currentDate={currentDate}
@@ -246,8 +244,8 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
         onCurrentDateChange={setCurrentDate}
         onCurrentViewNameChange={(newView) => setCurrentViewName(newView as ViewTypes)}
       />
-      <DayView cellDuration={60} timeTableCellComponent={DayViewTableCell} />
-      <WeekView timeTableCellComponent={WeekViewTableCell} />
+      <DayView cellDuration={60} endDayHour={20} startDayHour={6} timeTableCellComponent={DayViewTableCell} />
+      <WeekView endDayHour={20} startDayHour={6} timeTableCellComponent={WeekViewTableCell} />
       <MonthView />
       <Toolbar rootComponent={ToolbarWithLoading} />
       <ViewSwitcher />
@@ -280,7 +278,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
           {`${isTouchScreen ? 'Klikk' : 'Dobbelklikk'} på et tidspunkt for å opprette en reservasjon, dra på reservasjonen for å endre tiden.`}
         </Typography>
       )}
-      <Cal />
+      <ReactiveCalendar />
       <Slide direction='up' in={Boolean(addedAppointment)}>
         <Container className={classes.fixedBottom} maxWidth='md'>
           <Button fullWidth onClick={() => setReservationOpen(true)}>
