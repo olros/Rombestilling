@@ -7,7 +7,7 @@ import { useSnackbar } from 'hooks/Snackbar';
 // Material UI Components
 import { makeStyles } from '@material-ui/core/styles';
 import { ButtonProps } from '@material-ui/core/Button';
-import { Button, FormHelperText, List, ListItem, ListItemSecondaryAction } from '@material-ui/core';
+import { Button, FormHelperText, List, ListItem, ListItemText, ListItemSecondaryAction } from '@material-ui/core';
 
 // Icons
 import DeleteIcon from '@material-ui/icons/DeleteOutlineRounded';
@@ -36,79 +36,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1, 0, 2),
   },
 }));
-
-export type ImageUploadProps = ButtonProps &
-  Pick<UseFormReturn, 'formState'> & {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    watch: UseFormWatch<any>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setValue: UseFormSetValue<any>;
-    name: string;
-    register: UseFormRegisterReturn;
-    label?: string;
-  };
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const ImageUpload = forwardRef(({ register, watch, setValue, name, formState, label = 'Last opp bilder', ...props }: ImageUploadProps, ref) => {
-  const classes = useStyles();
-  const showSnackbar = useSnackbar();
-  const images: Array<{ url: string }> = watch(name);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const upload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      setIsLoading(true);
-      try {
-        const data = await Promise.all(Array.from(files).map((file) => API.uploadFile(file)));
-        setValue(name, [
-          ...(images || []),
-          ...data.map((file) => ({
-            url: file.data.display_url,
-          })),
-        ]);
-        showSnackbar('Bildet ble lagt til', 'info');
-      } catch (e) {
-        showSnackbar(e.detail, 'error');
-      }
-      setIsLoading(false);
-    }
-  };
-
-  const removeImage = async (i: number) => {
-    if (images) {
-      setValue(name, images.slice(0, i).concat(images.slice(i + 1, images.length)));
-    }
-  };
-
-  return (
-    <div className={classes.root}>
-      <List className={classes.root}>
-        {images?.map((image, i) => (
-          <ListItem component={Paper} key={i} noPadding>
-            <img className={classes.img} src={image.url} />
-            <ListItemSecondaryAction>
-              <VerifyDialog iconButton onConfirm={() => removeImage(i)} titleText='Fjern bilde'>
-                <DeleteIcon className={classes.remove} />
-              </VerifyDialog>
-            </ListItemSecondaryAction>
-          </ListItem>
-        ))}
-      </List>
-      <div>
-        <input hidden {...register} />
-        <input accept='image/*' hidden id='file-upload-button' multiple onChange={upload} type='file' />
-        <label htmlFor='file-upload-button'>
-          <Button className={classes.button} color='primary' component='span' disabled={isLoading} fullWidth variant='contained' {...props}>
-            {label}
-          </Button>
-        </label>
-      </div>
-      {Boolean(formState.errors[name]) && <FormHelperText error>{formState.errors[name]?.message}</FormHelperText>}
-    </div>
-  );
-});
-
-ImageUpload.displayName = 'ImageUpload';
 
 export type SingleImageUploadProps = ButtonProps &
   Pick<UseFormReturn, 'formState'> & {
@@ -180,3 +107,62 @@ export const SingleImageUpload = forwardRef(
 );
 
 SingleImageUpload.displayName = 'SingleImageUpload';
+
+export type SingleFileSelectProps = ButtonProps &
+  Pick<UseFormReturn, 'formState'> & {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    watch: UseFormWatch<any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setValue: UseFormSetValue<any>;
+    name: string;
+    register: UseFormRegisterReturn;
+    label?: string;
+    gutters?: boolean;
+  };
+
+export const SingleFileSelect = forwardRef(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ({ register, watch, setValue, name, formState, label = 'Last opp fil', gutters, ...props }: SingleFileSelectProps, ref) => {
+    const classes = useStyles();
+    const file: File | undefined = watch(name);
+
+    const upload = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        setValue(name, file);
+      }
+    };
+
+    const removeFile = () => setValue(name, undefined);
+
+    return (
+      <div className={classnames(classes.root, gutters && classes.gutters)}>
+        {file ? (
+          <List className={classes.root}>
+            <ListItem component={Paper} noPadding>
+              <ListItemText primary={file.name} />
+              <ListItemSecondaryAction>
+                <VerifyDialog iconButton onConfirm={removeFile} titleText='Fjern fil'>
+                  <DeleteIcon className={classes.remove} />
+                </VerifyDialog>
+              </ListItemSecondaryAction>
+            </ListItem>
+          </List>
+        ) : (
+          <div>
+            <input hidden {...register} />
+            <input accept='.csv' hidden id='csv-upload-button' onChange={upload} type='file' />
+            <label htmlFor='csv-upload-button'>
+              <Button className={classes.button} color='primary' component='span' fullWidth variant='contained' {...props}>
+                {label}
+              </Button>
+            </label>
+          </div>
+        )}
+        {Boolean(formState.errors[name]) && <FormHelperText error>{formState.errors[name]?.message}</FormHelperText>}
+      </div>
+    );
+  },
+);
+
+SingleFileSelect.displayName = 'SingleFileUpload';

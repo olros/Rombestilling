@@ -80,6 +80,15 @@ export const useIsAuthenticated = () => {
   return typeof getCookie(REFRESH_TOKEN) !== 'undefined';
 };
 
+export const useBatchCreateUser = (): UseMutationResult<RequestResponse, RequestResponse, File, unknown> => {
+  const queryClient = useQueryClient();
+  return useMutation((file) => API.batchAddUser(file), {
+    onSuccess: () => {
+      queryClient.invalidateQueries(USERS_QUERY_KEY);
+    },
+  });
+};
+
 export const useCreateUser = (): UseMutationResult<RequestResponse, RequestResponse, UserCreate, unknown> => {
   const queryClient = useQueryClient();
   return useMutation((user) => API.createUser(user), {

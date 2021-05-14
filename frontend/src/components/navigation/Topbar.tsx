@@ -81,7 +81,6 @@ export type TopBarItemProps = {
 
 const TopBarItem = ({ text, to }: TopBarItemProps) => {
   const classes = useStyles({});
-  const partial = useMemo(() => location.pathname.substr(0, to.length) === to, [location.pathname, to]);
   const equal = useMemo(() => location.pathname === to, [location.pathname, to]);
   return (
     <Button
@@ -90,7 +89,7 @@ const TopBarItem = ({ text, to }: TopBarItemProps) => {
       component={Link}
       onClick={equal ? () => window.location.reload() : undefined}
       to={to}
-      variant={partial ? 'outlined' : 'text'}>
+      variant={equal ? 'outlined' : 'text'}>
       {text}
     </Button>
   );
