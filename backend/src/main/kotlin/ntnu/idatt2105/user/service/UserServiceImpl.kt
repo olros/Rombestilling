@@ -2,6 +2,7 @@ package ntnu.idatt2105.user.service
 
 import com.opencsv.bean.CsvToBean
 import com.opencsv.bean.CsvToBeanBuilder
+import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
@@ -107,8 +108,8 @@ class UserServiceImpl(
         return userRepository.existsByEmail(email)
     }
 
-    override fun getUsers(pageable: Pageable): Page<UserDto> =
-        userRepository.findAll(pageable).map { user -> modelMapper.map(user, UserDto::class.java) }
+    override fun getUsers(pageable: Pageable, predicate: Predicate): Page<UserDto> =
+        userRepository.findAll(predicate, pageable).map { user -> modelMapper.map(user, UserDto::class.java) }
 
     override fun <T> getUser(id: UUID, mapTo: Class<T>): T {
         val user = getUserById(id)

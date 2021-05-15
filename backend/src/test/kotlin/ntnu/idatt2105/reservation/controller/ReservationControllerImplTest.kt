@@ -3,7 +3,6 @@ package ntnu.idatt2105.reservation.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.factories.ReservationFactory
-import ntnu.idatt2105.factories.SectionFactory
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
@@ -11,6 +10,7 @@ import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
 import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.repository.UserRepository
+import ntnu.idatt2105.util.ReservationConstants
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -24,12 +24,13 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import java.time.LocalTime
 import java.time.ZonedDateTime
 
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ReservationControllerTest {
+class ReservationControllerImplTest {
 
     private fun getURL(section: Section) = "/sections/${section.id}/reservations/"
 
@@ -104,9 +105,11 @@ class ReservationControllerTest {
         sectionRepository.save(newReservation.section!!)
         val reservationCreate = ReservationCreateDto(newReservation.user?.id,
                 newReservation.section?.id,
-                reservation.fromTime?.plusHours(10),
-                reservation.toTime?.plusHours(20),
-                reservation.text, reservation.nrOfPeople)
+                reservation.fromTime?.plusDays(1),
+                reservation.toTime?.plusDays(1),
+                reservation.text,
+                reservation.nrOfPeople)
+
         this.mvc.perform(MockMvcRequestBuilders.post(getURL(reservation.section!!))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(reservationCreate)))
@@ -207,5 +210,121 @@ class ReservationControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].text", Matchers.hasItem(reservation.text)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].text", Matchers.not(newReservation.text)))
 
+    }
+
+    @Test
+    @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test that creating a reservation when from time is in the past returns http 400`() {
+        val newReservation = ReservationFactory().`object`
+        userRepository.save(newReservation.user!!)
+        sectionRepository.save(newReservation.section!!)
+
+        val reservationStartingInThePast = newReservation.copy(fromTime = ZonedDateTime.now().minusDays(1))
+        val reservationCreateRequest = modelMapper.map(reservationStartingInThePast, ReservationCreateDto::class.java)
+
+        mvc.perform(MockMvcRequestBuilders.post(getURL(reservation.section!!))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(reservationCreateRequest)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test that creating a reservation when from time is before 0600 returns http 400`() {
+        val newReservation = ReservationFactory().`object`
+        userRepository.save(newReservation.user!!)
+        sectionRepository.save(newReservation.section!!)
+
+        val reservationStartingInThePast = newReservation.copy(fromTime = reservation.fromTime?.with(LocalTime.of(5, 0)))
+        val reservationCreateRequest = modelMapper.map(reservationStartingInThePast, ReservationCreateDto::class.java)
+
+        mvc.perform(MockMvcRequestBuilders.post(getURL(reservation.section!!))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(reservationCreateRequest)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test that creating a reservation when from time is after 2000 returns http 400`() {
+        val newReservation = ReservationFactory().`object`
+        userRepository.save(newReservation.user!!)
+        sectionRepository.save(newReservation.section!!)
+
+        val reservationStartingInThePast = newReservation.copy(fromTime = reservation.fromTime?.with(LocalTime.of(21, 0)))
+        val reservationCreateRequest = modelMapper.map(reservationStartingInThePast, ReservationCreateDto::class.java)
+
+        mvc.perform(MockMvcRequestBuilders.post(getURL(reservation.section!!))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(reservationCreateRequest)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    @WithMockUser(roles = [RoleType.USER])
+    fun `test that creating a reservation when from time is more than max months in the future as user returns http 400`() {
+        val newReservation = ReservationFactory().`object`
+        userRepository.save(newReservation.user!!)
+        sectionRepository.save(newReservation.section!!)
+
+        val reservationStartingInThePast = newReservation.copy(
+            fromTime = reservation.fromTime?.plusMonths(ReservationConstants.MAX_MONTHS_FOR_USER_RESERVING_IN_FUTURE)
+        )
+        val reservationCreateRequest = modelMapper.map(reservationStartingInThePast, ReservationCreateDto::class.java)
+
+        mvc.perform(MockMvcRequestBuilders.post(getURL(reservation.section!!))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(reservationCreateRequest)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test that creating a reservation when from time is more than max months in the future as admin returns http 400`() {
+        val newReservation = ReservationFactory().`object`
+        userRepository.save(newReservation.user!!)
+        sectionRepository.save(newReservation.section!!)
+
+        val reservationStartingInThePast = newReservation.copy(
+            fromTime = reservation.fromTime?.plusMonths(ReservationConstants.MAX_MONTHS_FOR_ADMIN_RESERVING_IN_FUTURE + 1)
+        )
+        val reservationCreateRequest = modelMapper.map(reservationStartingInThePast, ReservationCreateDto::class.java)
+
+        mvc.perform(MockMvcRequestBuilders.post(getURL(reservation.section!!))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(reservationCreateRequest)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test that creating a reservation when from time is before end time returns http 400`() {
+        val newReservation = ReservationFactory().`object`
+        userRepository.save(newReservation.user!!)
+        sectionRepository.save(newReservation.section!!)
+
+        val reservationWithNegatedTimeInterval = newReservation.copy(fromTime = reservation.toTime, toTime = reservation.fromTime)
+        val reservationCreateRequest = modelMapper.map(reservationWithNegatedTimeInterval, ReservationCreateDto::class.java)
+
+        mvc.perform(MockMvcRequestBuilders.post(getURL(reservation.section!!))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(reservationCreateRequest)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test that creating a reservation when time interval is greater than maximum allowed duration returns http 400`() {
+        val newReservation = ReservationFactory().`object`
+        userRepository.save(newReservation.user!!)
+        sectionRepository.save(newReservation.section!!)
+
+        val reservationWithLongerThanMaxDuration = newReservation.copy(toTime = reservation.toTime?.withHour(ReservationConstants.MAX_DURATION + 1))
+        val reservationCreateRequest = modelMapper.map(reservationWithLongerThanMaxDuration, ReservationCreateDto::class.java)
+
+        mvc.perform(MockMvcRequestBuilders.post(getURL(reservation.section!!))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(reservationCreateRequest)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 }

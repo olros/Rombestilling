@@ -45,7 +45,7 @@ import java.util.stream.Stream
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class UserControllerTest {
+class UserControllerImplTest {
 
     private val URI = "/users/"
 
@@ -123,6 +123,58 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
+    }
+
+
+    @Test
+    @WithMockUser(value = "spring")
+    fun `test list users as admin returns all users with serach filter on email`() {
+        val length = user.email.length
+        mockMvc.perform(
+                get(URI)
+                        .param("search", user.email.substring(0, length -1))
+                        .with(user(adminUserDetails))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
+    }
+
+    @Test
+    @WithMockUser(value = "spring")
+    fun `test list users as admin returns all users with serach filter on surname`() {
+        val length = user.surname.length
+        mockMvc.perform(
+                get(URI)
+                        .param("search", user.surname.substring(0, length -1))
+                        .with(user(adminUserDetails))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
+    }
+
+    @Test
+    @WithMockUser(value = "spring")
+    fun `test list users as admin returns all users with serach filter on firstName`() {
+        val length = user.firstName.length
+        mockMvc.perform(
+                get(URI)
+                        .param("search", user.firstName.substring(0, length -1))
+                        .with(user(adminUserDetails))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
+    }
+    @Test
+    @WithMockUser(value = "spring")
+    fun `test list users as admin returns all users with search filter on phoneNumber`() {
+        val length = user.phoneNumber.length
+        mockMvc.perform(
+                get(URI)
+                        .param("search", user.phoneNumber.substring(0, length -1))
+                        .with(user(adminUserDetails))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
     }
 
     @Test

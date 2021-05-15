@@ -3,8 +3,9 @@ import { InfiniteData } from 'react-query';
 import { Reservation, PaginationResponse } from 'types/Types';
 import { useUserReservations, useSectionReservations } from 'hooks/Reservation';
 import { useSnackbar } from 'hooks/Snackbar';
-import { parseISO, endOfWeek, startOfWeek, endOfDay, startOfDay, endOfMonth, startOfMonth } from 'date-fns';
-import { formatTime } from 'utils';
+import { useUser } from 'hooks/User';
+import { parseISO, endOfWeek, startOfWeek, endOfDay, startOfDay, endOfMonth, startOfMonth, getHours, getMinutes, isAfter, isBefore, addMonths } from 'date-fns';
+import { formatTime, isUserAdmin } from 'utils';
 import { ViewState, AppointmentModel, EditingState, IntegratedEditing, ChangeSet, SchedulerDateTime } from '@devexpress/dx-react-scheduler';
 import {
   Scheduler,
@@ -36,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
       maxHeight: 600,
     },
     '& div:first-child': {
-      overflowY: 'hidden',
       whiteSpace: 'break-spaces',
     },
     '& table': {
@@ -86,8 +86,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Filters = {
-  fromTime: string;
-  toTime: string;
+  fromTimeAfter: string;
+  toTimeBefore: string;
+};
+
+const DEFAULT_FILTERS: Filters = {
+  fromTimeAfter: startOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
+  toTimeBefore: endOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
 };
 
 export type UserCalendarProps = {
@@ -95,12 +100,8 @@ export type UserCalendarProps = {
 };
 
 export const UserCalendar = ({ userId }: UserCalendarProps) => {
-  const [filters, setFilters] = useState<Filters>({
-    fromTime: startOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
-    toTime: endOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
-  });
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const { data, isLoading } = useUserReservations(userId, filters);
-
   return <Calendar data={data} isLoading={isLoading} setFilters={setFilters} />;
 };
 
@@ -109,12 +110,8 @@ export type SectionCalendarProps = {
 };
 
 export const SectionCalendar = ({ sectionId }: SectionCalendarProps) => {
-  const [filters, setFilters] = useState<Filters>({
-    fromTime: startOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
-    toTime: endOfWeek(new Date(), { weekStartsOn: 1 }).toJSON(),
-  });
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const { data, isLoading } = useSectionReservations(sectionId, filters);
-
   return <Calendar data={data} isLoading={isLoading} sectionId={sectionId} setFilters={setFilters} />;
 };
 
@@ -132,8 +129,9 @@ const NEW_APPOINTMENT = { title: 'Ny reservasjon', id: 'new-appointment' };
 const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => {
   const classes = useStyles();
   const showSnackbar = useSnackbar();
+  const { data: user } = useUser();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [currentViewName, setCurrentViewName] = useState<ViewTypes>('Week');
+  const [currentViewName, setCurrentViewName] = useState<ViewTypes>('Day');
   const [addedAppointment, setAddedAppointment] = useState<AppointmentModel | undefined>();
   const [reservationOpen, setReservationOpen] = useState(false);
   const reservations = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
@@ -149,11 +147,11 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
 
   useEffect(() => {
     if (currentViewName === 'Day') {
-      setFilters({ fromTime: startOfDay(currentDate).toJSON(), toTime: endOfDay(currentDate).toJSON() });
+      setFilters({ fromTimeAfter: startOfDay(currentDate).toJSON(), toTimeBefore: endOfDay(currentDate).toJSON() });
     } else if (currentViewName === 'Week') {
-      setFilters({ fromTime: startOfWeek(currentDate, { weekStartsOn: 1 }).toJSON(), toTime: endOfWeek(currentDate, { weekStartsOn: 1 }).toJSON() });
+      setFilters({ fromTimeAfter: startOfWeek(currentDate, { weekStartsOn: 1 }).toJSON(), toTimeBefore: endOfWeek(currentDate, { weekStartsOn: 1 }).toJSON() });
     } else {
-      setFilters({ fromTime: startOfMonth(currentDate).toJSON(), toTime: endOfMonth(currentDate).toJSON() });
+      setFilters({ fromTimeAfter: startOfMonth(currentDate).toJSON(), toTimeBefore: endOfMonth(currentDate).toJSON() });
     }
   }, [setFilters, currentViewName, currentDate]);
 
@@ -195,7 +193,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
             {data.text}
           </Typography>
         </Appointments.Appointment>
-        {open && data.id && sectionId && (
+        {open && data.id && data.id !== NEW_APPOINTMENT.id && sectionId && (
           <ReservationInfoDialog onClose={() => setOpen(false)} open={open} reservationId={String(data.id)} sectionId={String(sectionId)} />
         )}
       </>
@@ -216,7 +214,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
   const ToolbarWithLoading = ({ children, ...restProps }: ToolbarWithLoadingProps) => (
     <div className={classes.toolbarRoot}>
       <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
-      <LinearProgress className={classes.progress} />
+      {isLoading && <LinearProgress className={classes.progress} />}
     </div>
   );
 
@@ -230,15 +228,60 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
     if (!sectionId) {
       return;
     }
-    if (isOverlap(newAppointment)) {
+    if (isOutsideValidDates(newAppointment)) {
+      showSnackbar(`Tiden må være i fremtiden og maks ${isUserAdmin(user) ? '6' : '1'} måned frem i tid`, 'warning');
+    } else if (isOutsideValidTime(newAppointment)) {
+      showSnackbar('Tiden må være mellom kl 06.00 og kl 20.00', 'warning');
+    } else if (isOverlap(newAppointment)) {
       showSnackbar('Du kan ikke reservere en tid som overlapper med en annen tid', 'warning');
     } else {
       setAddedAppointment({ ...newAppointment, ...NEW_APPOINTMENT } as AppointmentModel);
     }
   };
 
+  const isOutsideValidDates = (appointment: NewAppointmentType) =>
+    isBefore(appointment.startDate, new Date()) || isAfter(appointment.endDate, addMonths(appointment.endDate, isUserAdmin(user) ? 6 : 1));
+
+  const isOutsideValidTime = (appointment: NewAppointmentType) =>
+    getHours(appointment.startDate) < 6 || (getHours(appointment.endDate) >= 20 && getMinutes(appointment.endDate) > 0);
+
   const isOverlap = (appointment: NewAppointmentType) =>
     reservations.some((reservation) => parseISO(reservation.fromTime) < appointment.endDate && parseISO(reservation.toTime) >= appointment.startDate);
+
+  const ReactiveCalendar = () => (
+    <Scheduler data={displayedReservations} firstDayOfWeek={1} locale='no-NB'>
+      <ViewState
+        currentDate={currentDate}
+        currentViewName={currentViewName}
+        onCurrentDateChange={setCurrentDate}
+        onCurrentViewNameChange={(newView) => setCurrentViewName(newView as ViewTypes)}
+      />
+      <DayView cellDuration={60} endDayHour={20} startDayHour={6} timeTableCellComponent={DayViewTableCell} />
+      <WeekView endDayHour={20} startDayHour={6} timeTableCellComponent={WeekViewTableCell} />
+      <MonthView />
+      <Toolbar rootComponent={ToolbarWithLoading} />
+      <ViewSwitcher />
+      <DateNavigator
+        openButtonComponent={({ text, onVisibilityToggle }) => (
+          <Button className={classes.button} onClick={onVisibilityToggle} variant='text'>
+            {text}
+          </Button>
+        )}
+      />
+      <EditingState
+        addedAppointment={addedAppointment}
+        onAddedAppointmentChange={(e) => addAppointment(e as NewAppointmentType)}
+        onCommitChanges={commitChanges}
+      />
+      <IntegratedEditing />
+      <Appointments appointmentComponent={Appointment} />
+      <DragDropProvider
+        allowDrag={(appointment) => Boolean(sectionId) && appointment.id === NEW_APPOINTMENT.id}
+        allowResize={(appointment) => Boolean(sectionId) && appointment.id === NEW_APPOINTMENT.id}
+      />
+      {currentViewName !== 'Month' && <AppointmentForm visible={false} />}
+    </Scheduler>
+  );
 
   return (
     <Paper className={classes.root} noPadding>
@@ -247,38 +290,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
           {`${isTouchScreen ? 'Klikk' : 'Dobbelklikk'} på et tidspunkt for å opprette en reservasjon, dra på reservasjonen for å endre tiden.`}
         </Typography>
       )}
-      <Scheduler data={displayedReservations} firstDayOfWeek={1} locale='no-NB'>
-        <ViewState
-          currentDate={currentDate}
-          currentViewName={currentViewName}
-          onCurrentDateChange={setCurrentDate}
-          onCurrentViewNameChange={(newView) => setCurrentViewName(newView as ViewTypes)}
-        />
-        <DayView cellDuration={60} timeTableCellComponent={DayViewTableCell} />
-        <WeekView timeTableCellComponent={WeekViewTableCell} />
-        <MonthView />
-        <Toolbar {...(isLoading ? { rootComponent: ToolbarWithLoading } : null)} />
-        <ViewSwitcher />
-        <DateNavigator
-          openButtonComponent={({ text, onVisibilityToggle }) => (
-            <Button className={classes.button} onClick={onVisibilityToggle} variant='text'>
-              {text}
-            </Button>
-          )}
-        />
-        <EditingState
-          addedAppointment={addedAppointment}
-          onAddedAppointmentChange={(e) => addAppointment(e as NewAppointmentType)}
-          onCommitChanges={commitChanges}
-        />
-        <IntegratedEditing />
-        <Appointments appointmentComponent={Appointment} />
-        <DragDropProvider
-          allowDrag={(appointment) => Boolean(sectionId) && appointment.id === NEW_APPOINTMENT.id}
-          allowResize={(appointment) => Boolean(sectionId) && appointment.id === NEW_APPOINTMENT.id}
-        />
-        {currentViewName !== 'Month' && <AppointmentForm visible={false} />}
-      </Scheduler>
+      <ReactiveCalendar />
       <Slide direction='up' in={Boolean(addedAppointment)}>
         <Container className={classes.fixedBottom} maxWidth='md'>
           <Button fullWidth onClick={() => setReservationOpen(true)}>

@@ -1,8 +1,11 @@
 import slugify from 'slugify';
 import { subMinutes } from 'date-fns';
-import { PaginationResponse } from 'types/Types';
+import { PaginationResponse, User } from 'types/Types';
+import { UserRole } from 'types/Enums';
 
 export const urlEncode = (text = '') => slugify(text, { lower: true, strict: true, locale: 'nb' });
+
+export const isUserAdmin = (user?: User) => (user ? user.roles?.some((role) => role.name === UserRole.ADMIN) : false);
 
 // Add leading zero to numbers below 10. Ex: 2 -> 02, 12 -> 12
 const addLeadingZero = (number: number) => (number < 10 ? '0' + number : number);

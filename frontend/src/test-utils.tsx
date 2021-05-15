@@ -50,9 +50,13 @@ export const mockUser = (id?: string): User => {
     id: id || '123',
     image: '',
     surname: 'Normann',
+    expirationDate: '2025-01-01',
     roles: [
       {
         name: UserRole.ADMIN,
+      },
+      {
+        name: UserRole.USER,
       },
     ],
   };

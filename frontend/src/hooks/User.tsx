@@ -5,7 +5,6 @@ import { User, UserList, UserCreate, PaginationResponse, LoginRequestResponse, R
 import { getCookie, setCookie, removeCookie } from 'api/cookie';
 import { ACCESS_TOKEN, REFRESH_TOKEN, ACCESS_TOKEN_DURATION, REFRESH_TOKEN_DURATION } from 'constant';
 import { getNextPaginationPage } from 'utils';
-import { UserRole } from 'types/Enums';
 
 export const USER_QUERY_KEY = 'user';
 export const USERS_QUERY_KEY = 'users';
@@ -13,11 +12,6 @@ export const USERS_QUERY_KEY = 'users';
 export const useUser = (userId?: string) => {
   const isAuthenticated = useIsAuthenticated();
   return useQuery<User | undefined, RequestResponse>([USER_QUERY_KEY, userId], () => (isAuthenticated ? API.getUser(userId) : undefined));
-};
-
-export const useIsAdmin = (userId?: string) => {
-  const { data: user, isLoading } = useUser(userId);
-  return { isAdmin: user ? user.roles.some((role) => role.name === UserRole.ADMIN) : false, isLoading };
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,8 +52,8 @@ export const useForgotPassword = (): UseMutationResult<RequestResponse, RequestR
   return useMutation((email) => API.forgotPassword(email));
 };
 
-export const useResetPassword = (): UseMutationResult<RequestResponse, RequestResponse, { email: string; token: string; newPassword: string }, unknown> => {
-  return useMutation(({ email, token, newPassword }) => API.resetPassword(email, newPassword, token));
+export const useResetPassword = (): UseMutationResult<RequestResponse, RequestResponse, { email: string; token: string; password: string }, unknown> => {
+  return useMutation(({ email, token, password }) => API.resetPassword(email, password, token));
 };
 
 export const useLogout = () => {
@@ -101,8 +95,9 @@ export const useCreateUser = (): UseMutationResult<RequestResponse, RequestRespo
 export const useUpdateUser = (): UseMutationResult<User, RequestResponse, { userId: string; user: Partial<User> }, unknown> => {
   const queryClient = useQueryClient();
   return useMutation(({ userId, user }) => API.updateUser(userId, user), {
-    onSuccess: () => {
+    onSuccess: (user) => {
       queryClient.invalidateQueries([USER_QUERY_KEY, undefined]);
+      queryClient.invalidateQueries([USER_QUERY_KEY, user.id]);
       queryClient.invalidateQueries(USERS_QUERY_KEY);
     },
   });

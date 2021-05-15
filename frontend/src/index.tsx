@@ -12,12 +12,13 @@ import { Navigate, BrowserRouter, Routes, Route, useLocation } from 'react-route
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import URLS from 'URLS';
+import { isUserAdmin } from 'utils';
 import 'delayed-scroll-restoration-polyfill';
 
 // Services
 import { ThemeProvider } from 'hooks/ThemeContext';
 import { SnackbarProvider } from 'hooks/Snackbar';
-import { useUser, useRefreshToken, useIsAdmin } from 'hooks/User';
+import { useUser, useRefreshToken } from 'hooks/User';
 
 // Project components
 import Navigation from 'components/navigation/Navigation';
@@ -40,11 +41,10 @@ type AuthRouteProps = {
 
 const AuthRoute = ({ children, path, element, onlyAdmin }: AuthRouteProps) => {
   const { data, isLoading } = useUser();
-  const { isAdmin, isLoading: isAdminLoading } = useIsAdmin();
 
-  if (isLoading || (onlyAdmin && isAdminLoading)) {
+  if (isLoading) {
     return <Navigation isLoading noFooter />;
-  } else if (!data || (onlyAdmin && !isAdmin)) {
+  } else if (!data || (onlyAdmin && !isUserAdmin(data))) {
     return <Navigate to={URLS.LOGIN} />;
   } else {
     return (

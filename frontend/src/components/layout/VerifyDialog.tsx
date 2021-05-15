@@ -1,8 +1,7 @@
 import { useState, ReactNode } from 'react';
 
 // Material UI Components
-import IconButton from '@material-ui/core/IconButton';
-import Button, { ButtonProps } from '@material-ui/core/Button';
+import { Button, ButtonProps, IconButton } from '@material-ui/core';
 
 // Project components
 import Dialog, { DialogProps } from 'components/layout/Dialog';

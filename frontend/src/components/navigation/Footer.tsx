@@ -1,6 +1,5 @@
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles';
-import Divider from '@material-ui/core/Divider';
+import { makeStyles, Divider } from '@material-ui/core';
 
 // Project components
 import Logo from 'components/miscellaneous/Logo';
@@ -13,16 +12,9 @@ const useStyles = makeStyles((theme) => ({
   content: {
     width: '100%',
     padding: theme.spacing(5),
-    display: 'grid',
-    gap: theme.spacing(2),
-    gridTemplateColumns: '1fr',
-    color: theme.palette.text.primary,
-    maxWidth: theme.breakpoints.values.md,
     margin: 'auto',
-    [theme.breakpoints.down('lg')]: {
-      padding: theme.spacing(4),
-      gap: theme.spacing(1),
-    },
+    display: 'flex',
+    justifyContent: 'center',
   },
   logo: {
     maxWidth: '200px',

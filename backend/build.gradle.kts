@@ -51,7 +51,7 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	implementation("io.github.serpro69:kotlin-faker:1.6.0")
 	implementation("com.opencsv:opencsv:5.0")
-
+	implementation("io.springfox:springfox-boot-starter:3.0.0")
 }
 
 
