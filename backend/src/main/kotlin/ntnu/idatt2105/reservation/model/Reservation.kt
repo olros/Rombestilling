@@ -33,10 +33,10 @@ data class Reservation(
         @Transient
         @QueryType(PropertyType.DATETIME)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        var fromTimeAfter: ZonedDateTime? = null;
+        var fromTimeAfter: ZonedDateTime? = null
         @Transient
         @QueryType(PropertyType.DATETIME)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        var toTimeBefore: ZonedDateTime? = null;
+        var toTimeBefore: ZonedDateTime? = null
 }
 

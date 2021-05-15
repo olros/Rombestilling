@@ -1,5 +1,6 @@
 package ntnu.idatt2105.section.dto
 
+import ntnu.idatt2105.reservation.dto.ReservationDto
 import ntnu.idatt2105.util.SectionType
 import java.util.*
 
@@ -11,5 +12,5 @@ data class SectionDto(
         var image: String = "",
         var type: String = SectionType.ROOM,
         var parent: SectionChildrenDto? = null,
-        var children: MutableList<SectionChildrenDto> = mutableListOf()
+        var children: MutableList<SectionChildrenDto> = mutableListOf(),
 )
