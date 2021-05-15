@@ -18,7 +18,6 @@ import ntnu.idatt2105.mailer.MailService
 import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
 import ntnu.idatt2105.security.dto.ResetPasswordDto
 import ntnu.idatt2105.user.model.RoleType.USER
-import ntnu.idatt2105.user.model.UserBuilder
 import org.modelmapper.ModelMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -28,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
-import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.*
 import kotlin.concurrent.thread
@@ -43,12 +41,12 @@ class UserServiceImpl(
     val passwordResetTokenRepository: PasswordResetTokenRepository
 ) : UserService {
 
-    override fun registerUser(user: UserRegistrationDto): UserDto {
-        if (existsByEmail(user.email))
-            throw ApplicationException.throwException(EntityType.USER, ExceptionType.DUPLICATE_ENTITY, "2", user.email)
+    override fun registerUser(userDTO: UserRegistrationDto): UserDto {
+        if (existsByEmail(userDTO.email))
+            throw ApplicationException.throwException(EntityType.USER, ExceptionType.DUPLICATE_ENTITY, "2", userDTO.email)
 
-        val userObj: User = createUserObj(user)
-        val savedUser: User = userRepository.saveAndFlush(userObj)
+        val user: User = createUserObj(userDTO)
+        val savedUser: User = userRepository.saveAndFlush(user)
         forgotPassword(ForgotPassword(savedUser.email))
         return modelMapper.map(savedUser, UserDto::class.java)
     }
@@ -65,16 +63,16 @@ class UserServiceImpl(
         try {
             fileReader = BufferedReader(InputStreamReader(file.inputStream))
             val csvToBean = createCSVToBean(fileReader)
-            val list: List<UserRegistrationDto> = csvToBean.parse()
-            val list2 = mutableListOf<User>()
-            list.forEach {
-                list2.add(modelMapper.map(it, User::class.java))
+            val listOfDTO: List<UserRegistrationDto> = csvToBean.parse()
+            val listOfObj = mutableListOf<User>()
+            listOfDTO.forEach {
+                listOfObj.add(modelMapper.map(it, User::class.java))
             }
-            userRepository.saveAll(list2)
+            userRepository.saveAll(listOfObj)
 
             //This is kinda dirty but best solution for not making the user wait for ages
             thread() {
-                list2.forEach {
+                listOfObj.forEach {
                     forgotPassword(ForgotPassword(it.email))
                 }
             }
