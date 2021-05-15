@@ -225,7 +225,7 @@ class UserControllerTest {
             surname = surname,
             email = email,
             phoneNumber = phoneNumber,
-            expirationDate = LocalDate.EPOCH
+            expirationDate = LocalDate.now().plusYears(1)
         )
 
     companion object {
