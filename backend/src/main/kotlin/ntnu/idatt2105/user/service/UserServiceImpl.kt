@@ -20,6 +20,7 @@ import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
 import ntnu.idatt2105.security.dto.ResetPasswordDto
 import ntnu.idatt2105.user.model.RoleType.USER
 import org.modelmapper.ModelMapper
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -40,20 +41,25 @@ class UserServiceImpl(
     val mailService: MailService,
     val passwordResetTokenRepository: PasswordResetTokenRepository
 ) : UserService {
+    val logger = LoggerFactory.getLogger("UserServiceImpl")
 
     override fun registerUser(user: UserRegistrationDto): UserDto {
-        if (existsByEmail(user.email))
+        logger.debug("Trying to register a user")
+        if (existsByEmail(user.email)) {
+            logger.error("User already exists")
             throw ApplicationException.throwException(EntityType.USER, ExceptionType.DUPLICATE_ENTITY, "2", user.email)
-
+        }
         val userObj: User = modelMapper.map(user, User::class.java)
         userObj.id = UUID.randomUUID()
         val savedUser: User = userRepository.saveAndFlush(userObj)
         forgotPassword(ForgotPassword(savedUser.email))
+        logger.debug("$userObj has been created... Trying to send mail")
         return modelMapper.map(savedUser, UserDto::class.java)
     }
 
     override fun registerUserBatch(file: MultipartFile): Response {
         throwIfFileEmpty(file)
+        logger.debug("Trying to register multiple users")
         var fileReader : BufferedReader? = null
 
         try {
@@ -65,6 +71,7 @@ class UserServiceImpl(
                 list2.add(modelMapper.map(it, User::class.java))
             }
             userRepository.saveAll(list2)
+            logger.debug("The users have been created. Sending emails...")
             list2.forEach{
                 forgotPassword(ForgotPassword(it.email))
             }
@@ -91,8 +98,10 @@ class UserServiceImpl(
     }
 
     private fun throwIfFileEmpty(file: MultipartFile) {
-        if (file.isEmpty)
+        if (file.isEmpty) {
+            logger.error("File is empty!")
             throw RuntimeException("Empty file")
+        }
     }
 
     private fun existsByEmail(email: String): Boolean {
@@ -116,12 +125,14 @@ class UserServiceImpl(
                 phoneNumber = user.phoneNumber,
                 image = user.image,
             )
+        logger.debug("$user has been updated")
         return modelMapper.map(userRepository.save(updatedUser), UserDto::class.java)
     }
 
     override fun deleteUser(id: UUID): Response {
         val user = getUserById(id)
         userRepository.delete(user)
+        logger.debug("$user has been deleted!")
         return Response("The user has been deleted")
     }
 
@@ -149,6 +160,7 @@ class UserServiceImpl(
             1 to user.email,
             2 to "https://rombestilling.vercel.app/auth/reset-password/" + token.id + "/"
         )
+        logger.debug("Sending mail to $user for resetting password")
         sendEmail(user.email, properties)
     }
 
@@ -158,12 +170,14 @@ class UserServiceImpl(
         }
         val user = getUserByEmail(resetDto.email)
         if(!user.equals(token.user) && token.expirationDate.isAfter(ZonedDateTime.now())) {
+            logger.error("$token is not valid for ${user.email}")
             throw ApplicationException.throwException(EntityType.TOKEN,
                 ExceptionType.NOT_VALID, id.toString())
         }
         if(user.roles.isEmpty()) user.roles.plus(USER)
         user.password = passwordEncoder.encode(resetDto.password)
         userRepository.save(user)
+        logger.debug("New password for ${user.email} has been created")
     }
 
     private fun sendEmail(email: String, properties: Map<Int, String>) {

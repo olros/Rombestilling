@@ -1,6 +1,7 @@
 package ntnu.idatt2105.section.service
 
 import com.querydsl.core.types.Predicate
+import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.section.dto.SectionCreateDto
 import ntnu.idatt2105.section.dto.SectionDto
 import ntnu.idatt2105.section.dto.SectionListDto
@@ -14,6 +15,6 @@ interface SectionService {
     fun createSection(section: SectionCreateDto): SectionDto
     fun getSectionById(id: UUID): SectionDto
     fun updateSection(id: UUID, section: SectionDto): SectionDto
-    fun deleteSection(id: UUID)
+    fun deleteSection(id: UUID): Response
     fun addChildToSection(parentId: UUID, child: Section) : SectionDto
 }
