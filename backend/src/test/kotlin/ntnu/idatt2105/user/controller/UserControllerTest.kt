@@ -37,6 +37,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.LocalDate
 import java.util.*
 import java.util.stream.Stream
 
@@ -223,7 +224,8 @@ class UserControllerTest {
             firstName = firstName,
             surname = surname,
             email = email,
-            phoneNumber = phoneNumber
+            phoneNumber = phoneNumber,
+            expirationDate = LocalDate.EPOCH
         )
 
     companion object {
