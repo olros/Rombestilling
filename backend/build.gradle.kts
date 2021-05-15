@@ -30,7 +30,6 @@ dependencies {
 	implementation ("io.jsonwebtoken:jjwt-impl:0.11.2")
 	implementation ("io.jsonwebtoken:jjwt-jackson:0.11.2")
 	implementation("org.modelmapper:modelmapper:2.3.0")
-
 	//QueryDsl (filtering)
 	implementation("com.querydsl:querydsl-core:${queryDslVersion}")
 	implementation("com.querydsl:querydsl-jpa:${queryDslVersion}")
