@@ -7,6 +7,12 @@ help:
 db:
 	docker-compose up
 
+test:
+	./gradlew test
+
+format:
+	./gradlew ktlinFormat --warning-mode=all
+
 restart:
 	docker-compose build
 	docker-compose up
@@ -16,6 +22,7 @@ deploy:
 	gradlew jib --image=rombestilling.azurecr.io/rombestilling:latest
 
 PR:
+	./gradlew ktlinCheck --warning-mode=all
 	git add .
 
 run:
