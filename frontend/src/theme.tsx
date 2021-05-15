@@ -4,6 +4,7 @@ import { createMuiTheme, darkScrollbar } from '@material-ui/core';
 import DarkIcon from '@material-ui/icons/Brightness2Outlined';
 import AutomaticIcon from '@material-ui/icons/DevicesOutlined';
 import LightIcon from '@material-ui/icons/WbSunnyOutlined';
+import EcoIcon from '@material-ui/icons/EcoRounded';
 
 declare module '@material-ui/core/styles/createPalette' {
   interface Palette {
@@ -55,6 +56,7 @@ declare module '@material-ui/core/styles/createPalette' {
 
 export const themesDetails = [
   { key: 'light', name: 'Lyst', icon: LightIcon },
+  { key: 'spring', name: 'Vår', icon: EcoIcon },
   { key: 'automatic', name: 'Automatisk', icon: AutomaticIcon },
   { key: 'dark', name: 'Mørkt', icon: DarkIcon },
 ] as const;
@@ -63,12 +65,14 @@ export type ThemeTypes = typeof themes[number];
 
 export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
   // eslint-disable-next-line comma-spacing
-  const get = <T,>({ light, dark }: { light: T; dark: T }): T => {
+  const get = <T,>({ light, dark, spring }: { light: T; dark: T; spring?: T }): T => {
     switch (theme) {
       case 'automatic':
         return prefersDarkMode ? dark : light;
       case 'dark':
         return dark;
+      case 'spring':
+        return spring || light;
       default:
         return light;
     }
@@ -104,9 +108,13 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       MuiCssBaseline: {
         styleOverrides: {
           body: {
-            background: get<string>({ light: 'linear-gradient(45deg, #3e843142, #0000ff3d)', dark: 'linear-gradient(45deg, #271d23, #14142b)' }),
+            background: get<string>({
+              light: 'linear-gradient(45deg, #3e843142, #0000ff3d)',
+              dark: 'linear-gradient(45deg, #271d23, #14142b)',
+              spring: 'linear-gradient(45deg, #b4ffa1, #ffa272)',
+            }),
             // eslint-disable-next-line @typescript-eslint/ban-types
-            ...get<object>({ light: {}, dark: darkScrollbar() }),
+            ...get<object>({ light: {}, dark: darkScrollbar(), spring: {} }),
           },
           '@global': {
             html: {
@@ -114,7 +122,7 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
             },
           },
           a: {
-            color: get<string>({ light: '#1D448C', dark: '#9ec0ff' }),
+            color: get<string>({ light: '#1D448C', dark: '#9ec0ff', spring: '#81ceef' }),
           },
         },
       },
@@ -137,11 +145,11 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       get,
       mode: get<'light' | 'dark'>({ light: 'light', dark: 'dark' }),
       primary: {
-        main: get<string>({ light: '#4e7bea', dark: '#67e0f5' }),
+        main: get<string>({ light: '#4e7bea', dark: '#67e0f5', spring: '#bd2ef7' }),
         contrastText: get<string>({ light: '#ffffff', dark: '#000000' }),
       },
       secondary: {
-        main: get<string>({ light: '#cf3e75', dark: '#fe9edc' }),
+        main: get<string>({ light: '#cf3e75', dark: '#fe9edc', spring: '#843e1a' }),
       },
       error: {
         main: get<string>({ light: '#F71735', dark: '#ff6060' }),
@@ -164,17 +172,17 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
         },
       },
       transparent: {
-        background: get<string>({ light: '#f6f5f340', dark: '#61616160' }),
-        border: get<string>({ light: '1px solid #d7d7d75c', dark: '1px solid #4545453b' }),
-        boxShadow: `0 8px 32px 0 ${get<string>({ light: '#cab2e7', dark: '#26292d' })}52`,
+        background: get<string>({ light: '#f6f5f340', dark: '#61616160', spring: '#77c7ec4f' }),
+        border: get<string>({ light: '1px solid #d7d7d75c', dark: '1px solid #4545453b', spring: '1px solid #77c7ec17' }),
+        boxShadow: `0 8px 32px 0 ${get<string>({ light: '#cab2e7', dark: '#26292d', spring: '#a5cee1' })}52`,
       },
       borderWidth: '1px',
       background: {
-        default: get<string>({ light: '#FDFFFC', dark: '#121212' }),
-        paper: get<string>({ light: '#f6f5f3', dark: '#232323' }),
+        default: get<string>({ light: '#FDFFFC', dark: '#121212', spring: '#adcedd' }),
+        paper: get<string>({ light: '#f6f5f3', dark: '#232323', spring: '#a4beca' }),
       },
       colors: {
-        topbar: get<string>({ light: '#cecef5', dark: '#26292d' }),
+        topbar: get<string>({ light: '#cecef5', dark: '#26292d', spring: '#b3e7fd' }),
         gradient: get<string>({ light: 'linear-gradient(to bottom, #a4b3d7, #abc8c0)', dark: 'linear-gradient(to bottom, #160202ab, #07072769)' }),
       },
     },
