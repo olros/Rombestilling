@@ -4,6 +4,8 @@ import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.section.model.Section
 import org.springframework.beans.factory.FactoryBean
 import java.util.*
+import kotlin.random.asKotlinRandom
+import kotlin.random.nextUInt
 
 class SectionFactory : FactoryBean<Section> {
 
@@ -18,6 +20,14 @@ class SectionFactory : FactoryBean<Section> {
     }
 
     override fun getObject(): Section {
-       return Section(UUID.randomUUID(), faker.name.name(),faker.backToTheFuture.quotes(), Random(1).nextInt(), "", mutableListOf(), null)
+       return Section(
+           UUID.randomUUID(),
+           faker.name.name(),
+           faker.backToTheFuture.quotes(),
+           (0..10000).random(),
+           "",
+           mutableListOf(),
+           null
+       )
     }
 }
