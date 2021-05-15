@@ -7,9 +7,7 @@ import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
 import ntnu.idatt2105.reservation.model.QReservation
-import ntnu.idatt2105.section.dto.SectionCreateDto
-import ntnu.idatt2105.section.dto.SectionDto
-import ntnu.idatt2105.section.dto.SectionListDto
+import ntnu.idatt2105.section.dto.*
 import ntnu.idatt2105.section.model.QSection
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
@@ -27,8 +25,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
 
     override fun getAllSections(pageable: Pageable, predicate: Predicate): Page<SectionListDto> {
         val sections = sectionRepository.findAll(predicate,pageable)
-        logger.info("Finding all sections")
-        return sections.map{ modelMapper.map(it, SectionListDto::class.java)}
+        return sections.map{ it.toSectionListDto() }
     }
 
     override fun createSection(section: SectionCreateDto): SectionDto {
@@ -40,9 +37,8 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
         newSection.children = mutableListOf()
         newSection = sectionRepository.save(newSection)
         logger.info("Section ${newSection.id} was created")
-        val savedSection = modelMapper.map(newSection, SectionDto::class.java)
         if(section.parentId != null) return addChildToSection(section.parentId!!, newSection)
-        return savedSection
+        return newSection.toSectionDto()
     }
 
 
@@ -64,7 +60,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
             )
             updatedSection = sectionRepository.save(updatedSection)
             logger.info("Section: ${section.name} was updated")
-            return modelMapper.map(updatedSection, SectionDto::class.java)
+            return updatedSection.toSectionDto()
         }
 
     }
@@ -84,7 +80,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
                 EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, parentId.toString())  }
         parent.children.add(child)
         sectionRepository.save(parent)
-        logger.info("Child section with id: ${child.id} was added to parent with id: $parentId")
-        return modelMapper.map(child, SectionDto::class.java)
+        return child.toSectionDto()
+
     }
 }
