@@ -44,7 +44,7 @@ class UserServiceImpl(
     val logger = LoggerFactory.getLogger("UserServiceImpl")
 
     override fun registerUser(user: UserRegistrationDto): UserDto {
-        logger.debug("Trying to register a user")
+        logger.info("Trying to register a user")
         if (existsByEmail(user.email)) {
             logger.error("User already exists")
             throw ApplicationException.throwException(EntityType.USER, ExceptionType.DUPLICATE_ENTITY, "2", user.email)
@@ -53,13 +53,13 @@ class UserServiceImpl(
         userObj.id = UUID.randomUUID()
         val savedUser: User = userRepository.saveAndFlush(userObj)
         forgotPassword(ForgotPassword(savedUser.email))
-        logger.debug("$userObj has been created... Trying to send mail")
+        logger.info("$userObj has been created... Trying to send mail")
         return modelMapper.map(savedUser, UserDto::class.java)
     }
 
     override fun registerUserBatch(file: MultipartFile): Response {
         throwIfFileEmpty(file)
-        logger.debug("Trying to register multiple users")
+        logger.info("Trying to register multiple users")
         var fileReader : BufferedReader? = null
 
         try {
@@ -71,7 +71,7 @@ class UserServiceImpl(
                 list2.add(modelMapper.map(it, User::class.java))
             }
             userRepository.saveAll(list2)
-            logger.debug("The users have been created. Sending emails...")
+            logger.info("The users have been created. Sending emails...")
             list2.forEach{
                 forgotPassword(ForgotPassword(it.email))
             }
@@ -125,14 +125,14 @@ class UserServiceImpl(
                 phoneNumber = user.phoneNumber,
                 image = user.image,
             )
-        logger.debug("$user has been updated")
+        logger.info("$user has been updated")
         return modelMapper.map(userRepository.save(updatedUser), UserDto::class.java)
     }
 
     override fun deleteUser(id: UUID): Response {
         val user = getUserById(id)
         userRepository.delete(user)
-        logger.debug("$user has been deleted!")
+        logger.info("$user has been deleted!")
         return Response("The user has been deleted")
     }
 
@@ -160,7 +160,7 @@ class UserServiceImpl(
             1 to user.email,
             2 to "https://rombestilling.vercel.app/auth/reset-password/" + token.id + "/"
         )
-        logger.debug("Sending mail to $user for resetting password")
+        logger.info("Sending mail to $user for resetting password")
         sendEmail(user.email, properties)
     }
 
@@ -177,7 +177,7 @@ class UserServiceImpl(
         if(user.roles.isEmpty()) user.roles.plus(USER)
         user.password = passwordEncoder.encode(resetDto.password)
         userRepository.save(user)
-        logger.debug("New password for ${user.email} has been created")
+        logger.info("New password for ${user.email} has been created")
     }
 
     private fun sendEmail(email: String, properties: Map<Int, String>) {

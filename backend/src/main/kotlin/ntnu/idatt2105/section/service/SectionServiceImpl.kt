@@ -27,19 +27,19 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
 
     override fun getAllSections(pageable: Pageable, predicate: Predicate): Page<SectionListDto> {
         val sections = sectionRepository.findAll(predicate,pageable)
-        logger.debug("Finding all sections")
+        logger.info("Finding all sections")
         return sections.map{ modelMapper.map(it, SectionListDto::class.java)}
     }
 
     override fun createSection(section: SectionCreateDto): SectionDto {
-        logger.debug("Trying to create a new section with name ${section.name}")
+        logger.info("Trying to create a new section with name ${section.name}")
         var newSection = Section(section.id, section.name, section.description, section.capacity, section.image)
         if(section.parentId != null) newSection.parent = sectionRepository.findById(section.parentId!!)
                 .orElseThrow { throw ApplicationException.throwException(
                         EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, section.parentId.toString())  }
         newSection.children = mutableListOf()
         newSection = sectionRepository.save(newSection)
-        logger.debug("Section ${newSection.id} was created")
+        logger.info("Section ${newSection.id} was created")
         val savedSection = modelMapper.map(newSection, SectionDto::class.java)
         if(section.parentId != null) return addChildToSection(section.parentId!!, newSection)
         return savedSection
@@ -49,7 +49,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
     override fun getSectionById(id: UUID): SectionDto {
         val section = sectionRepository.findById(id).orElseThrow{ throw ApplicationException.throwException(
                 EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, id.toString())  }
-        logger.debug("Finding section by id: $id")
+        logger.info("Finding section by id: $id")
         return modelMapper.map(section, SectionDto::class.java)
     }
 
@@ -63,7 +63,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
                     description = section.description
             )
             updatedSection = sectionRepository.save(updatedSection)
-            logger.debug("Section: ${section.name} was updated")
+            logger.info("Section: ${section.name} was updated")
             return modelMapper.map(updatedSection, SectionDto::class.java)
         }
 
@@ -73,7 +73,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
         sectionRepository.findById(id).orElseThrow { throw ApplicationException.throwException(
                 EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, id.toString()) }.run {
             sectionRepository.delete(this)
-            logger.debug("Section with id: $id was deleted")
+            logger.info("Section with id: $id was deleted")
             return Response("Section was deleted")
         }
 
@@ -84,7 +84,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
                 EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, parentId.toString())  }
         parent.children.add(child)
         sectionRepository.save(parent)
-        logger.debug("Child section with id: ${child.id} was added to parent with id: $parentId")
+        logger.info("Child section with id: ${child.id} was added to parent with id: $parentId")
         return modelMapper.map(child, SectionDto::class.java)
     }
 }
