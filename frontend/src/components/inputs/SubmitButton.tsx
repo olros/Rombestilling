@@ -1,5 +1,4 @@
-import Button, { ButtonProps } from '@material-ui/core/Button';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import { Button, ButtonProps, FormHelperText } from '@material-ui/core';
 import { UseFormReturn } from 'react-hook-form';
 
 export type SubmitButtonProps = ButtonProps &

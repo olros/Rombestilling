@@ -1,8 +1,6 @@
 import { useEffect, useState, useContext, useCallback, useMemo, createContext, ReactNode } from 'react';
 
-import { makeStyles } from '@material-ui/core/styles';
-import MaterialSnackbar from '@material-ui/core/Snackbar';
-import MaterialAlert from '@material-ui/core/Alert';
+import { makeStyles, Snackbar as MaterialSnackbar, Alert as MaterialAlert } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   snackbar: {

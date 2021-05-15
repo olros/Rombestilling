@@ -38,8 +38,8 @@ export default {
     }),
   forgotPassword: (email: string) =>
     IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/forgot-password/`, data: { email }, withAuth: false, tryAgain: false }),
-  resetPassword: (email: string, newPassword: string, token: string) =>
-    IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/reset-password/${token}/`, data: { email, newPassword }, withAuth: false, tryAgain: false }),
+  resetPassword: (email: string, password: string, token: string) =>
+    IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/reset-password/${token}/`, data: { email, password }, withAuth: false, tryAgain: false }),
   refreshAccessToken: () =>
     IFetch<RefreshTokenResponse>({ method: 'GET', url: `${AUTH}/refresh-token/`, refreshAccess: true, withAuth: false })
       .then((tokens) => {

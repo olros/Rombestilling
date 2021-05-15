@@ -3,8 +3,9 @@ import Helmet from 'react-helmet';
 import URLS from 'URLS';
 import { Link, useParams } from 'react-router-dom';
 import { useSectionById } from 'hooks/Section';
-import { useIsAdmin } from 'hooks/User';
+import { useUser } from 'hooks/User';
 import classnames from 'classnames';
+import { isUserAdmin } from 'utils';
 
 // Material UI Components
 import { makeStyles, Typography, Collapse } from '@material-ui/core';
@@ -61,7 +62,7 @@ export type RoomFilters = {
 
 const RoomDetails = () => {
   const classes = useStyles();
-  const { isAdmin } = useIsAdmin();
+  const { data: user } = useUser();
   const { id } = useParams();
   const { data, isLoading, isError } = useSectionById(id);
   const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
@@ -91,7 +92,7 @@ const RoomDetails = () => {
                   </Typography>
                 )}
               </div>
-              {isAdmin && (
+              {isUserAdmin(user) && (
                 <EditRoom room={data} sectionType='room'>
                   Endre rom
                 </EditRoom>
@@ -113,7 +114,7 @@ const RoomDetails = () => {
                         <RoomSection key={section.id} section={section} />
                       ))}
                       {!data.children.length && <Typography variant='subtitle1'>Dette rommet har ingen deler</Typography>}
-                      {isAdmin && <CreateRoom parentId={id}>Opprett ny del av rom</CreateRoom>}
+                      {isUserAdmin(user) && <CreateRoom parentId={id}>Opprett ny del av rom</CreateRoom>}
                     </Paper>
                   </Collapse>
                 </div>
