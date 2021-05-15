@@ -53,7 +53,7 @@ class UserServiceImpl(
         userObj.id = UUID.randomUUID()
         val savedUser: User = userRepository.saveAndFlush(userObj)
         forgotPassword(ForgotPassword(savedUser.email))
-        logger.info("$userObj has been created... Trying to send mail")
+        logger.info("${userObj.id} has been created... Trying to send mail")
         return modelMapper.map(savedUser, UserDto::class.java)
     }
 
@@ -125,14 +125,14 @@ class UserServiceImpl(
                 phoneNumber = user.phoneNumber,
                 image = user.image,
             )
-        logger.info("$user has been updated")
+        logger.info("${user.id} has been updated")
         return modelMapper.map(userRepository.save(updatedUser), UserDto::class.java)
     }
 
     override fun deleteUser(id: UUID): Response {
         val user = getUserById(id)
         userRepository.delete(user)
-        logger.info("$user has been deleted!")
+        logger.info("${user.id} has been deleted!")
         return Response("The user has been deleted")
     }
 
@@ -160,7 +160,7 @@ class UserServiceImpl(
             1 to user.email,
             2 to "https://rombestilling.vercel.app/auth/reset-password/" + token.id + "/"
         )
-        logger.info("Sending mail to $user for resetting password")
+        logger.info("Sending mail to ${user.id} for resetting password")
         sendEmail(user.email, properties)
     }
 
