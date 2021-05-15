@@ -81,7 +81,7 @@ class UserControllerImplTest {
     fun setUp() {
         user = userFactory.`object`
         adminUser = userFactory.`object`
-        adminUser = adminUser.copy(roles = setOf(
+        adminUser = adminUser.copy(roles = mutableSetOf(
             RoleFactory().`object`,
             RoleFactory().getObject(RoleType.ADMIN)
         ))
