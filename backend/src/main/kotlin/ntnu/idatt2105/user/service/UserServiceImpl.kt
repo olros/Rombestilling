@@ -43,17 +43,17 @@ class UserServiceImpl(
 ) : UserService {
     val logger = LoggerFactory.getLogger("UserServiceImpl")
 
-    override fun registerUser(user: UserRegistrationDto): UserDto {
+    override fun registerUser(userDTO: UserRegistrationDto): UserDto {
         logger.info("Trying to register a user")
-        if (existsByEmail(user.email)) {
+        if (existsByEmail(userDTO.email)) {
             logger.error("User already exists")
-            throw ApplicationException.throwException(EntityType.USER, ExceptionType.DUPLICATE_ENTITY, "2", user.email)
+            throw ApplicationException.throwException(EntityType.USER, ExceptionType.DUPLICATE_ENTITY, "2", userDTO.email)
         }
-        val userObj: User = modelMapper.map(user, User::class.java)
-        userObj.id = UUID.randomUUID()
-        val savedUser: User = userRepository.saveAndFlush(userObj)
+        val user: User = modelMapper.map(userDTO, User::class.java)
+        user.id = UUID.randomUUID()
+        val savedUser: User = userRepository.saveAndFlush(user)
         forgotPassword(ForgotPassword(savedUser.email))
-        logger.info("${userObj.id} has been created... Trying to send mail")
+        logger.info("${user.id} has been created... Trying to send mail")
         return modelMapper.map(savedUser, UserDto::class.java)
     }
 
