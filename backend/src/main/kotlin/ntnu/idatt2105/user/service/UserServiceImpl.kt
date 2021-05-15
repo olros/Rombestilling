@@ -18,6 +18,7 @@ import ntnu.idatt2105.mailer.MailService
 import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
 import ntnu.idatt2105.security.dto.ResetPasswordDto
 import ntnu.idatt2105.user.model.RoleType.USER
+import ntnu.idatt2105.user.model.UserBuilder
 import org.modelmapper.ModelMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -27,8 +28,10 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.*
+import kotlin.concurrent.thread
 
 
 @Service
@@ -44,11 +47,16 @@ class UserServiceImpl(
         if (existsByEmail(user.email))
             throw ApplicationException.throwException(EntityType.USER, ExceptionType.DUPLICATE_ENTITY, "2", user.email)
 
-        val userObj: User = modelMapper.map(user, User::class.java)
-        userObj.id = UUID.randomUUID()
+        // modelMapper.map(user, User::class.java)
+        val userObj: User = createUserObj(user)
         val savedUser: User = userRepository.saveAndFlush(userObj)
         forgotPassword(ForgotPassword(savedUser.email))
         return modelMapper.map(savedUser, UserDto::class.java)
+    }
+
+    private fun createUserObj(userDto : UserRegistrationDto): User {
+        return User(email = userDto.email, expirationDate = userDto.expirationDate, firstName = userDto.firstName,
+            surname = userDto.surname, phoneNumber =  userDto.phoneNumber)
     }
 
     override fun registerUserBatch(file: MultipartFile): Response {
@@ -64,8 +72,12 @@ class UserServiceImpl(
                 list2.add(modelMapper.map(it, User::class.java))
             }
             userRepository.saveAll(list2)
-            list2.forEach{
-                forgotPassword(ForgotPassword(it.email))
+
+            //This is kinda dirty but best solution for not making the user wait for ages
+            thread() {
+                list2.forEach {
+                    forgotPassword(ForgotPassword(it.email))
+                }
             }
         } catch (ex: Exception) {
             throw Exception("Something went wrong during parsing users", ex)

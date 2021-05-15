@@ -14,6 +14,10 @@ class MailServiceImpl(
         message.setFrom(mail.from)
         message.setSubject(mail.subject)
         mail.htmlTemplate.props.get(2)?.let { message.setText(it) }
-        emailSender.send(message)
+        try {
+            emailSender.send(message)
+        }catch (ex: Exception) {
+            TODO(ex.toString())
+        }
     }
 }

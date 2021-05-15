@@ -1,5 +1,6 @@
 package ntnu.idatt2105.user.model
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import ntnu.idatt2105.security.token.PasswordResetToken
 import java.time.LocalDate
 import java.util.*
@@ -15,7 +16,7 @@ data class User(@Id
                 var email: String = "",
                 var phoneNumber: String = "",
                 var image: String = "",
-                var expirationDate: LocalDate = LocalDate.EPOCH,
+                var expirationDate: LocalDate = LocalDate.now().plusYears(1),
                 var password: String = "",
                 @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
                 @JoinTable(name = "user_roles",

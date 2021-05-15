@@ -39,7 +39,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.*
 import java.util.stream.Stream
-import javax.mail.internet.MimeMessage
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
