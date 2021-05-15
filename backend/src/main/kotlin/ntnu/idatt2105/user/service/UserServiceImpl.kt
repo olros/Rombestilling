@@ -20,6 +20,7 @@ import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
 import ntnu.idatt2105.security.dto.ResetPasswordDto
 import ntnu.idatt2105.user.model.RoleType.USER
 import org.modelmapper.ModelMapper
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -41,14 +42,19 @@ class UserServiceImpl(
     val mailService: MailService,
     val passwordResetTokenRepository: PasswordResetTokenRepository
 ) : UserService {
+    val logger = LoggerFactory.getLogger("UserServiceImpl")
 
     override fun registerUser(userDTO: UserRegistrationDto): UserDto {
-        if (existsByEmail(userDTO.email))
+        logger.info("Trying to register a user")
+        if (existsByEmail(userDTO.email)) {
+            logger.error("User already exists")
             throw ApplicationException.throwException(EntityType.USER, ExceptionType.DUPLICATE_ENTITY, "2", userDTO.email)
-
-        val user: User = createUserObj(userDTO)
+        }
+        val user: User = modelMapper.map(userDTO, User::class.java)
+        user.id = UUID.randomUUID()
         val savedUser: User = userRepository.saveAndFlush(user)
         forgotPassword(ForgotPassword(savedUser.email))
+        logger.info("${user.id} has been created... Trying to send mail")
         return modelMapper.map(savedUser, UserDto::class.java)
     }
 
@@ -59,6 +65,7 @@ class UserServiceImpl(
 
     override fun registerUserBatch(file: MultipartFile): Response {
         throwIfFileEmpty(file)
+        logger.info("Trying to register multiple users")
         var fileReader : BufferedReader? = null
 
         try {
@@ -70,12 +77,9 @@ class UserServiceImpl(
                 listOfObj.add(modelMapper.map(it, User::class.java))
             }
             userRepository.saveAll(listOfObj)
-
-            //This is kinda dirty but best solution for not making the user wait for ages
-            thread() {
-                listOfObj.forEach {
-                    forgotPassword(ForgotPassword(it.email))
-                }
+            logger.info("The users have been created. Sending emails...")
+            listOfObj.forEach{
+                forgotPassword(ForgotPassword(it.email))
             }
         } catch (ex: Exception) {
             throw Exception("Something went wrong during parsing users", ex)
@@ -100,8 +104,10 @@ class UserServiceImpl(
     }
 
     private fun throwIfFileEmpty(file: MultipartFile) {
-        if (file.isEmpty)
+        if (file.isEmpty) {
+            logger.error("File is empty!")
             throw RuntimeException("Empty file")
+        }
     }
 
     private fun existsByEmail(email: String): Boolean {
@@ -125,12 +131,14 @@ class UserServiceImpl(
                 phoneNumber = user.phoneNumber,
                 image = user.image,
             )
+        logger.info("${user.id} has been updated")
         return modelMapper.map(userRepository.save(updatedUser), UserDto::class.java)
     }
 
     override fun deleteUser(id: UUID): Response {
         val user = getUserById(id)
         userRepository.delete(user)
+        logger.info("${user.id} has been deleted!")
         return Response("The user has been deleted")
     }
 
@@ -158,6 +166,7 @@ class UserServiceImpl(
             1 to user.email,
             2 to "https://rombestilling.vercel.app/auth/reset-password/" + token.id + "/"
         )
+        logger.info("Sending mail to ${user.id} for resetting password")
         sendEmail(user.email, properties)
     }
 
@@ -167,12 +176,14 @@ class UserServiceImpl(
         }
         val user = getUserByEmail(resetDto.email)
         if(!user.equals(token.user) && token.expirationDate.isAfter(ZonedDateTime.now())) {
+            logger.error("$token is not valid for ${user.email}")
             throw ApplicationException.throwException(EntityType.TOKEN,
                 ExceptionType.NOT_VALID, id.toString())
         }
         if(user.roles.isEmpty()) user.roles.plus(USER)
         user.password = passwordEncoder.encode(resetDto.password)
         userRepository.save(user)
+        logger.info("New password for ${user.email} has been created")
     }
 
     private fun sendEmail(email: String, properties: Map<Int, String>) {
