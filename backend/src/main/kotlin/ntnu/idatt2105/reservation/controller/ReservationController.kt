@@ -35,6 +35,7 @@ class ReservationController(val reservationService: ReservationService) {
 			   sort = ["fromTime"], direction = Sort.Direction.DESC
 		   ) pageable: Pageable,
 	    @PathVariable sectionId: UUID
+
 	) =
 		reservationService.getAllReservation(sectionId, pageable, predicate)
 
