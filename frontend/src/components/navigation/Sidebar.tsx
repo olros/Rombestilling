@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useIsAuthenticated, useLogout } from 'hooks/User';
 
 // Material UI Components
-import { makeStyles, useTheme, Drawer, Button } from '@material-ui/core';
+import { makeStyles, Typography, useTheme, Drawer, Button } from '@material-ui/core';
 
 // Project components
 import ThemeSettings from 'components/miscellaneous/ThemeSettings';
@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.getContrastText(theme.palette.colors.topbar),
     fontSize: '2rem',
     textTransform: 'none',
+    textDecoration: 'none',
   },
   bottomButton: {
     height: 70,
@@ -54,15 +55,15 @@ type SidebarItemProps = {
 const SidebarItem = ({ text, to }: SidebarItemProps) => {
   const classes = useStyles();
   return (
-    <Button
+    <Typography
+      align='center'
       className={classes.text}
       component={Link}
-      fullWidth
       onClick={to === window.location.pathname ? () => window.location.reload() : undefined}
       to={to}
-      variant='text'>
+      variant='h2'>
       {text}
-    </Button>
+    </Typography>
   );
 };
 
@@ -83,6 +84,7 @@ const Sidebar = ({ items, onClose, open }: IProps) => {
         {items.map((item, i) => (
           <SidebarItem key={i} {...item} />
         ))}
+        <SidebarItem text='Min profil' to={URLS.PROFILE} />
         <div className={classes.icon}>
           <ThemeSettings className={classes.text} classNameIcon={classes.classNameIcon} />
         </div>
