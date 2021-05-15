@@ -31,8 +31,8 @@ class ReservationControllerImpl(val reservationService: ReservationService) : Re
     override fun createReservation(sectionId: UUID, reservation: ReservationCreateDto) =
         reservationService.createReservation(sectionId, reservation)
 
-    override fun updateReservation(sectionId: UUID, userId: UUID, reservation: ReservationDto) =
-            reservationService.updateReservation(sectionId, userId, reservation)
+    override fun updateReservation(sectionId: UUID, reservationId: UUID, reservation: ReservationDto) =
+            reservationService.updateReservation(sectionId, reservationId, reservation)
 
     override fun deleteReservation(sectionId: UUID, reservationId: UUID) : ResponseEntity<Response> {
         reservationService.deleteReservation(sectionId, reservationId)
