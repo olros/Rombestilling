@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Helmet from 'react-helmet';
 import URLS from 'URLS';
 import { Link, useParams } from 'react-router-dom';
@@ -70,6 +70,10 @@ const RoomDetails = () => {
   const sectionsTab = { value: 'sections', label: 'Deler', icon: SectionsIcon };
   const tabs = [reservationsTab, calendarTab, ...(data?.type === 'room' ? [sectionsTab] : [])];
   const [tab, setTab] = useState(reservationsTab.value);
+
+  useEffect(() => {
+    setTab(reservationsTab.value);
+  }, [id]);
 
   if (isError) {
     return <Http404 />;
