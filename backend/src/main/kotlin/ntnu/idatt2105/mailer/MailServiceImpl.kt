@@ -1,5 +1,6 @@
 package ntnu.idatt2105.mailer
 
+import org.springframework.mail.MailAuthenticationException
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
@@ -17,7 +18,7 @@ class MailServiceImpl(
         try {
             emailSender.send(message)
         }catch (ex: Exception) {
-            TODO(ex.toString())
+            TODO("LOG")
         }
     }
 }

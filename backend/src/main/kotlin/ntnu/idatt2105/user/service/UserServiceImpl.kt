@@ -47,7 +47,6 @@ class UserServiceImpl(
         if (existsByEmail(user.email))
             throw ApplicationException.throwException(EntityType.USER, ExceptionType.DUPLICATE_ENTITY, "2", user.email)
 
-        // modelMapper.map(user, User::class.java)
         val userObj: User = createUserObj(user)
         val savedUser: User = userRepository.saveAndFlush(userObj)
         forgotPassword(ForgotPassword(savedUser.email))
