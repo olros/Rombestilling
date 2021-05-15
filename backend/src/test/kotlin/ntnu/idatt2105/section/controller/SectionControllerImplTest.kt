@@ -118,6 +118,18 @@ class SectionControllerImplTest {
 
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test section controller POST with negative capacity returns Created and the created section`() {
+        sectionRepository.save(section.copy(capacity = -1))
+
+        this.mvc.perform(post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(section)))
+                .andExpect(status().isCreated)
+                .andExpect(jsonPath("\$.name").value(section.name))
+    }
+
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test section controller PUT returns OK and the updated section`() {
         val name = "new name"
         section.name = name

@@ -214,6 +214,22 @@ class ReservationControllerImplTest {
 
     @Test
     @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test that creating a reservation with a negative number of people returns http 400`() {
+        val newReservation = ReservationFactory().`object`
+        userRepository.save(newReservation.user!!)
+        sectionRepository.save(newReservation.section!!)
+
+        val reservationWithNegativeNrOfPeople = newReservation.copy(nrOfPeople = -1)
+        val reservationCreateRequest = modelMapper.map(reservationWithNegativeNrOfPeople, ReservationCreateDto::class.java)
+
+        mvc.perform(MockMvcRequestBuilders.post(getURL(reservation.section!!))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(reservationCreateRequest)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
     fun `test that creating a reservation when from time is in the past returns http 400`() {
         val newReservation = ReservationFactory().`object`
         userRepository.save(newReservation.user!!)

@@ -204,8 +204,8 @@ class UserControllerImplTest {
                 .content(objectMapper.writeValueAsString(validUser)))
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.firstName").value(validUser.firstName))
-            .andExpect(jsonPath("$.errors.password").doesNotExist())
-            .andExpect(jsonPath("$.errors.email").doesNotExist())
+            .andExpect(jsonPath("$.errors.fields.password").doesNotExist())
+            .andExpect(jsonPath("$.errors.fields.email").doesNotExist())
     }
 
     @ParameterizedTest
@@ -220,7 +220,7 @@ class UserControllerImplTest {
                 .content(objectMapper.writeValueAsString(invalidUser)))
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.message").isNotEmpty)
-            .andExpect(jsonPath("$.errors.email").exists())
+            .andExpect(jsonPath("$.errors.fields.email").exists())
     }
 
     @Test
@@ -349,6 +349,6 @@ class UserControllerImplTest {
                 .content(objectMapper.writeValueAsString(user))
         )
 
-        assertThat(userRepository.existsById(user.id)).isFalse()
+        assertThat(userRepository.existsById(user.id)).isFalse
     }
 }
