@@ -191,7 +191,7 @@ class SectionControllerTest {
 
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
-    fun `test section controller GET all returns OK and page of sections with serach on name`() {
+    fun `test section controller GET all returns OK and page of sections with search on name`() {
         val newSection =  SectionFactory().`object`
         newSection.parent = section
         sectionRepository.save(newSection)
@@ -206,7 +206,7 @@ class SectionControllerTest {
 
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
-    fun `test section controller GET all returns OK and page of sections with partial serach on name`() {
+    fun `test section controller GET all returns OK and page of sections with partial search on name`() {
         val newSection =  SectionFactory().`object`
         newSection.parent = section
         sectionRepository.save(newSection)
