@@ -65,14 +65,14 @@ class UserServiceImpl(
         try {
             fileReader = BufferedReader(InputStreamReader(file.inputStream))
             val csvToBean = createCSVToBean(fileReader)
-            val list: List<UserRegistrationDto> = csvToBean.parse()
-            val list2 = mutableListOf<User>()
-            list.forEach {
-                list2.add(modelMapper.map(it, User::class.java))
+            val listOfDTO: List<UserRegistrationDto> = csvToBean.parse()
+            val listOfObj = mutableListOf<User>()
+            listOfDTO.forEach {
+                listOfObj.add(modelMapper.map(it, User::class.java))
             }
-            userRepository.saveAll(list2)
+            userRepository.saveAll(listOfObj)
             logger.info("The users have been created. Sending emails...")
-            list2.forEach{
+            listOfObj.forEach{
                 forgotPassword(ForgotPassword(it.email))
             }
         } catch (ex: Exception) {
