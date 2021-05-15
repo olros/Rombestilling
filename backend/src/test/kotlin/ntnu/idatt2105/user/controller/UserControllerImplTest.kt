@@ -45,7 +45,7 @@ import javax.mail.internet.MimeMessage
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class UserControllerTest {
+class UserControllerImplTest {
 
     private val URI = "/users/"
 

@@ -33,7 +33,7 @@ import java.time.ZonedDateTime
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class SectionControllerTest {
+class SectionControllerImplTest {
 
     private val URL = "/sections/"
 
