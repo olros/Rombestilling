@@ -50,8 +50,7 @@ class UserServiceImpl(
             logger.error("User already exists")
             throw ApplicationException.throwException(EntityType.USER, ExceptionType.DUPLICATE_ENTITY, "2", userDTO.email)
         }
-        val user: User = modelMapper.map(userDTO, User::class.java)
-        user.id = UUID.randomUUID()
+        val user: User = createUserObj(userDTO)
         val savedUser: User = userRepository.saveAndFlush(user)
         forgotPassword(ForgotPassword(savedUser.email))
         logger.info("${user.id} has been created... Trying to send mail")
@@ -59,7 +58,7 @@ class UserServiceImpl(
     }
 
     private fun createUserObj(userDto : UserRegistrationDto): User {
-        return User(email = userDto.email, expirationDate = userDto.expirationDate, firstName = userDto.firstName,
+        return User(id = UUID.randomUUID(), email = userDto.email, expirationDate = userDto.expirationDate, firstName = userDto.firstName,
             surname = userDto.surname, phoneNumber =  userDto.phoneNumber)
     }
 
