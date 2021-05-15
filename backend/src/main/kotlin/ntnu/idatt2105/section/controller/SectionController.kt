@@ -30,9 +30,9 @@ class SectionController(val sectionService: SectionService) {
 
     @GetMapping
     fun getAllSections(
-		@QuerydslPredicate(root = Section::class) predicate: Predicate,
-		@PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
-        sort = ["name"], direction = Sort.Direction.DESC) pageable: Pageable
+        @QuerydslPredicate(root = Section::class) predicate: Predicate,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
+	  	sort = ["name"], direction = Sort.Direction.DESC) pageable: Pageable
     ) =
             sectionService.getAllSections(pageable, predicate)
 
