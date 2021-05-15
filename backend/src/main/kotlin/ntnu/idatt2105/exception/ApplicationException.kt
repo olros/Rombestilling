@@ -14,7 +14,7 @@ class ApplicationException (propertiesConfig: PropertiesConfig) {
 
     class EntityNotFoundException(message: String?) : RuntimeException(message)
     class DuplicateEntityException(message: String?) : RuntimeException(message)
-    class NotValidException(message: String?) : RuntimeException(message)
+    class EntityNotValidException(message: String?) : RuntimeException(message)
 
     companion object {
         private lateinit var propertiesConfig: PropertiesConfig
@@ -44,9 +44,22 @@ class ApplicationException (propertiesConfig: PropertiesConfig) {
             } else if (ExceptionType.DUPLICATE_ENTITY == exceptionType) {
                 return DuplicateEntityException(format(messageTemplate, *args))
             } else if (ExceptionType.NOT_VALID == exceptionType) {
-                return NotValidException(format(messageTemplate, *args))
+                return EntityNotValidException(format(messageTemplate, *args))
             }
             return RuntimeException(format(messageTemplate, *args))
+        }
+
+        /**
+         * Returns new RuntimeException based on EntityType, ExceptionType and args
+         */
+        fun throwExceptionWithId(
+            entityType: EntityType,
+            exceptionType: ExceptionType,
+            id: String,
+            vararg args: String
+        ): RuntimeException {
+            val messageTemplate = getMessageTemplate(entityType, exceptionType).plus(".").plus(id)
+            return throwException(exceptionType, messageTemplate, *args)
         }
 
         private fun getMessageTemplate(entityType: EntityType, exceptionType: ExceptionType): String {
