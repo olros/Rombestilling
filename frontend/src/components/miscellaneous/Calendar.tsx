@@ -6,6 +6,8 @@ import { useSnackbar } from 'hooks/Snackbar';
 import { useUser } from 'hooks/User';
 import { parseISO, endOfWeek, startOfWeek, endOfDay, startOfDay, endOfMonth, startOfMonth, getHours, getMinutes, isAfter, isBefore, addMonths } from 'date-fns';
 import { formatTime, isUserAdmin } from 'utils';
+import { CALENDAR_INFO_DIALOG } from 'constant';
+import { getCookie, setCookie } from 'api/cookie';
 import { ViewState, AppointmentModel, EditingState, IntegratedEditing, ChangeSet, SchedulerDateTime } from '@devexpress/dx-react-scheduler';
 import {
   Scheduler,
@@ -25,6 +27,7 @@ import {
 import { Button, Typography, LinearProgress, makeStyles, SwipeableDrawer, Slide } from '@material-ui/core';
 
 // Project components
+import Dialog from 'components/layout/Dialog';
 import Paper from 'components/layout/Paper';
 import ReserveForm from 'components/miscellaneous/ReserveForm';
 import { ReservationInfoDialog } from 'components/miscellaneous/ReservationInfo';
@@ -134,6 +137,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
   const [currentViewName, setCurrentViewName] = useState<ViewTypes>('Day');
   const [addedAppointment, setAddedAppointment] = useState<AppointmentModel | undefined>();
   const [reservationOpen, setReservationOpen] = useState(false);
+  const [infoDialogOpen, setInfoDialogOpen] = useState(Boolean(sectionId && !getCookie(CALENDAR_INFO_DIALOG)));
   const reservations = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const displayedReservations = useMemo(
     () => [
@@ -283,9 +287,34 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
     </Scheduler>
   );
 
+  const INFO_TEXT = `For å reservere et rom ved hjelp av kalenderen så kan du ${
+    isTouchScreen ? 'klikke' : 'dobbelklikke'
+  } på et tidspunkt. Deretter kan du enten dra hele boksen som kommer opp for å flytte hele reservasjonen, eller dra i en av endene for å gjøre den lengre eller kortere.
+
+Det er kun mulig å reservere når du ser på en dag eller en uke i kalenderen.
+
+${isUserAdmin(user) ? 'Siden du er administrator' : 'Som bruker'} kan du bestille opp til ${
+    isUserAdmin(user) ? '6 måneder' : '1 måned'
+  } frem i tid. Reservasjon er kun mulig mellom kl 06.00 og 20.00.`;
+
+  const acceptInfoDialog = () => {
+    setInfoDialogOpen(false);
+    setCookie(CALENDAR_INFO_DIALOG, 'true', 1000 * 3600 * 24 * 365);
+  };
+
   return (
     <Paper className={classes.root} noPadding>
-      {sectionId && (
+      {infoDialogOpen && (
+        <Dialog
+          confirmText='Ikke vis igjen'
+          contentText={INFO_TEXT}
+          onClose={() => setInfoDialogOpen(false)}
+          onConfirm={acceptInfoDialog}
+          open={infoDialogOpen}
+          titleText='Reserver rom'
+        />
+      )}
+      {sectionId && currentViewName !== 'Month' && (
         <Typography className={classes.text} variant='subtitle2'>
           {`${isTouchScreen ? 'Klikk' : 'Dobbelklikk'} på et tidspunkt for å opprette en reservasjon, dra på reservasjonen for å endre tiden.`}
         </Typography>

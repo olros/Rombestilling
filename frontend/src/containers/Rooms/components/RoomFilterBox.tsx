@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { formatDate } from 'utils';
-import { parseISO } from 'date-fns';
+import { parseISO, addMonths, getHours } from 'date-fns';
+import { useUser } from 'hooks/User';
+import { isUserAdmin } from 'utils';
 
 // Material UI Components
 import { makeStyles, Divider, useMediaQuery, Theme, Collapse, Button, Typography } from '@material-ui/core';
@@ -43,12 +45,18 @@ type FormValues = Pick<RoomFilters, 'name'> & {
 
 const RoomFilterBox = ({ defaultFilters, filters, updateFilters }: RoomFilterBoxProps) => {
   const classes = useStyles();
+  const { data: user } = useUser();
   const [isOpen, setIsOpen] = useState(true);
   const mdDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
-  const { control, formState, handleSubmit, register, reset } = useForm<FormValues>({
+  const { control, watch, formState, handleSubmit, register, reset, setError } = useForm<FormValues>({
     defaultValues: { from: parseISO(filters.from), to: parseISO(filters.to) },
   });
+  const fromDate = watch('from');
   const submit = async (data: FormValues) => {
+    if (data.to < data.from) {
+      setError('to', { message: `"Til" må være etter "Fra"` });
+      return;
+    }
     updateFilters({ ...data, to: data.to.toJSON(), from: data.from.toJSON() });
     setIsOpen(false);
   };
@@ -57,6 +65,25 @@ const RoomFilterBox = ({ defaultFilters, filters, updateFilters }: RoomFilterBox
     reset();
     updateFilters(defaultFilters);
   };
+  const FROM_DATE_RULES = useMemo(
+    () => ({
+      minDate: new Date(),
+      maxDate: addMonths(new Date(), isUserAdmin(user) ? 6 : 1),
+      minTime: new Date(0, 0, 0, 6),
+      maxTime: new Date(0, 0, 0, 20),
+    }),
+    [user],
+  );
+  const TO_DATE_RULES = useMemo(
+    () => ({
+      minDate: fromDate,
+      maxDate: fromDate,
+      minTime: new Date(0, 0, 0, getHours(fromDate)),
+      maxTime: new Date(0, 0, 0, 20),
+    }),
+    [fromDate, user],
+  );
+
   return (
     <Paper blurred border className={classes.paper}>
       <Collapse in={!isOpen}>
@@ -80,6 +107,7 @@ const RoomFilterBox = ({ defaultFilters, filters, updateFilters }: RoomFilterBox
           <Divider orientation={mdDown ? 'horizontal' : 'vertical'} />
           <DatePicker
             control={control}
+            dateProps={FROM_DATE_RULES}
             formState={formState}
             label='Fra'
             margin='dense'
@@ -92,6 +120,7 @@ const RoomFilterBox = ({ defaultFilters, filters, updateFilters }: RoomFilterBox
           <Divider orientation={mdDown ? 'horizontal' : 'vertical'} />
           <DatePicker
             control={control}
+            dateProps={TO_DATE_RULES}
             formState={formState}
             label='Til'
             margin='dense'

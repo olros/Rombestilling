@@ -6,6 +6,7 @@ import { makeStyles, Button, Dialog as MaterialDialog, DialogActions, DialogTitl
 const useStyles = makeStyles((theme) => ({
   contentText: {
     color: theme.palette.text.secondary,
+    whiteSpace: 'break-spaces',
   },
   paper: {
     background: theme.palette.background.paper,

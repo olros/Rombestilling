@@ -1,5 +1,5 @@
 import Helmet from 'react-helmet';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import URLS from 'URLS';
 import { useIsAuthenticated } from 'hooks/User';
 
@@ -68,7 +68,9 @@ const Landing = () => {
         <Typography align='center' color='inherit' variant='h3'>
           Reserver et rom nå!
         </Typography>
-        {!isAuthenticated && (
+        {isAuthenticated ? (
+          <Navigate replace to={URLS.PROFILE} />
+        ) : (
           <Button className={classes.button} component={Link} to={URLS.LOGIN} variant='outlined'>
             Logg inn
           </Button>
