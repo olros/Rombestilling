@@ -1,6 +1,7 @@
 package ntnu.idatt2105.user.controller
 
 import com.querydsl.core.types.Predicate
+import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.service.ReservationService
 import ntnu.idatt2105.user.dto.DetailedUserDto
@@ -45,7 +46,7 @@ class UserController(
 
 	@PostMapping("/batch-users/")
 	fun registerUserBatch(@RequestParam("file") file: MultipartFile) =
-		ResponseEntity(userService.registerUserBatch(file), HttpStatus.CREATED)
+		ResponseEntity<Response>(userService.registerUserBatch(file), HttpStatus.CREATED)
 
 	@GetMapping("me/")
 	fun getMe(@AuthenticationPrincipal principal: UserDetailsImpl) =
@@ -57,8 +58,8 @@ class UserController(
 
     @GetMapping
     fun getUsers(
-            @QuerydslPredicate(root = User::class) predicate: Predicate,
-            @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["firstName"], direction = Sort.Direction.ASC) pageable: Pageable
+        @QuerydslPredicate(root = User::class) predicate: Predicate,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort = ["firstName"], direction = Sort.Direction.ASC) pageable: Pageable
     ) =
         ResponseEntity(userService.getUsers(pageable, predicate), HttpStatus.OK)
 

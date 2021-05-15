@@ -33,7 +33,7 @@ data class Reservation(
     var text: String = "",
     var nrOfPeople: Int = -1,
 
-        ){
+) {
         @Transient
         @QueryType(PropertyType.DATETIME)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

@@ -15,5 +15,5 @@ interface SectionService {
     fun getSectionById(id: UUID): SectionDto
     fun updateSection(id: UUID, section: SectionDto): SectionDto
     fun deleteSection(id: UUID)
-    fun addChildToSection(parentId: UUID, child: Section) : SectionDto
+    fun addChildToSection(parentId: UUID, child: Section): SectionDto
 }

@@ -1,6 +1,7 @@
 package ntnu.idatt2105.user.service
 
 import com.querydsl.core.types.Predicate
+import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.security.dto.ForgotPassword
 import ntnu.idatt2105.security.dto.ResetPasswordDto
 import ntnu.idatt2105.user.dto.UserDto

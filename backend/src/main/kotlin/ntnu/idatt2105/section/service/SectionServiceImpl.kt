@@ -1,15 +1,12 @@
 package ntnu.idatt2105.section.service
 
-import com.querydsl.core.types.ExpressionUtils
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
-import ntnu.idatt2105.reservation.model.QReservation
 import ntnu.idatt2105.section.dto.SectionCreateDto
 import ntnu.idatt2105.section.dto.SectionDto
 import ntnu.idatt2105.section.dto.SectionListDto
-import ntnu.idatt2105.section.model.QSection
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
 import org.modelmapper.ModelMapper
@@ -25,8 +22,8 @@ class SectionServiceImpl(
 ) : SectionService {
 
     override fun getAllSections(pageable: Pageable, predicate: Predicate): Page<SectionListDto> {
-        val sections = sectionRepository.findAll(predicate,pageable)
-        return sections.map{ modelMapper.map(it, SectionListDto::class.java)}
+        val sections = sectionRepository.findAll(predicate, pageable)
+        return sections.map { modelMapper.map(it, SectionListDto::class.java) }
     }
 
 	override fun createSection(section: SectionCreateDto): SectionDto {

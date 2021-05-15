@@ -126,14 +126,13 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
 	}
 
-
     @Test
     @WithMockUser(value = "spring")
     fun `test list users as admin returns all users with serach filter on email`() {
         val length = user.email.length
         mockMvc.perform(
                 get(URI)
-                        .param("search", user.email.substring(0, length -1))
+                        .param("search", user.email.substring(0, length - 1))
                         .with(user(adminUserDetails))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
@@ -146,7 +145,7 @@ class UserControllerTest {
         val length = user.surname.length
         mockMvc.perform(
                 get(URI)
-                        .param("search", user.surname.substring(0, length -1))
+                        .param("search", user.surname.substring(0, length - 1))
                         .with(user(adminUserDetails))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
@@ -159,7 +158,7 @@ class UserControllerTest {
         val length = user.firstName.length
         mockMvc.perform(
                 get(URI)
-                        .param("search", user.firstName.substring(0, length -1))
+                        .param("search", user.firstName.substring(0, length - 1))
                         .with(user(adminUserDetails))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
@@ -171,7 +170,7 @@ class UserControllerTest {
         val length = user.phoneNumber.length
         mockMvc.perform(
                 get(URI)
-                        .param("search", user.phoneNumber.substring(0, length -1))
+                        .param("search", user.phoneNumber.substring(0, length - 1))
                         .with(user(adminUserDetails))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk)
@@ -180,7 +179,7 @@ class UserControllerTest {
 
     @Test
     fun `test create user as admin when user exists fails`() {
-        val existingUser = createUserRegistrationDto(email=user.email)
+        val existingUser = createUserRegistrationDto(email = user.email)
 
 		mockMvc.perform(
 			post(URI)
