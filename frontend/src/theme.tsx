@@ -1,5 +1,4 @@
-import { createMuiTheme } from '@material-ui/core/styles';
-import darkScrollbar from '@material-ui/core/darkScrollbar';
+import { createMuiTheme, darkScrollbar } from '@material-ui/core';
 
 // Icons
 import DarkIcon from '@material-ui/icons/Brightness2Outlined';

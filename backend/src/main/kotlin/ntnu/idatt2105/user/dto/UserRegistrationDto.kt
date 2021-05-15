@@ -1,7 +1,8 @@
 package ntnu.idatt2105.user.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.opencsv.bean.CsvBindByName
-import com.opencsv.bean.CsvBindByPosition
+import java.time.LocalDate
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 
@@ -19,7 +20,8 @@ data class UserRegistrationDto(
     val email: String,
     @get:NotBlank(message = "Field must not be blank")
     @CsvBindByName(column = "phoneNumber")
-    val phoneNumber: String
-) {
-    constructor() : this("", "", "", "")
+    val phoneNumber: String,
+    var expirationDate: LocalDate = LocalDate.now().plusYears(1),
+    ) {
+    constructor() : this("", "", "", "", )
 }

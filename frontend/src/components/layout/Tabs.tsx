@@ -1,9 +1,7 @@
 import { ComponentType } from 'react';
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles';
-import MaterialTabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import { makeStyles, Tabs as MaterialTabs, Tab } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   tabsIndicator: {

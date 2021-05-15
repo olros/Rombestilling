@@ -3,15 +3,12 @@ import Helmet from 'react-helmet';
 import { useParams, useNavigate } from 'react-router-dom';
 import classnames from 'classnames';
 import URLS from 'URLS';
-import { useUser, useLogout, useIsAdmin } from 'hooks/User';
-import { urlEncode } from 'utils';
+import { useSnackbar } from 'hooks/Snackbar';
+import { useUser, useLogout, useUpdateUser } from 'hooks/User';
+import { isUserAdmin, urlEncode } from 'utils';
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
-import Collapse from '@material-ui/core/Collapse';
+import { makeStyles, Typography, Button, Avatar, Collapse } from '@material-ui/core';
 
 // Icons
 import EditIcon from '@material-ui/icons/EditRounded';
@@ -21,11 +18,13 @@ import ListIcon from '@material-ui/icons/ViewStreamRounded';
 // Project Components
 import Navigation from 'components/navigation/Navigation';
 import Paper from 'components/layout/Paper';
+import VerifyDialog from 'components/layout/VerifyDialog';
 import Tabs from 'components/layout/Tabs';
 import Http404 from 'containers/Http404';
 import EditProfile from 'containers/Profile/components/EditProfile';
 import { UserCalendar } from 'components/miscellaneous/Calendar';
 import { UserReservations } from 'containers/RoomDetails/components/RoomReservations';
+import { UserRole } from 'types/Enums';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -65,14 +64,15 @@ const useStyles = makeStyles((theme) => ({
 const Profile = () => {
   const classes = useStyles();
   const { userId }: { userId?: string } = useParams();
-  const { isAdmin, isLoading: isAdminLoading } = useIsAdmin();
   const { data: signedInUser } = useUser();
   const { data: user, isLoading, isError } = useUser(userId);
+  const showSnackbar = useSnackbar();
   const logout = useLogout();
+  const updateUser = useUpdateUser();
   const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
   const bookings = { value: 'bookings', label: 'Kalender', icon: PostsIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
-  const tabs = [reservationsTab, bookings, ...(userId ? [] : [editTab])];
+  const tabs = [reservationsTab, bookings, editTab];
   const [tab, setTab] = useState(reservationsTab.value);
   const navigate = useNavigate();
 
@@ -85,10 +85,10 @@ const Profile = () => {
   }, [user, signedInUser, navigate]);
 
   useEffect(() => {
-    if (userId && !isAdminLoading && !isAdmin) {
+    if (userId && signedInUser && !isUserAdmin(signedInUser)) {
       navigate(URLS.LANDING, { replace: true });
     }
-  }, [isAdmin, isAdminLoading, userId]);
+  }, [signedInUser, userId]);
 
   if (isError) {
     return <Http404 />;
@@ -96,6 +96,20 @@ const Profile = () => {
   if (isLoading || !user) {
     return <Navigation isLoading />;
   }
+
+  const makeAdmin = async () => {
+    updateUser.mutate(
+      { userId, user: { roles: [...user.roles, { name: UserRole.ADMIN }] } },
+      {
+        onSuccess: () => {
+          showSnackbar('Brukeren ble gjort til administrator', 'success');
+        },
+        onError: (e) => {
+          showSnackbar(e.message, 'error');
+        },
+      },
+    );
+  };
 
   return (
     <Navigation>
@@ -113,6 +127,14 @@ const Profile = () => {
               </Typography>
             </div>
           </Paper>
+          {userId && !isUserAdmin(user) && (
+            <VerifyDialog
+              contentText='Denne brukeren vil få administrator-tilgang til hele systemet. Det innebærer å kunne se og redigere alle bruker, reservasjoner, rom og underseksjoner.'
+              onConfirm={makeAdmin}
+              titleText='Gjør til administrator'>
+              Gjør til administrator
+            </VerifyDialog>
+          )}
           <Button className={classes.logout} fullWidth onClick={logout} variant='outlined'>
             Logg ut
           </Button>
@@ -128,7 +150,7 @@ const Profile = () => {
             </Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <Paper>
-                <EditProfile user={user} />
+                <EditProfile isAdmin={isUserAdmin(signedInUser)} user={user} />
               </Paper>
             </Collapse>
           </div>

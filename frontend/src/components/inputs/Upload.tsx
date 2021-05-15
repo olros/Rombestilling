@@ -5,9 +5,7 @@ import API from 'api/api';
 import { useSnackbar } from 'hooks/Snackbar';
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles';
-import { ButtonProps } from '@material-ui/core/Button';
-import { Button, FormHelperText, List, ListItem, ListItemText, ListItemSecondaryAction } from '@material-ui/core';
+import { ButtonProps, makeStyles, Button, FormHelperText, List, ListItem, ListItemText, ListItemSecondaryAction } from '@material-ui/core';
 
 // Icons
 import DeleteIcon from '@material-ui/icons/DeleteOutlineRounded';

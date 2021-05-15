@@ -84,6 +84,7 @@ const RoomFilterBox = ({ defaultFilters, filters, updateFilters }: RoomFilterBox
             label='Fra'
             margin='dense'
             name='from'
+            noOutline
             required
             rules={{ required: 'Du må oppgi en fra-dato' }}
             type='date-time'
@@ -95,6 +96,7 @@ const RoomFilterBox = ({ defaultFilters, filters, updateFilters }: RoomFilterBox
             label='Til'
             margin='dense'
             name='to'
+            noOutline
             required
             rules={{ required: 'Du må oppgi en til-dato' }}
             type='date-time'

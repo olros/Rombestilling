@@ -3,11 +3,7 @@ import { useThemeSettings } from 'hooks/ThemeContext';
 import { ThemeTypes, themesDetails } from 'theme';
 
 // Material-ui
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import ToggleButton from '@material-ui/core/ToggleButton';
-import ToggleButtonGroup from '@material-ui/core/ToggleButtonGroup';
-import IconButton from '@material-ui/core/IconButton';
+import { makeStyles, Typography, ToggleButton, ToggleButtonGroup, IconButton } from '@material-ui/core';
 
 // Icons
 import LightIcon from '@material-ui/icons/WbSunnyRounded';

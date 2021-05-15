@@ -31,6 +31,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.time.ZonedDateTime
 import java.util.*
+import kotlin.concurrent.thread
 
 
 @Service
@@ -55,6 +56,11 @@ class UserServiceImpl(
         forgotPassword(ForgotPassword(savedUser.email))
         logger.info("${user.id} has been created... Trying to send mail")
         return modelMapper.map(savedUser, UserDto::class.java)
+    }
+
+    private fun createUserObj(userDto : UserRegistrationDto): User {
+        return User(email = userDto.email, expirationDate = userDto.expirationDate, firstName = userDto.firstName,
+            surname = userDto.surname, phoneNumber =  userDto.phoneNumber)
     }
 
     override fun registerUserBatch(file: MultipartFile): Response {

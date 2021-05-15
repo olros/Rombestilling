@@ -18,7 +18,7 @@ data class User(@Id
                 var email: String = "",
                 var phoneNumber: String = "",
                 var image: String = "",
-                var expirationDate: LocalDate = LocalDate.EPOCH,
+                var expirationDate: LocalDate = LocalDate.now().plusYears(1),
                 var password: String = "",
                 @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
                 @JoinTable(name = "user_roles",

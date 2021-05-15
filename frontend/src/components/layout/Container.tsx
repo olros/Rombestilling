@@ -2,8 +2,7 @@ import { forwardRef, Ref } from 'react';
 import classnames from 'classnames';
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles';
-import MuiContainer, { ContainerProps } from '@material-ui/core/Container';
+import { Container as MuiContainer, makeStyles, ContainerProps } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   container: {

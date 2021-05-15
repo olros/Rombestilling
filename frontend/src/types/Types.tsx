@@ -30,6 +30,7 @@ export type User = {
   email: string;
   phoneNumber: string;
   image: string;
+  expirationDate: string;
   roles: Array<{
     name: UserRole;
   }>;
@@ -37,7 +38,7 @@ export type User = {
 
 export type UserList = Pick<User, 'id' | 'firstName' | 'surname' | 'email' | 'image' | 'phoneNumber'>;
 
-export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname' | 'phoneNumber'>;
+export type UserCreate = Pick<User, 'email' | 'firstName' | 'surname' | 'phoneNumber'> & Partial<Pick<User, 'expirationDate'>>;
 
 export type Section = {
   id: string;
@@ -60,7 +61,7 @@ export type SectionCreate = Omit<Section, 'id'> & {
 
 export type Reservation = {
   id: string;
-  section: SectionList;
+  section: Omit<SectionList, 'parent' | 'children'>;
   fromTime: string;
   toTime: string;
   text: string;

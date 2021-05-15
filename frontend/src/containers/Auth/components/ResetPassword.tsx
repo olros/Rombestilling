@@ -7,9 +7,7 @@ import { useSnackbar } from 'hooks/Snackbar';
 import { EMAIL_REGEX } from 'constant';
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import { makeStyles, Typography, Button } from '@material-ui/core';
 
 // Project Components
 import SubmitButton from 'components/inputs/SubmitButton';
@@ -27,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 type ResetPasswordData = {
   email: string;
-  newPassword: string;
+  password: string;
 };
 
 const ResetPassword = () => {
@@ -40,7 +38,7 @@ const ResetPassword = () => {
 
   const onSubmit = async (data: ResetPasswordData) => {
     resetPassword.mutate(
-      { email: data.email, newPassword: data.newPassword, token },
+      { email: data.email, password: data.password, token },
       {
         onSuccess: () => {
           showSnackbar('Passordet ble oppdatert', 'success');
@@ -78,7 +76,7 @@ const ResetPassword = () => {
           disabled={resetPassword.isLoading}
           formState={formState}
           label='Nytt passord'
-          {...register('newPassword', {
+          {...register('password', {
             required: 'Feltet er påkrevd',
           })}
           required

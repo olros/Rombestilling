@@ -4,7 +4,7 @@ import MuiDateTimePicker, { DateTimePickerProps as MuiDateTimePickerProps } from
 import { Control, Controller, RegisterOptions, UseFormReturn } from 'react-hook-form';
 
 const useStyles = makeStyles((theme) => ({
-  input: {
+  noOutline: {
     ...theme.palette.extra.noOutlinedTextField,
   },
 }));
@@ -19,9 +19,10 @@ export type DatePickerProps = TextFieldProps &
     defaultValue?: string;
     dateProps?: Partial<MuiDatePickerProps> & Partial<MuiDateTimePickerProps>;
     type: 'date' | 'date-time';
+    noOutline?: boolean;
   };
 
-const DatePicker = ({ type, name, label, control, formState, rules = {}, defaultValue = '', dateProps, ...props }: DatePickerProps) => {
+const DatePicker = ({ type, name, label, control, formState, noOutline, rules = {}, defaultValue = '', dateProps, ...props }: DatePickerProps) => {
   const classes = useStyles();
   const Picker = type === 'date' ? MuiDatePicker : MuiDateTimePicker;
   return (
@@ -38,7 +39,7 @@ const DatePicker = ({ type, name, label, control, formState, rules = {}, default
           label={label}
           renderInput={(params) => (
             <MuiTextField
-              className={classes.input}
+              className={noOutline ? classes.noOutline : ''}
               margin='normal'
               variant='outlined'
               {...params}
