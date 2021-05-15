@@ -21,7 +21,7 @@ data class UserRegistrationDto(
     @get:NotBlank(message = "Field must not be blank")
     @CsvBindByName(column = "phoneNumber")
     val phoneNumber: String,
-    var expirationDate: LocalDate,
+    var expirationDate: LocalDate = LocalDate.now().plusYears(1),
     ) {
-    constructor() : this("", "", "", "", LocalDate.now().plusYears(1) )
+    constructor() : this("", "", "", "", )
 }
