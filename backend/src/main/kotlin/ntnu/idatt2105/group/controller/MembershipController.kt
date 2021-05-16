@@ -5,7 +5,6 @@ import io.swagger.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import ntnu.idatt2105.group.dto.GroupDto
-import ntnu.idatt2105.section.dto.SectionCreateDto
 import ntnu.idatt2105.section.dto.SectionDto
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.user.dto.UserIdDto

@@ -16,7 +16,6 @@ import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
-import javax.validation.Valid
 
 
 @Api(value = "Group services", tags = ["Group Services"], description = "Group Services")
