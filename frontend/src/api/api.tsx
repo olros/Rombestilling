@@ -53,7 +53,8 @@ export default {
       }),
   changePassword: (oldPassword: string, newPassword: string) =>
     IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/change-password/`, data: { oldPassword, newPassword } }),
-  deleteUser: () => IFetch<RequestResponse>({ method: 'DELETE', url: `${USERS}/me/` }),
+  makeAdmin: (userId: string) => IFetch<User>({ method: 'POST', url: `${AUTH}/make-admin/`, data: { userId } }),
+  deleteUser: () => IFetch<RequestResponse>({ method: 'DELETE', url: `${USERS}/${ME}/` }),
 
   // Reservation
   getReservation: (sectionId: string, reservationId: string) =>

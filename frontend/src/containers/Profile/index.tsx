@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import classnames from 'classnames';
 import URLS from 'URLS';
 import { useSnackbar } from 'hooks/Snackbar';
-import { useUser, useLogout, useUpdateUser } from 'hooks/User';
+import { useUser, useLogout, useMakeAdmin } from 'hooks/User';
 import { isUserAdmin, urlEncode } from 'utils';
 
 // Material UI Components
@@ -24,7 +24,6 @@ import Http404 from 'containers/Http404';
 import EditProfile from 'containers/Profile/components/EditProfile';
 import { UserCalendar } from 'components/miscellaneous/Calendar';
 import { UserReservations } from 'containers/RoomDetails/components/RoomReservations';
-import { UserRole } from 'types/Enums';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -68,7 +67,7 @@ const Profile = () => {
   const { data: user, isLoading, isError } = useUser(userId);
   const showSnackbar = useSnackbar();
   const logout = useLogout();
-  const updateUser = useUpdateUser();
+  const makeUserAdmin = useMakeAdmin();
   const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
   const bookings = { value: 'bookings', label: 'Kalender', icon: PostsIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
@@ -97,19 +96,15 @@ const Profile = () => {
     return <Navigation isLoading />;
   }
 
-  const makeAdmin = async () => {
-    updateUser.mutate(
-      { userId, user: { roles: [...user.roles, { name: UserRole.ADMIN }] } },
-      {
-        onSuccess: () => {
-          showSnackbar('Brukeren ble gjort til administrator', 'success');
-        },
-        onError: (e) => {
-          showSnackbar(e.message, 'error');
-        },
+  const makeAdmin = async () =>
+    makeUserAdmin.mutate(userId, {
+      onSuccess: () => {
+        showSnackbar('Brukeren ble gjort til administrator', 'success');
       },
-    );
-  };
+      onError: (e) => {
+        showSnackbar(e.message, 'error');
+      },
+    });
 
   return (
     <Navigation>
