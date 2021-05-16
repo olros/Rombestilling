@@ -6,4 +6,5 @@ enum class EntityType {
     TOKEN,
     RESERVATION,
     ROLE
+    GROUP
 }
