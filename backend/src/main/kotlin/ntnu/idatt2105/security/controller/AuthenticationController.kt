@@ -39,7 +39,7 @@ interface AuthenticationController {
     @PostMapping("/reset-password/{passwordResetTokenId}/")
     fun resetPassword(@PathVariable passwordResetTokenId: UUID, @RequestBody reset: ResetPasswordDto) : ResponseEntity<Response>
 
-    @Operation(summary = "Make a use admin", responses = [
+    @Operation(summary = "Make a user admin", responses = [
         ApiResponse(responseCode = "200", description = "Success: user was made an admin"),
         ApiResponse(responseCode = "404", description = "Not found: user was not found"),
     ])

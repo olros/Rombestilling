@@ -19,6 +19,7 @@ import ntnu.idatt2105.mailer.MailService
 import ntnu.idatt2105.security.dto.MakeAdminDto
 import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
 import ntnu.idatt2105.security.dto.ResetPasswordDto
+import ntnu.idatt2105.security.token.isAfter
 import ntnu.idatt2105.user.model.Role
 import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.RoleType.USER
@@ -187,7 +188,7 @@ class UserServiceImpl(
             ExceptionType.ENTITY_NOT_FOUND, id.toString())
         }
         val user = getUserByEmail(resetDto.email)
-        if(user != token.user && token.expirationDate.isAfter(ZonedDateTime.now())) {
+        if(user != token.user && token.isAfter()) {
             logger.error("$token is not valid for ${user.email}")
             throw ApplicationException.throwException(EntityType.TOKEN,
                 ExceptionType.NOT_VALID, id.toString())
