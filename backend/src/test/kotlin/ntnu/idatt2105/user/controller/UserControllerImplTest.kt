@@ -15,6 +15,7 @@ import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -25,9 +26,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.test.mock.mockito.SpyBean
+import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.test.context.support.WithMockUser
@@ -81,10 +84,12 @@ class UserControllerImplTest {
     fun setUp() {
         user = userFactory.`object`
         adminUser = userFactory.`object`
-        adminUser = adminUser.copy(roles = setOf(
-            RoleFactory().`object`,
-            RoleFactory().getObject(RoleType.ADMIN)
-        ))
+        adminUser = adminUser.copy(
+            roles = setOf(
+                RoleFactory().`object`,
+                RoleFactory().getObject(RoleType.ADMIN)
+            )
+        )
 
         userRepository.saveAll(listOf(user, adminUser))
 
@@ -109,7 +114,8 @@ class UserControllerImplTest {
         mockMvc.perform(
             get("$URI{userId}/", user.id.toString())
                 .with(user(adminUserDetails))
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(user.id.toString()))
     }
@@ -120,7 +126,8 @@ class UserControllerImplTest {
         mockMvc.perform(
             get(URI)
                 .with(user(adminUserDetails))
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
     }
@@ -131,12 +138,13 @@ class UserControllerImplTest {
     fun `test list users as admin returns all users with serach filter on email`() {
         val length = user.email.length
         mockMvc.perform(
-                get(URI)
-                        .param("search", user.email.substring(0, length -1))
-                        .with(user(adminUserDetails))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
+            get(URI)
+                .param("search", user.email.substring(0, length - 1))
+                .with(user(adminUserDetails))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
     }
 
     @Test
@@ -144,12 +152,13 @@ class UserControllerImplTest {
     fun `test list users as admin returns all users with serach filter on surname`() {
         val length = user.surname.length
         mockMvc.perform(
-                get(URI)
-                        .param("search", user.surname.substring(0, length -1))
-                        .with(user(adminUserDetails))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
+            get(URI)
+                .param("search", user.surname.substring(0, length - 1))
+                .with(user(adminUserDetails))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
     }
 
     @Test
@@ -157,35 +166,39 @@ class UserControllerImplTest {
     fun `test list users as admin returns all users with serach filter on firstName`() {
         val length = user.firstName.length
         mockMvc.perform(
-                get(URI)
-                        .param("search", user.firstName.substring(0, length -1))
-                        .with(user(adminUserDetails))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
+            get(URI)
+                .param("search", user.firstName.substring(0, length - 1))
+                .with(user(adminUserDetails))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
     }
+
     @Test
     @WithMockUser(value = "spring")
     fun `test list users as admin returns all users with search filter on phoneNumber`() {
         val length = user.phoneNumber.length
         mockMvc.perform(
-                get(URI)
-                        .param("search", user.phoneNumber.substring(0, length -1))
-                        .with(user(adminUserDetails))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk)
-                .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
+            get(URI)
+                .param("search", user.phoneNumber.substring(0, length - 1))
+                .with(user(adminUserDetails))
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
     }
 
     @Test
     fun `test create user as admin when user exists fails`() {
-        val existingUser = createUserRegistrationDto(email=user.email)
+        val existingUser = createUserRegistrationDto(email = user.email)
 
         mockMvc.perform(
             post(URI)
                 .with(user(adminUserDetails))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(existingUser)))
+                .content(objectMapper.writeValueAsString(existingUser))
+        )
             .andExpect(status().isBadRequest)
             .andExpect(
                 jsonPath("$.message").isNotEmpty
@@ -201,7 +214,8 @@ class UserControllerImplTest {
             post(URI)
                 .with(user(adminUserDetails))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(validUser)))
+                .content(objectMapper.writeValueAsString(validUser))
+        )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.firstName").value(validUser.firstName))
             .andExpect(jsonPath("$.errors.fields.password").doesNotExist())
@@ -217,7 +231,8 @@ class UserControllerImplTest {
             post(URI)
                 .with(user(adminUserDetails))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidUser)))
+                .content(objectMapper.writeValueAsString(invalidUser))
+        )
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.message").isNotEmpty)
             .andExpect(jsonPath("$.errors.fields.email").exists())
@@ -227,7 +242,8 @@ class UserControllerImplTest {
     fun `test get me as admin returns the currently authenticated user`() {
         mockMvc.perform(
             get(URI + "me/")
-                .with(user(adminUserDetails)))
+                .with(user(adminUserDetails))
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(adminUser.id.toString()))
     }
@@ -236,7 +252,8 @@ class UserControllerImplTest {
     fun `test get me as user returns the currently authenticated user`() {
         mockMvc.perform(
             get(URI + "me/")
-                .with(user(userDetails)))
+                .with(user(userDetails))
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(user.id.toString()))
     }
@@ -249,7 +266,8 @@ class UserControllerImplTest {
             put(URI + user.id.toString() + "/")
                 .with(user(adminUserDetails))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(user)))
+                .content(objectMapper.writeValueAsString(user))
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(user.id.toString()))
     }
@@ -262,15 +280,17 @@ class UserControllerImplTest {
             put(URI + user.id.toString() + "/")
                 .with(user(userDetails))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(user)))
+                .content(objectMapper.writeValueAsString(user))
+        )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(user.id.toString()))
     }
 
-    private fun createUserRegistrationDto(email: String,
-                                          firstName: String = Faker().name.firstName(),
-                                          surname: String = Faker().name.lastName(),
-                                          phoneNumber: String = Faker().phoneNumber.phoneNumber()
+    private fun createUserRegistrationDto(
+        email: String,
+        firstName: String = Faker().name.firstName(),
+        surname: String = Faker().name.lastName(),
+        phoneNumber: String = Faker().phoneNumber.phoneNumber()
     ): UserRegistrationDto =
         UserRegistrationDto(
             firstName = firstName,
@@ -350,5 +370,84 @@ class UserControllerImplTest {
         )
 
         assertThat(userRepository.existsById(user.id)).isFalse
+    }
+
+    @Test
+    fun `test batch create with single valid users`() {
+        val file = MockMultipartFile(
+            "file",
+            "test.csv",
+            "csv",
+            "firstName,surname,email,phoneNumber,expirationDate\n Amber,Cunningham,amber.cunningham@codersee.com,888 888 888,2008-08-08\n".byteInputStream()
+        )
+
+        val size = userRepository.findAll().size
+        mockMvc.perform(
+            multipart(URI + "batch-users/").file(file)
+                .with(user(adminUserDetails))
+        ).andExpect(status().isCreated)
+
+        assert(size+1 == userRepository.findAll().size)
+    }
+
+    @Test
+    fun `test batch create with valid and invalid users`() {
+        val file = MockMultipartFile(
+            "file",
+            "test.csv",
+            "csv",
+            ("firstName,surname,email,phoneNumber,expirationDate\n " +
+                    "Amber,Cunningham,amber.cunningham@codersee.com,888 888 888,2008-08-08\n" +
+                    "Frankie,frankie.jackson@codersee.com,777 777 777,2007-07-07\n").byteInputStream()
+        )
+
+        try {
+            mockMvc.perform(
+                multipart(URI + "batch-users/").file(file)
+                    .with(user(adminUserDetails))
+            )
+            fail("Should throw exception")
+        } catch (ex: Exception) {
+        }
+    }
+
+
+    @Test
+    fun `test batch create with multiple valid users`() {
+        val file = MockMultipartFile(
+            "file",
+            "test.csv",
+            "csv",
+            ("firstName,surname,email,phoneNumber,expirationDate\n" +
+                    "Amber,Cunningham,amber.cunningham@codersee.com,888 888 888,2008-08-08\n" +
+                    "Frankie,Jackson,frankie.jackson@codersee.com,777 777 777,2007-07-07\n" +
+                    "Jessie,Carey,jessie.carey@codersee.com,666 666 666,2006-06-06\n").byteInputStream()
+        )
+
+        val size = userRepository.findAll().size
+        mockMvc.perform(
+            multipart(URI + "batch-users/").file(file)
+                .with(user(adminUserDetails))
+        ).andExpect(status().isCreated)
+
+        assert(size+3 == userRepository.findAll().size)
+    }
+
+    @Test
+    fun `test batch create with invalid users`() {
+        val file = MockMultipartFile(
+            "file",
+            "test.csv",
+            "csv",
+            " ".byteInputStream()
+        )
+
+        val size = userRepository.findAll().size
+        mockMvc.perform(
+            multipart(URI + "batch-users/").file(file)
+                .with(user(adminUserDetails))
+        ).andExpect(status().isNotFound)
+
+        assert(size == userRepository.findAll().size)
     }
 }

@@ -72,8 +72,9 @@ class UserServiceImpl(
             val csvToBean = createCSVToBean(fileReader)
             val listOfDTO: List<UserRegistrationDto> = csvToBean.parse()
             val listOfObj = mutableListOf<User>()
+            if(listOfDTO.isEmpty()) throw ApplicationException.throwException(EntityType.USER, ExceptionType.ENTITY_NOT_FOUND, "Could not find a valid user in the file")
             listOfDTO.forEach {
-                listOfObj.add(modelMapper.map(it, User::class.java))
+                listOfObj.add(createUserObj(it))
             }
             userRepository.saveAll(listOfObj)
             logger.info("The users have been created. Sending emails...")
