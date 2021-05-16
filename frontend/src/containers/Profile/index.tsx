@@ -97,7 +97,7 @@ const Profile = () => {
   }
 
   const makeAdmin = async () =>
-    makeUserAdmin.mutate(userId, {
+    makeUserAdmin.mutate(user.id, {
       onSuccess: () => {
         showSnackbar('Brukeren ble gjort til administrator', 'success');
       },
@@ -121,18 +121,18 @@ const Profile = () => {
                 {user.email}
               </Typography>
             </div>
+            {userId && !isUserAdmin(user) && (
+              <VerifyDialog
+                contentText='Denne brukeren vil få administrator-tilgang til hele systemet. Det innebærer å kunne se og redigere alle bruker, reservasjoner, rom og underseksjoner.'
+                onConfirm={makeAdmin}
+                titleText='Gjør til administrator'>
+                Gjør til administrator
+              </VerifyDialog>
+            )}
+            <Button className={classes.logout} fullWidth onClick={logout} variant='outlined'>
+              Logg ut
+            </Button>
           </Paper>
-          {userId && !isUserAdmin(user) && (
-            <VerifyDialog
-              contentText='Denne brukeren vil få administrator-tilgang til hele systemet. Det innebærer å kunne se og redigere alle bruker, reservasjoner, rom og underseksjoner.'
-              onConfirm={makeAdmin}
-              titleText='Gjør til administrator'>
-              Gjør til administrator
-            </VerifyDialog>
-          )}
-          <Button className={classes.logout} fullWidth onClick={logout} variant='outlined'>
-            Logg ut
-          </Button>
         </div>
         <div className={classes.grid}>
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />

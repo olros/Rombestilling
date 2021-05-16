@@ -7,7 +7,7 @@ import ntnu.idatt2105.security.dto.JwtTokenResponse
 import ntnu.idatt2105.security.dto.MakeAdminDto
 import ntnu.idatt2105.security.dto.ResetPasswordDto
 import ntnu.idatt2105.security.service.JwtService
-import ntnu.idatt2105.user.dto.UserDto
+import ntnu.idatt2105.user.dto.DetailedUserDto
 import ntnu.idatt2105.user.service.UserServiceImpl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -35,7 +35,7 @@ class AuthenticationControllerImpl(val jwtConfig: JWTConfig, val jwtService: Jwt
         return ResponseEntity(Response("Password was reset"), HttpStatus.OK)
     }
 
-    override fun makeAdmin(user: MakeAdminDto): ResponseEntity<UserDto> {
+    override fun makeAdmin(user: MakeAdminDto): ResponseEntity<DetailedUserDto> {
         return ResponseEntity(userService.makeAdmin(user), HttpStatus.OK)
     }
 }

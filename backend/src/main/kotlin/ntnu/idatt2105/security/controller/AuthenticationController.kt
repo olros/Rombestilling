@@ -8,7 +8,7 @@ import ntnu.idatt2105.security.dto.ForgotPassword
 import ntnu.idatt2105.security.dto.JwtTokenResponse
 import ntnu.idatt2105.security.dto.MakeAdminDto
 import ntnu.idatt2105.security.dto.ResetPasswordDto
-import ntnu.idatt2105.user.dto.UserDto
+import ntnu.idatt2105.user.dto.DetailedUserDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -44,5 +44,5 @@ interface AuthenticationController {
         ApiResponse(responseCode = "404", description = "Not found: user was not found"),
     ])
     @PostMapping("/make-admin/")
-    fun makeAdmin(@RequestBody user: MakeAdminDto) : ResponseEntity<UserDto>
+    fun makeAdmin(@RequestBody user: MakeAdminDto) : ResponseEntity<DetailedUserDto>
 }

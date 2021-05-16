@@ -33,7 +33,7 @@ class UserControllerImpl(val userService: UserService, val reservationService: R
             ResponseEntity.ok(userService.getUser(principal.getId(), mapTo=DetailedUserDto::class.java))
 
     override fun getUser(userId: UUID) =
-        ResponseEntity.ok(userService.getUser(userId, mapTo=UserDto::class.java))
+        ResponseEntity.ok(userService.getUser(userId, mapTo=DetailedUserDto::class.java))
 
     override fun getUsers(predicate: Predicate, pageable: Pageable
     ) =
@@ -45,10 +45,17 @@ class UserControllerImpl(val userService: UserService, val reservationService: R
     override fun deleteUser(userId: UUID) =
         ResponseEntity.ok(userService.deleteUser(userId))
 
-    override fun getUserReservations(
+    override fun getMyReservations(
         predicate: Predicate,
         pageable: Pageable,
         principal: UserDetailsImpl
     ) =
         reservationService.getUserReservation(principal.getId(), pageable, predicate)
+
+    override fun getUserReservations(
+        userId: UUID,
+        predicate: Predicate,
+        pageable: Pageable,
+    ) =
+        reservationService.getUserReservation(userId, pageable, predicate)
 }

@@ -10,6 +10,7 @@ import ntnu.idatt2105.exception.ExceptionType
 import ntnu.idatt2105.security.dto.ForgotPassword
 import ntnu.idatt2105.security.token.PasswordResetToken
 import ntnu.idatt2105.user.dto.UserDto
+import ntnu.idatt2105.user.dto.DetailedUserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.UserRepository
@@ -147,12 +148,12 @@ class UserServiceImpl(
         return Response("The user has been deleted")
     }
 
-    override fun makeAdmin(user: MakeAdminDto): UserDto {
+    override fun makeAdmin(user: MakeAdminDto): DetailedUserDto {
         val userObj = getUser(user.userId!!, User::class.java)
         val adminRole = roleRepository.findByName(RoleType.ADMIN)
         val userRole = roleRepository.findByName(USER)
         if(!userObj.roles.contains(adminRole))userObj.roles = mutableSetOf(adminRole!!,userRole!!)
-        return modelMapper.map(userRepository.save(userObj), UserDto::class.java)
+        return modelMapper.map(userRepository.save(userObj), DetailedUserDto::class.java)
     }
 
     private fun getUserById(id: UUID): User =
