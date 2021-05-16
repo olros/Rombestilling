@@ -1,6 +1,6 @@
 package ntnu.idatt2105.statistics.dto
 
-data class StatsDto(
+data class StatisticsDto(
     val nrOfReservation: Int,
     val hoursOfReservation: Long,
     val daysWithReservation: Int,

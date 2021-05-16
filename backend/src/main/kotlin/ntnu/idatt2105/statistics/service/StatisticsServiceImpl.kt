@@ -8,26 +8,24 @@ import ntnu.idatt2105.exception.ExceptionType
 import ntnu.idatt2105.reservation.model.QReservation
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
-import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
-import ntnu.idatt2105.statistics.dto.StatsDto
+import ntnu.idatt2105.statistics.dto.StatisticsDto
 import ntnu.idatt2105.user.model.User
 import org.apache.commons.collections4.IterableUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.LocalDate
-import java.time.ZonedDateTime
 import java.util.*
 
 @Service
-class StatsServiceImpl(
+class StatisticsServiceImpl(
     val sectionRepository: SectionRepository,
     val reservationRepository: ReservationRepository
-) : StatsService {
+) : StatisticsService {
     val logger = LoggerFactory.getLogger("StatsService")
 
-    override fun getStatisticsForSection(sectionID: UUID, predicate: Predicate): StatsDto {
+    override fun getStatisticsForSection(sectionID: UUID, predicate: Predicate): StatisticsDto {
         val reservation = QReservation.reservation
         val newPredicate = ExpressionUtils.allOf(predicate, reservation.section.id.eq(sectionID))!!
         val reservations: Iterable<Reservation> = reservationRepository.findAll(newPredicate)
@@ -36,7 +34,7 @@ class StatsServiceImpl(
         )
 
         logger.info("Getting statistics for sections")
-        return StatsDto(
+        return StatisticsDto(
             nrOfReservation = getNrOfReservations(reservations),
             hoursOfReservation = getHoursOfReservation(reservations),
             daysWithReservation = getDaysWithReservation(reservations),
