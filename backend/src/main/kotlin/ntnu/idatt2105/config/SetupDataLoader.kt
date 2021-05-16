@@ -39,7 +39,7 @@ class SetupDataLoader(
                     phoneNumber="+4712345678",
                     password=passwordEncoder.encode("admin"),
                     expirationDate = LocalDate.EPOCH,
-                    roles = setOf(userRole, adminRole)
+                    roles = mutableSetOf(userRole, adminRole)
                 ))
 
             userRepository.findByEmail("user@test.com") ?: userRepository.save(
