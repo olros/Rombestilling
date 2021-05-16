@@ -5,6 +5,7 @@ import io.swagger.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.util.PaginationConstants
 import org.springframework.data.domain.Page
@@ -35,20 +36,20 @@ interface GroupController {
         ApiResponse(responseCode = "404", description = "Not found: group with the given id does not exist")
     ])
     @GetMapping("{groupId}/")
-    fun getGroup(@PathVariable groupId: UUID): ResponseEntity<Group>
+    fun getGroup(@PathVariable groupId: UUID): ResponseEntity<GroupDto>
 
     @Operation(summary = "Create a new group", responses = [
         ApiResponse(responseCode = "201", description = "Created: new group was created"),
     ])
     @PostMapping
-    fun createGroup(@RequestBody group: Group): ResponseEntity<Group>
+    fun createSection(@RequestBody group: Group): ResponseEntity<GroupDto>
 
     @Operation(summary = "Update existing group", responses = [
         ApiResponse(responseCode = "200", description = "Success: group was updated"),
         ApiResponse(responseCode = "404", description = "Not found: group with the given id does not exist"),
     ])
     @PutMapping("{groupId}/")
-    fun updateGroup(@PathVariable groupId: UUID, @RequestBody group: Group): ResponseEntity<Group>
+    fun updateSection(@PathVariable groupId: UUID, @RequestBody group: Group): ResponseEntity<GroupDto>
 
     @Operation(summary = "Delete existing group", responses = [
         ApiResponse(responseCode = "200", description = "Success: group was deleted"),
