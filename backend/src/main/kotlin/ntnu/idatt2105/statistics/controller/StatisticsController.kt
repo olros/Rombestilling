@@ -14,7 +14,7 @@ import ntnu.idatt2105.statistics.dto.StatisticsDto
 import org.springframework.web.bind.annotation.RequestMapping
 
 @Api(value = "Statistics for Section", tags = ["Statistics for section"], description = "Statistics for section")
-@RequestMapping("/sections/")
+@RequestMapping("/sections/{sectionId}/statistics/")
 interface StatisticsController {
 
     @Operation(
