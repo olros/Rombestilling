@@ -46,46 +46,46 @@ class WebSecurity(val refreshTokenService: RefreshTokenService,
 
     @Throws(Exception::class)
     override fun configure(httpSecurity: HttpSecurity) {
-        if (jwtConfig != null) {
-            httpSecurity.cors().configurationSource { request: HttpServletRequest? ->
-                val cors = CorsConfiguration()
-                cors.allowedOrigins = List.of("*")
-                cors.allowedMethods = List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                cors.allowedHeaders = List.of("*")
-                cors
-            }
-                    .and()
-                    .csrf()
-                    .disable()
-                    .authorizeRequests()
-                    .antMatchers(*DOCS_WHITELIST).permitAll()
-                    .antMatchers(HttpMethod.POST, jwtConfig.uri + "/login").permitAll()
-                    .antMatchers(HttpMethod.POST, "/auth/forgot-password/").permitAll()
-                    .antMatchers(HttpMethod.POST, "/auth/reset-password/**").permitAll()
-                    .antMatchers(HttpMethod.GET, "/auth/refresh-token/").permitAll()
-                    .antMatchers(HttpMethod.GET, "/users/me/").hasRole(RoleType.USER)
-                    .antMatchers(HttpMethod.GET, "/users/me/reservations/").hasRole(RoleType.USER)
-                    .antMatchers(HttpMethod.PUT, "/users/{userId}/").hasRole(RoleType.USER)
-                    .antMatchers(HttpMethod.GET, "/sections/", "/sections/{sectionId}/").hasRole(RoleType.USER)
-                    .antMatchers(HttpMethod.POST, "/sections/{sectionId}/reservations/").hasRole(RoleType.USER)
-                    .antMatchers(HttpMethod.GET, "/sections/{sectionId}/reservations/").hasRole(RoleType.USER)
-
-                    .antMatchers( "/**").hasAnyRole(RoleType.ADMIN)
-                    .anyRequest()
-                    .authenticated()
-                    .and()
-                    .exceptionHandling()
-                        .authenticationEntryPoint { req: HttpServletRequest?, res: HttpServletResponse, e: AuthenticationException? ->
-                        res.contentType = "application/json"
-                        res.status = HttpServletResponse.SC_UNAUTHORIZED
-                        res.outputStream.println("{ \"message\": \"Brukernavn eller passord er feil\"}")
-                    }
-                    .and()
-                    .addFilter(JWTUsernamePasswordAuthenticationFilter(refreshTokenService, authenticationManager(), jwtConfig))
-                    .addFilterAfter(JWTAuthenticationFilter(jwtConfig, jwtUtil), UsernamePasswordAuthenticationFilter::class.java)
-                    .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        httpSecurity.cors().configurationSource { request: HttpServletRequest? ->
+            val cors = CorsConfiguration()
+            cors.allowedOrigins = List.of("*")
+            cors.allowedMethods = List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            cors.allowedHeaders = List.of("*")
+            cors
         }
+            .and()
+            .csrf()
+            .disable()
+            .authorizeRequests()
+            .antMatchers(*DOCS_WHITELIST).permitAll()
+            .antMatchers(HttpMethod.POST, jwtConfig.uri + "/login").permitAll()
+            .antMatchers(HttpMethod.POST, "/auth/forgot-password/").permitAll()
+            .antMatchers(HttpMethod.POST, "/auth/reset-password/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/auth/refresh-token/").permitAll()
+            .antMatchers(HttpMethod.GET, "/users/me/").hasRole(RoleType.USER)
+            .antMatchers(HttpMethod.GET, "/users/me/reservations/").hasRole(RoleType.USER)
+            .antMatchers(HttpMethod.PUT, "/users/{userId}/").hasRole(RoleType.USER)
+            .antMatchers(HttpMethod.GET, "/sections/", "/sections/{sectionId}/").hasRole(RoleType.USER)
+            .antMatchers(HttpMethod.POST, "/sections/{sectionId}/reservations/").hasRole(RoleType.USER)
+            .antMatchers(HttpMethod.GET, "/sections/{sectionId}/reservations/").hasRole(RoleType.USER)
+            .antMatchers(HttpMethod.DELETE, "/sections/{sectionId}/reservations/{reservationId}/").hasRole(RoleType.USER)
+            .antMatchers(HttpMethod.PUT, "/sections/{sectionId}/reservations/{reservationId}/").hasRole(RoleType.USER)
+            .antMatchers(HttpMethod.GET, "/sections/{sectionId}/reservations/{reservationId}/").hasRole(RoleType.USER)
+            .antMatchers( "/**").hasAnyRole(RoleType.ADMIN)
+            .anyRequest()
+            .authenticated()
+            .and()
+            .exceptionHandling()
+            .authenticationEntryPoint { req: HttpServletRequest?, res: HttpServletResponse, e: AuthenticationException? ->
+                res.contentType = "application/json"
+                res.status = HttpServletResponse.SC_UNAUTHORIZED
+                res.outputStream.println("{ \"message\": ${e?.message}}")
+            }
+            .and()
+            .addFilter(JWTUsernamePasswordAuthenticationFilter(refreshTokenService, authenticationManager(), jwtConfig))
+            .addFilterAfter(JWTAuthenticationFilter(jwtConfig, jwtUtil), UsernamePasswordAuthenticationFilter::class.java)
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     }
 
     @Throws(Exception::class)

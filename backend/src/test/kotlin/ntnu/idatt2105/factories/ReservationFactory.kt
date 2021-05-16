@@ -6,6 +6,8 @@ import ntnu.idatt2105.util.ReservationConstants
 import org.springframework.beans.factory.FactoryBean
 import java.time.ZonedDateTime
 import java.util.*
+import kotlin.random.asKotlinRandom
+import kotlin.random.nextUInt
 
 class ReservationFactory : FactoryBean<Reservation> {
 
@@ -34,6 +36,6 @@ class ReservationFactory : FactoryBean<Reservation> {
                 earliestStartTimeTomorrow.plusHours(1),
                 earliestStartTimeTomorrow.plusHours(5),
                 faker.bojackHorseman.characters(),
-                Random(1).nextInt())
+                (0..10000).random())
     }
 }

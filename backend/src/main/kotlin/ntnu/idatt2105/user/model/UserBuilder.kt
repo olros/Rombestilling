@@ -11,7 +11,7 @@ data class UserBuilder(
     val phoneNumber: String = "",
     val expirationDate: LocalDate = LocalDate.now(),
     val password: String = "",
-    val roles: Set<Role> = setOf()
+    val roles: MutableSet<Role> = mutableSetOf()
 ) {
     fun build(): User {
         return User(

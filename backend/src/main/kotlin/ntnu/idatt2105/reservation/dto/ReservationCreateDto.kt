@@ -5,6 +5,7 @@ import ntnu.idatt2105.reservation.validation.ReservationFromDateTimeBeforeToDate
 import ntnu.idatt2105.reservation.validation.ReservationMaximumDuration
 import java.time.ZonedDateTime
 import java.util.*
+import javax.validation.constraints.Positive
 
 @ReservationMaximumDuration
 @ReservationAllowedFromDateTime
@@ -15,5 +16,6 @@ data class ReservationCreateDto(
         val fromTime: ZonedDateTime? = null,
         val toTime: ZonedDateTime? = null,
         val text: String = "",
-        val nrOfPeople: Int = -1,
+        @get:Positive(message = "The number of people must be positive")
+        val nrOfPeople: Int = 1,
         )

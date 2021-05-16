@@ -5,6 +5,7 @@ import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.section.model.QSection
 import ntnu.idatt2105.section.model.Section
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.querydsl.QuerydslPredicateExecutor
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer
 import org.springframework.data.querydsl.binding.QuerydslBindings

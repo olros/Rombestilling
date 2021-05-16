@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.querydsl.binding.QuerydslPredicate
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.Valid
@@ -52,10 +53,11 @@ interface ReservationController {
         ApiResponse(responseCode = "400", description = "Bad request: existing reservation was not updated"),
         ApiResponse(responseCode = "404", description = "Not found: reservation with the given id does not exist"),
     ])
-    @PutMapping("{userId}/")
+    @PutMapping("{reservationId}/")
+    @PreAuthorize("@securityService.reservationPermissions(#reservationId)")
     fun updateReservation(
         @PathVariable sectionId: UUID,
-        @PathVariable userId: UUID,
+        @PathVariable reservationId: UUID,
         @RequestBody reservation: ReservationDto
     ): ReservationDto
 
@@ -64,5 +66,6 @@ interface ReservationController {
         ApiResponse(responseCode = "404", description = "Not found: reservation with the given id does not exist"),
     ])
     @DeleteMapping("{reservationId}/")
+    @PreAuthorize("@securityService.reservationPermissions(#reservationId)")
     fun deleteReservation(@PathVariable sectionId: UUID, @PathVariable reservationId: UUID): ResponseEntity<Response>
 }

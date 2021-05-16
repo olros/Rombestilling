@@ -16,9 +16,14 @@ import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.mailer.HtmlTemplate
 import ntnu.idatt2105.mailer.Mail
 import ntnu.idatt2105.mailer.MailService
+import ntnu.idatt2105.security.dto.MakeAdminDto
 import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
 import ntnu.idatt2105.security.dto.ResetPasswordDto
+import ntnu.idatt2105.security.token.isAfter
+import ntnu.idatt2105.user.model.Role
+import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.RoleType.USER
+import ntnu.idatt2105.user.repository.RoleRepository
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -40,7 +45,8 @@ class UserServiceImpl(
     val modelMapper: ModelMapper,
     val passwordEncoder: BCryptPasswordEncoder,
     val mailService: MailService,
-    val passwordResetTokenRepository: PasswordResetTokenRepository
+    val passwordResetTokenRepository: PasswordResetTokenRepository,
+    val roleRepository: RoleRepository
 ) : UserService {
     val logger = LoggerFactory.getLogger("UserServiceImpl")
 
@@ -50,8 +56,7 @@ class UserServiceImpl(
             logger.error("User already exists")
             throw ApplicationException.throwException(EntityType.USER, ExceptionType.DUPLICATE_ENTITY, "2", userDTO.email)
         }
-        val user: User = modelMapper.map(userDTO, User::class.java)
-        user.id = UUID.randomUUID()
+        val user: User = createUserObj(userDTO)
         val savedUser: User = userRepository.saveAndFlush(user)
         forgotPassword(ForgotPassword(savedUser.email))
         logger.info("${user.id} has been created... Trying to send mail")
@@ -59,7 +64,7 @@ class UserServiceImpl(
     }
 
     private fun createUserObj(userDto : UserRegistrationDto): User {
-        return User(email = userDto.email, expirationDate = userDto.expirationDate, firstName = userDto.firstName,
+        return User(id = UUID.randomUUID(), email = userDto.email, expirationDate = userDto.expirationDate, firstName = userDto.firstName,
             surname = userDto.surname, phoneNumber =  userDto.phoneNumber)
     }
 
@@ -142,6 +147,14 @@ class UserServiceImpl(
         return Response("The user has been deleted")
     }
 
+    override fun makeAdmin(user: MakeAdminDto): UserDto {
+        val userObj = getUser(user.userId!!, User::class.java)
+        val adminRole = roleRepository.findByName(RoleType.ADMIN)
+        val userRole = roleRepository.findByName(USER)
+        if(!userObj.roles.contains(adminRole))userObj.roles = mutableSetOf(adminRole!!,userRole!!)
+        return modelMapper.map(userRepository.save(userObj), UserDto::class.java)
+    }
+
     private fun getUserById(id: UUID): User =
         userRepository.findById(id).orElseThrow {
             throw ApplicationException.throwException(
@@ -175,12 +188,18 @@ class UserServiceImpl(
             ExceptionType.ENTITY_NOT_FOUND, id.toString())
         }
         val user = getUserByEmail(resetDto.email)
-        if(!user.equals(token.user) && token.expirationDate.isAfter(ZonedDateTime.now())) {
+        if(user != token.user && token.isAfter()) {
             logger.error("$token is not valid for ${user.email}")
             throw ApplicationException.throwException(EntityType.TOKEN,
                 ExceptionType.NOT_VALID, id.toString())
         }
-        if(user.roles.isEmpty()) user.roles.plus(USER)
+        roleRepository.findByName(USER).run {
+            if (this == null) throw ApplicationException.throwException(EntityType.ROLE,
+                    ExceptionType.ENTITY_NOT_FOUND, this?.name!!)
+
+
+            if (!user.roles.contains(this)) user.roles = mutableSetOf(this)
+        }
         user.password = passwordEncoder.encode(resetDto.password)
         userRepository.save(user)
         logger.info("New password for ${user.email} has been created")

@@ -33,13 +33,24 @@ class SetupDataLoader(
 
             userRepository.findByEmail("admin@test.com") ?: userRepository.save(
                 User(id=UUID.randomUUID(),
-                    firstName="hei",
-                    surname="hei",
+                    firstName="Admin",
+                    surname="User",
                     email="admin@test.com",
                     phoneNumber="+4712345678",
                     password=passwordEncoder.encode("admin"),
                     expirationDate = LocalDate.EPOCH,
-                    roles = setOf(userRole, adminRole)
+                    roles = mutableSetOf(userRole, adminRole)
+                ))
+
+            userRepository.findByEmail("user@test.com") ?: userRepository.save(
+                User(id=UUID.randomUUID(),
+                    firstName="Test",
+                    surname="User",
+                    email="user@test.com",
+                    phoneNumber="+test",
+                    password=passwordEncoder.encode("user"),
+                    expirationDate = LocalDate.now().plusYears(1),
+                    roles = setOf(userRole)
                 ))
         }
         alreadySetup = true

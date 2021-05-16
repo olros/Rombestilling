@@ -14,8 +14,10 @@ data class PasswordResetToken(
     val user: User,
     val expirationDate: ZonedDateTime = ZonedDateTime.now().plusMinutes(EXPIRATION.toLong())
 ) {
+
     companion object {
         //60 minutes
         private const val EXPIRATION = 60
     }
 }
+fun PasswordResetToken.isAfter() = this.expirationDate.isAfter(ZonedDateTime.now())

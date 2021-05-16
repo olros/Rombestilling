@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
 import Helmet from 'react-helmet';
 import { useSections } from 'hooks/Section';
+import { useUser } from 'hooks/User';
 import classnames from 'classnames';
 import { startOfHour, addHours } from 'date-fns';
+import { isUserAdmin } from 'utils';
 
 // Material UI Components
 import { makeStyles, Typography, SwipeableDrawer, Button } from '@material-ui/core';
@@ -39,12 +41,14 @@ export type RoomFilters = {
   to: string;
 };
 
+const defaultFilters: RoomFilters = {
+  from: startOfHour(addHours(new Date(), 1)).toJSON(),
+  to: startOfHour(addHours(new Date(), 2)).toJSON(),
+};
+
 const Rooms = () => {
   const classes = useStyles();
-  const defaultFilters: RoomFilters = {
-    from: startOfHour(addHours(new Date(), 1)).toJSON(),
-    to: startOfHour(addHours(new Date(), 2)).toJSON(),
-  };
+  const { data: user } = useUser();
   const [filters, setFilters] = useState<RoomFilters>(defaultFilters);
   const { data, error, hasNextPage, fetchNextPage, isFetching } = useSections(filters);
   const results = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
@@ -67,7 +71,7 @@ const Rooms = () => {
       <div className={classes.list}>
         <div className={classnames(classes.list, classes.top)}>
           <Typography variant='h1'>Finn rom</Typography>
-          <CreateRoom>Opprett rom</CreateRoom>
+          {isUserAdmin(user) && <CreateRoom>Opprett rom</CreateRoom>}
         </div>
         <RoomFilterBox defaultFilters={defaultFilters} filters={filters} updateFilters={setFilters} />
         <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>

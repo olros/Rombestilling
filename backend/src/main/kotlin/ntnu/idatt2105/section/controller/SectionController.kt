@@ -5,7 +5,7 @@ import io.swagger.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import ntnu.idatt2105.dto.response.Response
-import ntnu.idatt2105.section.dto.SectionCreateDto
+import ntnu.idatt2105.section.dto.CreateSectionRequest
 import ntnu.idatt2105.section.dto.SectionDto
 import ntnu.idatt2105.section.dto.SectionListDto
 import ntnu.idatt2105.section.model.Section
@@ -36,7 +36,7 @@ interface SectionController {
         ApiResponse(responseCode = "400", description = "Bad request: new section was not created"),
     ])
     @PostMapping
-    fun createSection(@RequestBody sectionCreateDto: @Valid SectionCreateDto): ResponseEntity<SectionDto>
+    fun createSection(@RequestBody CreateSectionRequest: @Valid CreateSectionRequest): ResponseEntity<SectionDto>
 
     @Operation(summary = "Fetch section details for the given section id", responses = [
         ApiResponse(responseCode = "200", description = "Success"),

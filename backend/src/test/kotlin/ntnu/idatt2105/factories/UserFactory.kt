@@ -38,7 +38,7 @@ class UserFactory : FactoryBean<User> {
             password=encoder.encode(faker.rickAndMorty.locations()),
             phoneNumber = faker.phoneNumber.phoneNumber(),
             expirationDate = LocalDate.now().plusDays(1),
-            roles = setOf(userRole)
+            roles = mutableSetOf(userRole)
         ).build()
     }
 
