@@ -52,6 +52,9 @@ internal class RefreshTokenServiceImplTest {
             .joinToString("");
 
         val jwtConfig = JWTConfig(
+            uri = "/auth",
+            header = "Authorization",
+            prefix = "Bearer",
             secret = randomString,
             expiration = 24 * 60 * 60,
             refreshExpiration = 24 * 60 * 60
