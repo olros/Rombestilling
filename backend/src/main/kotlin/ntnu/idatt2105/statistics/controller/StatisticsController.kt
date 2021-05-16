@@ -23,7 +23,7 @@ interface StatisticsController {
             ApiResponse(responseCode = "400", description = "Bad request: could not get statistics"),
         ]
     )
-    @GetMapping("{sectionId}/statistics/")
+    @GetMapping
     fun getStatistics(
         @PathVariable sectionId: UUID,
         @QuerydslPredicate(root = Reservation::class) predicate: Predicate
