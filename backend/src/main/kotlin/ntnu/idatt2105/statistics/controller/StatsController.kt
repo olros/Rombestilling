@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import java.util.*
 import com.querydsl.core.types.Predicate
 import io.swagger.annotations.Api
+import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.statistics.dto.StatsDto
 import org.springframework.web.bind.annotation.RequestMapping
 
@@ -26,6 +27,6 @@ interface StatsController {
     @GetMapping("{sectionId}/statistics/")
     fun getStatistics(
         @PathVariable sectionId: UUID,
-        @QuerydslPredicate(root = Section::class) predicate: Predicate
+        @QuerydslPredicate(root = Reservation::class) predicate: Predicate
     ): ResponseEntity<StatsDto>
 }

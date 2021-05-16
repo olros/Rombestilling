@@ -39,5 +39,6 @@ data class Section(
         @QueryType(PropertyType.DATETIME)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         var to: ZonedDateTime? = null
+
 }
 

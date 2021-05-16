@@ -327,4 +327,54 @@ class ReservationControllerImplTest {
                 .content(objectMapper.writeValueAsString(reservationCreateRequest)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
+
+    @Test
+    @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test that statistics are returned correct`() {
+        var newReservation = ReservationFactory().`object`
+        userRepository.save(newReservation.user!!)
+        sectionRepository.save(newReservation.section!!)
+        newReservation.fromTime = ZonedDateTime.now().minusDays(50)
+        newReservation.toTime = ZonedDateTime.now().minusDays(25)
+        newReservation = reservationRepository.save(newReservation)
+
+        println("\n\n"+newReservation +"\n\n")
+
+        println("\n\n"+reservation +"\n\n")
+
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/sections/${reservation.section?.id}/statistics/")
+            .param("toTimeBefore", ZonedDateTime.now().minusHours(1).toString())
+            .param("fromTimeAfter", ZonedDateTime.now().plusHours(1).toString()))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].text", Matchers.hasItem(reservation.text)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].text", Matchers.not(newReservation.text)))
+
+    }
+
+    @Test
+    @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test that statistics are returned wrong`() {
+        var newReservation = ReservationFactory().`object`
+        userRepository.save(newReservation.user!!)
+        sectionRepository.save(newReservation.section!!)
+        newReservation.fromTime = ZonedDateTime.now().minusDays(50)
+        newReservation.toTime = ZonedDateTime.now().minusDays(25)
+        newReservation = reservationRepository.save(newReservation)
+
+        println("\n\n"+newReservation +"\n\n")
+
+        println("\n\n"+reservation +"\n\n")
+
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/sections/${newReservation.section?.id}/statistics/")
+            .param("toTimeBefore", newReservation.toTime!!.plusHours(1).toString())
+            .param("fromTimeAfter", newReservation.fromTime!!.minusHours(1).toString()))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].text", Matchers.hasItem(reservation.text)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].text", Matchers.not(newReservation.text)))
+
+    }
 }
