@@ -6,6 +6,7 @@ import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.service.ReservationService
+import ntnu.idatt2105.user.model.User
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.querydsl.binding.QuerydslPredicate
@@ -16,7 +17,7 @@ import java.util.*
 
 
 @RestController
-class ReservationControllerImpl(val reservationService: ReservationService) : ReservationController {
+class ReservationControllerImpl(val reservationService: ReservationService<Reservation<User>>) : ReservationController {
 
     override fun getAllReservations(
         predicate: Predicate,

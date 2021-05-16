@@ -10,33 +10,23 @@ import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
 
-@Entity
-@QueryEntity
-data class Reservation(
-        @Id
-        @Column(columnDefinition = "CHAR(32)")
-        var id: UUID = UUID.randomUUID(),
-        @ManyToOne
-        @JoinColumn(name="user_id", referencedColumnName = "id")
-        var user: User? = null,
+abstract class Reservation<T>(@Id
+                       @Column(columnDefinition = "CHAR(32)")
+                       open var id: UUID = UUID.randomUUID(),
+                              @ManyToOne
+                       @JoinColumn(name = "section_id", referencedColumnName = "id") var section: Section? = null,
+                              open var fromTime: ZonedDateTime? = null,
+                              open var toTime: ZonedDateTime? = null,
+                              open var text: String = "",
+                              open var nrOfPeople: Int = 1,
+                              @Transient
+                       @QueryType(PropertyType.DATETIME)
+                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) var fromTimeAfter: ZonedDateTime? = null,
+                              @Transient
+                       @QueryType(PropertyType.DATETIME)
+                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) var toTimeBefore: ZonedDateTime? = null) {
+    abstract fun setRelation(entity: T)
+    abstract fun getEntityId(): UUID
 
-        @ManyToOne
-        @JoinColumn(name="section_id", referencedColumnName = "id")
-        var section: Section? = null,
-
-        var fromTime : ZonedDateTime? = null,
-        var toTime : ZonedDateTime? = null,
-        var text : String = "",
-        var nrOfPeople: Int = -1,
-
-        ){
-        @Transient
-        @QueryType(PropertyType.DATETIME)
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        var fromTimeAfter: ZonedDateTime? = null
-        @Transient
-        @QueryType(PropertyType.DATETIME)
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        var toTimeBefore: ZonedDateTime? = null
 }
 

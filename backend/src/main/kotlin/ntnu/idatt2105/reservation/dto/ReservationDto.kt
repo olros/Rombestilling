@@ -7,12 +7,15 @@ import ntnu.idatt2105.user.dto.UserDto
 import java.time.ZonedDateTime
 import java.util.*
 
-data class ReservationDto (
-        val id : UUID? = null,
-        val fromTime: ZonedDateTime? = null,
-        val toTime: ZonedDateTime? = null,
-        val text: String = "",
-        val nrOfPeople: Int = -1,
-        val section : SectionChildrenDto? = null,
-        val user : UserDto? = null
-)
+abstract class ReservationDto (
+        open val id : UUID? = null,
+        open val fromTime: ZonedDateTime? = null,
+        open val toTime: ZonedDateTime? = null,
+        open val text: String = "",
+        open val nrOfPeople: Int = -1, 
+        open val section : SectionChildrenDto? = null,
+) {
+    abstract fun getEntityId(): UUID?
+    
+    abstract fun toReservation(): Reservation<*>
+}

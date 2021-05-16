@@ -21,12 +21,14 @@ import java.util.*
 
 
 @Service
-class ReservationServiceImpl(
-    val reservationRepository: ReservationRepository,
+class ReservationServiceImpl<T:Reservation<T>>(
     val modelMapper: ModelMapper,
     val userService: UserService,
-    val sectionRepository: SectionRepository) : ReservationService {
+    val sectionRepository: SectionRepository) : ReservationService<T> {
 
+    private lateinit var reservationRepository: ReservationRepository<T>
+    private lateinit var reservationRelationService: ReservationRelationService<T>
+    
     override fun getAllReservation(sectionId: UUID, pageable: Pageable, predicate: Predicate): Page<ReservationDto> {
         val reservation = QReservation.reservation
         val newPredicate = ExpressionUtils.allOf(predicate, reservation.section.id.eq(sectionId))!!
@@ -41,18 +43,15 @@ class ReservationServiceImpl(
             throw ApplicationException.throwException(
                     EntityType.RESERVATION, ExceptionType.DUPLICATE_ENTITY, reservation.fromTime.toString(), reservation.toTime.toString())
         }
-        var newReservation = Reservation(id = UUID.randomUUID(),
-                toTime = reservation.toTime,
-                fromTime = reservation.fromTime,
-                text = reservation.text,
-                nrOfPeople = reservation.nrOfPeople)
 
-        val user = userService.getUser(reservation.userId!!, User::class.java)
+        var newReservation: Reservation<T> = reservation.toReservation() as Reservation<T>
+
+        val entity = reservationRelationService.getByEntityId(reservation.entityId!!)
 
         val section = sectionRepository.findById(sectionId).orElseThrow { throw ApplicationException.throwException(
                 EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, reservation.sectionId.toString()) }
 
-        newReservation.user = user
+        newReservation.setRelation(entity)
         newReservation.section = section
         newReservation = reservationRepository.save(newReservation)
         return modelMapper.map(newReservation, ReservationDto::class.java)
@@ -77,11 +76,9 @@ class ReservationServiceImpl(
     override fun updateReservation(sectionId: UUID, reservationId: UUID, reservation: ReservationDto): ReservationDto {
         reservationRepository.findReservationByIdAndSectionId(reservationId, sectionId).run {
             if(this != null){
-                val updatedReservation = this.copy(
-                        text = reservation.text,
-                        nrOfPeople = reservation.nrOfPeople
-                )
-                reservationRepository.save(updatedReservation).run {
+                this.text = reservation.text
+                this. nrOfPeople = reservation.nrOfPeople
+                reservationRepository.save(this).run {
                     return modelMapper.map(this, ReservationDto::class.java)
                 }
             }

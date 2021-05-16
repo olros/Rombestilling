@@ -16,6 +16,7 @@ import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.mailer.HtmlTemplate
 import ntnu.idatt2105.mailer.Mail
 import ntnu.idatt2105.mailer.MailService
+import ntnu.idatt2105.reservation.service.ReservationRelationService
 import ntnu.idatt2105.security.dto.MakeAdminDto
 import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
 import ntnu.idatt2105.security.dto.ResetPasswordDto
@@ -47,7 +48,7 @@ class UserServiceImpl(
     val mailService: MailService,
     val passwordResetTokenRepository: PasswordResetTokenRepository,
     val roleRepository: RoleRepository
-) : UserService {
+) : UserService, ReservationRelationService<User> {
     val logger = LoggerFactory.getLogger("UserServiceImpl")
 
     override fun registerUser(userDTO: UserRegistrationDto): UserDto {
@@ -214,4 +215,6 @@ class UserServiceImpl(
             )
         mailService.sendMail(mail)
     }
+
+    override fun getByEntityId(id: UUID) = getUserById(id)
 }

@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.group.model.Group
-import ntnu.idatt2105.section.dto.SectionCreateDto
 import ntnu.idatt2105.section.dto.SectionDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
