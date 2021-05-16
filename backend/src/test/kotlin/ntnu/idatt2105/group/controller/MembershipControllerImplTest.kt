@@ -86,7 +86,6 @@ class MembershipControllerImplTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].id", Matchers.hasItem(newUser.id.toString())))
 
     }
-
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test memberships controller DELETE returns OK and returns page with updated members in group`() {
