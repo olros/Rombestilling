@@ -19,7 +19,7 @@ data class Section(
         var description: String = "",
         var capacity: Int = 0,
         var image: String,
-        @OneToMany(fetch = FetchType.EAGER,mappedBy = "parent" , cascade =[CascadeType.ALL])
+        @OneToMany(fetch = FetchType.EAGER, mappedBy = "parent" , cascade =[CascadeType.ALL])
         var children: MutableList<Section> = mutableListOf(),
         @ManyToOne
         var parent: Section? = null,
@@ -31,7 +31,18 @@ data class Section(
                         return SectionType.SECTION
                 return SectionType.ROOM
         }
-        @Transient
+
+    fun isRoom() = getType() == SectionType.ROOM
+
+    fun hasNoCapacityFor(section: Section): Boolean = getPreoccupationDegree() + section.capacity > this.capacity
+
+    private fun getPreoccupationDegree(): Int = children.fold(0, { acc, next -> acc + next.capacity})
+
+    override fun toString(): String {
+        return "Section(id=$id, name='$name', description='$description', capacity=$capacity, image='$image', children=$children, reservation=$reservation, from=$from, to=$to)"
+    }
+
+    @Transient
         @QueryType(PropertyType.DATETIME)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         var from: ZonedDateTime? = null
@@ -39,5 +50,7 @@ data class Section(
         @QueryType(PropertyType.DATETIME)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         var to: ZonedDateTime? = null
+
+
 }
 

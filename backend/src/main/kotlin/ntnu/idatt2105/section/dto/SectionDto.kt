@@ -25,5 +25,4 @@ fun Section.toSectionDto() = SectionDto(
         type = this.getType(),
         parent = this.parent?.toSectionChildrenDto(),
         children = this.children.map { it.toSectionChildrenDto() }
-
 )

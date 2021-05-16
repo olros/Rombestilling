@@ -1,8 +1,9 @@
 package ntnu.idatt2105.section.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.jayway.jsonpath.JsonPath
 import ntnu.idatt2105.factories.ReservationFactory
-import ntnu.idatt2105.section.dto.SectionCreateDto
+import ntnu.idatt2105.section.dto.CreateSectionRequest
 import ntnu.idatt2105.factories.SectionFactory
 import ntnu.idatt2105.reservation.repository.ReservationRepository
 import ntnu.idatt2105.section.model.Section
@@ -25,9 +26,6 @@ import org.hamcrest.Matchers.hasItem
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.AfterEach
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import java.net.URI
 import java.time.ZonedDateTime
 
 
@@ -47,9 +45,6 @@ class SectionControllerImplTest {
     private lateinit var sectionRepository: SectionRepository
 
     private lateinit var section : Section
-
-    @Autowired
-    private lateinit var modelMapper: ModelMapper
 
     @Autowired
     private lateinit var reservationRepository: ReservationRepository
@@ -82,8 +77,6 @@ class SectionControllerImplTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content.[*].name", hasItem(section.name)))
                 .andExpect(jsonPath("$.content.[*].name", hasItem(newSection.name)))
-
-
     }
 
 
@@ -164,22 +157,100 @@ class SectionControllerImplTest {
                 .andExpect(status().isNotFound)
     }
 
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test section controller POST with parentId returns http 200`() {
+        val child = CreateSectionRequest(name = section.name, parentId = section.id, capacity = section.capacity - 1)
+
+        this.mvc.perform(
+            post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(child))
+        )
+            .andExpect(status().isCreated)
+            .andExpect(jsonPath("\$.name").value(section.name))
+    }
 
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
-    fun `test section controller POST with parentId adds parent`() {
+    fun `test section controller POST with parentId adds parent to child`() {
+        val child = CreateSectionRequest(name = section.name, parentId = section.id, capacity = section.capacity - 1)
 
-        val newSection = SectionCreateDto(name = section.name, parentId = section.id)
-        this.mvc.perform(post(URL)
+        val mvcResult = this.mvc.perform(
+            post(URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(newSection)))
-                .andExpect(status().isCreated)
-                .andExpect(jsonPath("\$.name").value(section.name))
+                .content(objectMapper.writeValueAsString(child))
+        )
+            .andReturn()
 
-        assertThat(sectionRepository.findById(section.id).get().children.isNotEmpty())
+        val responseUUID: String = JsonPath.read(mvcResult.response.contentAsString, "\$.id")
+        val actualId = UUID.fromString(responseUUID)
+        val actualSection = sectionRepository.findById(actualId).get()
+        val parent = sectionRepository.findById(section.id).get()
 
+        assertThat(actualSection.parent?.id).isEqualTo(parent.id)
+    }
 
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test section controller POST with parentId adds child to parent`() {
+        val child = CreateSectionRequest(name = section.name,
+            parentId = section.id,
+            capacity = section.capacity - 1)
 
+        val mvcResult = this.mvc.perform(
+            post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(child))
+        )
+            .andReturn()
+
+        val responseUUID: String = JsonPath.read(mvcResult.response.contentAsString, "\$.id")
+        val actualChildId = UUID.fromString(responseUUID)
+
+        val parent = sectionRepository.findById(section.id).get()
+        val parentHasActualChild = parent.children.stream().anyMatch { it.id == actualChildId }
+
+        assertThat(parentHasActualChild).isTrue
+    }
+
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test section controller POST with child capacity greater than parent capacity returns http 400`() {
+        val sectionCreateRequest = CreateSectionRequest(
+            name = section.name,
+            parentId = section.id,
+            capacity = section.capacity + 10)
+
+        mvc.perform(
+            post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(sectionCreateRequest))
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("\$.message").isNotEmpty)
+    }
+
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test section controller POST with child capacity greater than parents accumulated preoccupation degree returns http 400`() {
+
+        val child = SectionFactory().`object`
+        section.children.add(child)
+        sectionRepository.save(section)
+
+        val sectionCreateRequest = CreateSectionRequest(
+            name = section.name,
+            parentId = section.id,
+            capacity = section.capacity + 10)
+
+        mvc.perform(
+            post(URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(sectionCreateRequest))
+        )
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("\$.message").isNotEmpty)
     }
 
     @Test

@@ -9,6 +9,7 @@ import ntnu.idatt2105.security.token.JwtToken
 import ntnu.idatt2105.security.token.JwtTokenFactory
 import ntnu.idatt2105.security.token.TokenFactory
 import ntnu.idatt2105.user.service.UserDetailsImpl
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
