@@ -78,8 +78,6 @@ class ReservationServiceImpl(
         reservationRepository.findReservationByIdAndSectionId(reservationId, sectionId).run {
             if(this != null){
                 val updatedReservation = this.copy(
-                        fromTime = reservation.fromTime,
-                        toTime = reservation.toTime,
                         text = reservation.text,
                         nrOfPeople = reservation.nrOfPeople
                 )

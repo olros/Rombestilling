@@ -14,20 +14,23 @@ import java.util.*
 
 
 @Service
-class SecurityService(val userRepository: UserRepository, val roleRepository: RoleRepository, val reservationRepository: ReservationRepository){
+class SecurityService(val userRepository: UserRepository,
+                      val roleRepository: RoleRepository,
+                      val reservationRepository: ReservationRepository){
 
     private fun getUser(): User? {
         val authentication: Authentication? = SecurityContextHolder.getContext().authentication
-        val userDetails = authentication?.principal as UserDetailsImpl
-        val id = userDetails.getId()
-        return userRepository.findById(id).orElse(null)
+        val userDetails = authentication?.principal as UserDetails
+        val email = userDetails.username
+        return userRepository.findByEmail(email)
     }
 
     fun reservationPermissions(reservationId: UUID) : Boolean {
         val user = getUser()
         val reservation =  reservationRepository.findById(reservationId).orElse(null)
-        val isNull = user == null && reservation == null
-        return !isNull && ( user!!.roles.contains(roleRepository.findByName(RoleType.ADMIN)) || reservation.user!! == user )
-
+        if(user != null && reservation != null){
+            return reservation.user?.equals(user) == true || user.roles.contains(roleRepository.findByName(RoleType.ADMIN))
+        }
+        return false
     }
 }
