@@ -43,12 +43,7 @@ class StatisticsServiceImpl(
     }
 
     private fun getUserReservationCount(reservations: Iterable<Reservation>): Int {
-        val listOfUsers: MutableList<User> = mutableListOf()
-        reservations.forEach {
-            it.user?.let { it1 -> listOfUsers.add(it1) }
-
-        }
-        return listOfUsers.distinct().size
+        return reservations.map { it.user }.distinct().size
     }
 
     private fun getDaysWithReservation(reservations: Iterable<Reservation>): Int {
@@ -64,10 +59,6 @@ class StatisticsServiceImpl(
     }
 
     private fun getHoursOfReservation(reservations: Iterable<Reservation>): Long {
-        var count = 0L
-        reservations.forEach {
-            count += (Duration.between(it.fromTime, it.toTime)).toHours()
-        }
-        return count
+        return reservations.fold(0L) { acc, next -> acc + (Duration.between(next.fromTime, next.toTime)).toHours() }
     }
 }
