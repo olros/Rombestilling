@@ -51,6 +51,5 @@ data class Section(
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         var to: ZonedDateTime? = null
 
-
 }
 
