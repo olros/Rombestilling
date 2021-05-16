@@ -9,8 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import java.util.*
 import com.querydsl.core.types.Predicate
+import io.swagger.annotations.Api
 import ntnu.idatt2105.statistics.dto.StatsDto
+import org.springframework.web.bind.annotation.RequestMapping
 
+@Api(value = "Statistics for Section", tags = ["Statistics for section"], description = "Statistics for section")
+@RequestMapping("/sections/")
 interface StatsController {
 
     @Operation(
@@ -19,7 +23,7 @@ interface StatsController {
             ApiResponse(responseCode = "400", description = "Bad request: could not get statistics"),
         ]
     )
-    @GetMapping("{sectionId}")
+    @GetMapping("{sectionId}/statistics/")
     fun getStatistics(
         @PathVariable sectionId: UUID,
         @QuerydslPredicate(root = Section::class) predicate: Predicate

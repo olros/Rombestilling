@@ -5,8 +5,10 @@ import ntnu.idatt2105.statistics.dto.StatsDto
 import ntnu.idatt2105.statistics.service.StatsService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
+@RestController
 class StatsControllerImpl(val statsService: StatsService): StatsController {
 
     override fun getStatistics(sectionId: UUID, predicate: Predicate): ResponseEntity<StatsDto> =
