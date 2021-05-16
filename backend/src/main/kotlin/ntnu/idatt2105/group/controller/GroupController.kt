@@ -28,19 +28,19 @@ interface GroupController {
         ApiResponse(responseCode = "201", description = "Created: new group was created"),
     ])
     @PostMapping
-    fun createSection(@RequestBody group: Group): ResponseEntity<Group>
+    fun createGroup(@RequestBody group: Group): ResponseEntity<Group>
 
     @Operation(summary = "Update existing group", responses = [
         ApiResponse(responseCode = "200", description = "Success: group was updated"),
         ApiResponse(responseCode = "404", description = "Not found: group with the given id does not exist"),
     ])
     @PutMapping("{groupId}/")
-    fun updateSection(@PathVariable groupId: UUID, @RequestBody group: Group): ResponseEntity<Group>
+    fun updateGroup(@PathVariable groupId: UUID, @RequestBody group: Group): ResponseEntity<Group>
 
     @Operation(summary = "Delete existing group", responses = [
         ApiResponse(responseCode = "200", description = "Success: group was deleted"),
         ApiResponse(responseCode = "404", description = "Not found: group with the given id does not exist"),
     ])
     @DeleteMapping("{groupId}/")
-    fun deleteSection(@PathVariable groupId: UUID): ResponseEntity<Response>
+    fun deleteGroup(@PathVariable groupId: UUID): ResponseEntity<Response>
 }

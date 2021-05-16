@@ -13,15 +13,15 @@ class GroupControllerImpl(val groupService: GroupService) : GroupController {
     override fun getGroup(groupId: UUID): ResponseEntity<Group> =
             ResponseEntity(groupService.getGroup(groupId), HttpStatus.OK)
 
-    override fun createSection(group: Group): ResponseEntity<Group> =
+    override fun createGroup(group: Group): ResponseEntity<Group> =
             ResponseEntity(groupService.createGroup(group), HttpStatus.CREATED)
 
 
-    override fun updateSection(groupId: UUID, group: Group): ResponseEntity<Group> =
+    override fun updateGroup(groupId: UUID, group: Group): ResponseEntity<Group> =
             ResponseEntity(groupService.updateGroup(groupId, group), HttpStatus.OK)
 
 
-    override fun deleteSection(groupId: UUID): ResponseEntity<Response> {
+    override fun deleteGroup(groupId: UUID): ResponseEntity<Response> {
         groupService.deleteGroup(groupId)
         return ResponseEntity(Response("Group was deleted"), HttpStatus.OK)
     }
