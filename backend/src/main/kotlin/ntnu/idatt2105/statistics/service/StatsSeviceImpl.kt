@@ -28,19 +28,12 @@ class StatsServiceImpl(
     val logger = LoggerFactory.getLogger("StatsService")
 
     override fun getStatisticsForSection(sectionID: UUID, predicate: Predicate): StatsDto {
-        val section: Section = sectionRepository.findById(sectionID).orElseThrow {
-            throw ApplicationException.throwException(
-                EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, sectionID.toString()
-            )
-        }
-        /*
-         TODO:
-         Get a list of reservation matching the predicate
-         Then perform the statistics check
-         */
         val reservation = QReservation.reservation
         val newPredicate = ExpressionUtils.allOf(predicate, reservation.section.id.eq(sectionID))!!
         val reservations: Iterable<Reservation> = reservationRepository.findAll(newPredicate)
+        if (IterableUtils.size(reservations) == 0) throw ApplicationException.throwException(
+            EntityType.RESERVATION, ExceptionType.ENTITY_NOT_FOUND, sectionID.toString()
+        )
 
         logger.info("Getting statistics for sections")
         return StatsDto(
