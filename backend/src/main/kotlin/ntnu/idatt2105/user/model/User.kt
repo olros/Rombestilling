@@ -32,3 +32,4 @@ data class User(@Id
     @QueryType(PropertyType.STRING)
     val search: String? = null
 }
+
