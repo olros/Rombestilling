@@ -2,15 +2,10 @@ package ntnu.idatt2105.statistics.service
 
 import com.querydsl.core.types.ExpressionUtils
 import com.querydsl.core.types.Predicate
-import ntnu.idatt2105.exception.ApplicationException
-import ntnu.idatt2105.exception.EntityType
-import ntnu.idatt2105.exception.ExceptionType
 import ntnu.idatt2105.reservation.model.QReservation
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
-import ntnu.idatt2105.section.repository.SectionRepository
 import ntnu.idatt2105.statistics.dto.StatisticsDto
-import ntnu.idatt2105.user.model.User
 import org.apache.commons.collections4.IterableUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -20,7 +15,6 @@ import java.util.*
 
 @Service
 class StatisticsServiceImpl(
-    val sectionRepository: SectionRepository,
     val reservationRepository: ReservationRepository
 ) : StatisticsService {
     val logger = LoggerFactory.getLogger("StatsService")
@@ -29,9 +23,6 @@ class StatisticsServiceImpl(
         val reservation = QReservation.reservation
         val newPredicate = ExpressionUtils.allOf(predicate, reservation.section.id.eq(sectionID))!!
         val reservations: Iterable<Reservation> = reservationRepository.findAll(newPredicate)
-        if (IterableUtils.size(reservations) == 0) throw ApplicationException.throwException(
-            EntityType.RESERVATION, ExceptionType.ENTITY_NOT_FOUND, sectionID.toString()
-        )
 
         logger.info("Getting statistics for sections")
         return StatisticsDto(
