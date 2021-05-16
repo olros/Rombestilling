@@ -3,6 +3,7 @@ package ntnu.idatt2105.reservation.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.factories.ReservationFactory
+import ntnu.idatt2105.factories.RoleFactory
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
@@ -10,6 +11,7 @@ import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
 import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.repository.UserRepository
+import ntnu.idatt2105.user.service.UserDetailsImplBuilder
 import ntnu.idatt2105.util.ReservationConstants
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.AfterEach
@@ -20,8 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
+
+
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.time.LocalTime
@@ -45,6 +52,9 @@ class ReservationControllerImplTest {
 
     @Autowired
     private lateinit var userRepository:  UserRepository
+
+    @Autowired
+    private lateinit var userDetailsService: UserDetailsService
 
     @Autowired
     private lateinit var sectionRepository:  SectionRepository
@@ -102,6 +112,7 @@ class ReservationControllerImplTest {
     fun `test reservation controller POST creates new Reservation`() {
         val newReservation = ReservationFactory().`object`
         userRepository.save(newReservation.user!!)
+
         sectionRepository.save(newReservation.section!!)
         val reservationCreate = ReservationCreateDto(newReservation.user?.id,
                 newReservation.section?.id,
@@ -123,7 +134,9 @@ class ReservationControllerImplTest {
     fun `test reservation controller PUT updates Reservation`() {
         val text = faker.breakingBad.episode()
         reservation.text = text
+        val userDetails = userDetailsService.loadUserByUsername(reservation.user?.email)
         this.mvc.perform(MockMvcRequestBuilders.put("${getURL(reservation.section!!)}${reservation.id}/")
+                .with(user(userDetails))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(reservation)))
                 .andExpect(MockMvcResultMatchers.status().isOk)
@@ -149,9 +162,11 @@ class ReservationControllerImplTest {
 
     }
     @Test
-    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
+    @WithMockUser(value = "spring")
     fun `test reservation controller DELETE updates Reservation`() {
+        val userDetails = userDetailsService.loadUserByUsername(reservation.user?.email)
         this.mvc.perform(MockMvcRequestBuilders.delete("${getURL(reservation.section!!)}${reservation.id}/")
+                .with(user(userDetails))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -284,7 +299,7 @@ class ReservationControllerImplTest {
         sectionRepository.save(newReservation.section!!)
 
         val reservationStartingInThePast = newReservation.copy(
-            fromTime = reservation.fromTime?.plusMonths(ReservationConstants.MAX_MONTHS_FOR_USER_RESERVING_IN_FUTURE)
+                fromTime = reservation.fromTime?.plusMonths(ReservationConstants.MAX_MONTHS_FOR_USER_RESERVING_IN_FUTURE)
         )
         val reservationCreateRequest = modelMapper.map(reservationStartingInThePast, ReservationCreateDto::class.java)
 
@@ -302,7 +317,7 @@ class ReservationControllerImplTest {
         sectionRepository.save(newReservation.section!!)
 
         val reservationStartingInThePast = newReservation.copy(
-            fromTime = reservation.fromTime?.plusMonths(ReservationConstants.MAX_MONTHS_FOR_ADMIN_RESERVING_IN_FUTURE + 1)
+                fromTime = reservation.fromTime?.plusMonths(ReservationConstants.MAX_MONTHS_FOR_ADMIN_RESERVING_IN_FUTURE + 1)
         )
         val reservationCreateRequest = modelMapper.map(reservationStartingInThePast, ReservationCreateDto::class.java)
 

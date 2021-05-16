@@ -69,6 +69,9 @@ class WebSecurity(val refreshTokenService: RefreshTokenService,
                     .antMatchers(HttpMethod.GET, "/sections/", "/sections/{sectionId}/").hasRole(RoleType.USER)
                     .antMatchers(HttpMethod.POST, "/sections/{sectionId}/reservations/").hasRole(RoleType.USER)
                     .antMatchers(HttpMethod.GET, "/sections/{sectionId}/reservations/").hasRole(RoleType.USER)
+                    .antMatchers(HttpMethod.DELETE, "/sections/{sectionId}/reservations/{reservationId}/").hasRole(RoleType.USER)
+                    .antMatchers(HttpMethod.PUT, "/sections/{sectionId}/reservations/{reservationId}/").hasRole(RoleType.USER)
+                    .antMatchers(HttpMethod.GET, "/sections/{sectionId}/reservations/{reservationId}/").hasRole(RoleType.USER)
 
                     .antMatchers( "/**").hasAnyRole(RoleType.ADMIN)
                     .anyRequest()
