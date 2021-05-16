@@ -1,5 +1,6 @@
 package ntnu.idatt2105.user.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.querydsl.core.annotations.PropertyType
 import com.querydsl.core.annotations.QueryType
 import ntnu.idatt2105.group.model.Group
@@ -28,10 +29,12 @@ data class User(@Id
                 var roles: MutableSet<Role> = mutableSetOf(),
                 @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL])
                 val pwdToken: PasswordResetToken? = null,
-                @ManyToMany(cascade = [CascadeType.ALL])
+                @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
                 @JoinTable(name = "group_user",
                 joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
-                inverseJoinColumns = [JoinColumn(name = "group_id", referencedColumnName = "id")])
+                inverseJoinColumns = [JoinColumn(name = "group_id", referencedColumnName = "id")],
+                uniqueConstraints = [UniqueConstraint(columnNames = ["group_id", "user_id"])])
+                @JsonIgnore
                 var groups: MutableList<Group> = mutableListOf()
 ){
     @Transient
