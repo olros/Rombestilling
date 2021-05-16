@@ -8,6 +8,7 @@ import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.service.UserDetailsServiceImpl
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpMethod
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -16,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
@@ -79,7 +81,8 @@ class WebSecurity(val refreshTokenService: RefreshTokenService,
             .authenticationEntryPoint { req: HttpServletRequest?, res: HttpServletResponse, e: AuthenticationException? ->
                 res.contentType = "application/json"
                 res.status = HttpServletResponse.SC_UNAUTHORIZED
-                res.outputStream.println("{ \"message\": ${e?.message}}")
+                e?.cause
+                res.outputStream.println("{ \"message\": \"Feil brukernavn eller passord\"}")
             }
             .and()
             .addFilter(JWTUsernamePasswordAuthenticationFilter(refreshTokenService, authenticationManager(), jwtConfig))
