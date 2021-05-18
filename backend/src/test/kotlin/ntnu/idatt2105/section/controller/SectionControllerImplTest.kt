@@ -371,7 +371,7 @@ class SectionControllerImplTest {
                 .param("toTimeBefore", reservation.toTime!!.plusYears(1).toString())
                 .param("fromTimeAfter", reservation.fromTime!!.plusYears(1).toString())
         )
-            .andExpect(status().isNotFound)
+            .andExpect(status().isOk)
     }
 
 

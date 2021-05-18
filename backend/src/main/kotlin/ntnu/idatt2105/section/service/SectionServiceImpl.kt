@@ -35,8 +35,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository,
                 .run { sectionFactory.createChildSection(createSectionRequest, parent = this) }
                 .toSectionDto()
 
-        return sectionFactory.createParentSection(createSectionRequest)
-            .toSectionDto()
+        return sectionFactory.createParentSection(createSectionRequest).toSectionDto()
     }
 
     private fun getSection(id: UUID): Section =
