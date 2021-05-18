@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import { makeStyles, Typography } from '@material-ui/core';
 
 // Project Components
-import Navigation from 'components/navigation/Navigation';
+import Container from 'components/layout/Container';
 import UsersFilterBox from 'containers/Users/components/UsersFilterBox';
 import UserListItem from 'containers/Users/components/UserListItem';
 import Pagination from 'components/layout/Pagination';
@@ -42,7 +42,7 @@ const Users = () => {
   const results = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !results.length && !isFetching, [results, isFetching]);
   return (
-    <Navigation>
+    <Container>
       <Helmet>
         <title>Brukere - Rombestilling</title>
       </Helmet>
@@ -61,7 +61,7 @@ const Users = () => {
           </div>
         </Pagination>
       </div>
-    </Navigation>
+    </Container>
   );
 };
 

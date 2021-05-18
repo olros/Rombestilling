@@ -50,16 +50,17 @@ const useStyles = makeStyles((theme) => ({
 type SidebarItemProps = {
   text: string;
   to: string;
+  close: () => void;
 };
 
-const SidebarItem = ({ text, to }: SidebarItemProps) => {
+const SidebarItem = ({ close, text, to }: SidebarItemProps) => {
   const classes = useStyles();
   return (
     <Typography
       align='center'
       className={classes.text}
       component={Link}
-      onClick={to === window.location.pathname ? () => window.location.reload() : undefined}
+      onClick={() => (to === window.location.pathname ? window.location.reload() : close())}
       to={to}
       variant='h2'>
       {text}
@@ -68,7 +69,7 @@ const SidebarItem = ({ text, to }: SidebarItemProps) => {
 };
 
 export type IProps = {
-  items: Array<SidebarItemProps>;
+  items: Array<Omit<SidebarItemProps, 'close'>>;
   onClose: () => void;
   open: boolean;
 };
@@ -82,9 +83,9 @@ const Sidebar = ({ items, onClose, open }: IProps) => {
     <Drawer anchor='top' classes={{ paper: classes.sidebar }} onClose={onClose} open={open} style={{ zIndex: theme.zIndex.drawer - 1 }}>
       <div className={classes.root}>
         {items.map((item, i) => (
-          <SidebarItem key={i} {...item} />
+          <SidebarItem key={i} {...item} close={onClose} />
         ))}
-        <SidebarItem text='Min profil' to={URLS.PROFILE} />
+        <SidebarItem close={onClose} text='Min profil' to={URLS.PROFILE} />
         <div className={classes.icon}>
           <ThemeSettings className={classes.text} classNameIcon={classes.classNameIcon} />
         </div>

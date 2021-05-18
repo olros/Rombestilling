@@ -17,7 +17,7 @@ import ListIcon from '@material-ui/icons/ViewStreamRounded';
 
 // Project Components
 import Http404 from 'containers/Http404';
-import Navigation from 'components/navigation/Navigation';
+import Container from 'components/layout/Container';
 import Paper from 'components/layout/Paper';
 import Tabs from 'components/layout/Tabs';
 import RoomSection from 'containers/RoomDetails/components/RoomSection';
@@ -79,11 +79,11 @@ const RoomDetails = () => {
     return <Http404 />;
   }
   return (
-    <Navigation>
+    <Container>
       <Helmet>
         <title>{`${data?.name || 'Laster rom...'} - Rombestilling`}</title>
       </Helmet>
-      {data && !isLoading ? (
+      {data && !isLoading && (
         <div>
           <div className={classes.grid}>
             <div className={classnames(classes.grid, classes.top)}>
@@ -130,10 +130,8 @@ const RoomDetails = () => {
             </div>
           </div>
         </div>
-      ) : (
-        <></>
       )}
-    </Navigation>
+    </Container>
   );
 };
 

@@ -16,7 +16,7 @@ import PostsIcon from '@material-ui/icons/ViewAgendaRounded';
 import ListIcon from '@material-ui/icons/ViewStreamRounded';
 
 // Project Components
-import Navigation from 'components/navigation/Navigation';
+import Container from 'components/layout/Container';
 import Paper from 'components/layout/Paper';
 import VerifyDialog from 'components/layout/VerifyDialog';
 import Tabs from 'components/layout/Tabs';
@@ -93,7 +93,7 @@ const Profile = () => {
     return <Http404 />;
   }
   if (isLoading || !user) {
-    return <Navigation isLoading />;
+    return null;
   }
 
   const makeAdmin = async () =>
@@ -107,7 +107,7 @@ const Profile = () => {
     });
 
   return (
-    <Navigation>
+    <Container>
       <Helmet>
         <title>{`${user.firstName} ${user.surname} - Rombestilling`}</title>
       </Helmet>
@@ -151,7 +151,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
-    </Navigation>
+    </Container>
   );
 };
 
