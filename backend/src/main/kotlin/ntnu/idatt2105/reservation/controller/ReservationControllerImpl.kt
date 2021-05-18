@@ -2,9 +2,12 @@ package ntnu.idatt2105.reservation.controller
 
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.reservation.dto.CreateUserReservationRequest
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
+import ntnu.idatt2105.reservation.dto.ReservationUserDto
 import ntnu.idatt2105.reservation.model.Reservation
+import ntnu.idatt2105.reservation.model.UserReservation
 import ntnu.idatt2105.reservation.service.ReservationService
 import ntnu.idatt2105.user.model.User
 import org.springframework.data.domain.Page
@@ -17,7 +20,7 @@ import java.util.*
 
 
 @RestController
-class ReservationControllerImpl(val reservationService: ReservationService<Reservation<User>>) : ReservationController {
+class ReservationControllerImpl(val reservationService: ReservationService<User>) : ReservationController {
 
     override fun getAllReservations(
         predicate: Predicate,
@@ -29,7 +32,7 @@ class ReservationControllerImpl(val reservationService: ReservationService<Reser
     override fun getReservation(sectionId: UUID, reservationId: UUID) =
             reservationService.getReservation(sectionId, reservationId)
 
-    override fun createReservation(sectionId: UUID, reservation: ReservationCreateDto) =
+    override fun createReservation(sectionId: UUID, reservation: CreateUserReservationRequest)  : ReservationDto=
         reservationService.createReservation(sectionId, reservation)
 
     override fun updateReservation(sectionId: UUID, reservationId: UUID, reservation: ReservationDto) =

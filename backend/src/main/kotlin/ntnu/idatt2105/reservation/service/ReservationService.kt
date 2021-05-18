@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import java.util.*
 
-interface ReservationService<T: Reservation<*>> {
+interface ReservationService<T> {
     fun getAllReservation(sectionId: UUID, pageable: Pageable, predicate: Predicate) : Page<ReservationDto>
     fun createReservation(sectionId: UUID, reservation : ReservationCreateDto) : ReservationDto
     fun getUserReservation(userId: UUID, pageable: Pageable, predicate: Predicate) : Page<ReservationDto>

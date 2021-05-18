@@ -7,6 +7,7 @@ import ntnu.idatt2105.reservation.service.ReservationService
 import ntnu.idatt2105.user.dto.DetailedUserDto
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
+import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.service.UserDetailsImpl
 import ntnu.idatt2105.user.service.UserService
 import org.springframework.data.domain.Page
@@ -21,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @RestController
-class UserControllerImpl(val userService: UserService, val reservationService: ReservationService) : UserController {
+class UserControllerImpl(val userService: UserService, val reservationService: ReservationService<Reservation<User>>) : UserController {
 
     override fun registerUser(userRegistrationDto: UserRegistrationDto): ResponseEntity<UserDto>  =
             ResponseEntity(userService.registerUser(userRegistrationDto), HttpStatus.CREATED)

@@ -1,6 +1,9 @@
 package ntnu.idatt2105.reservation.model
 
 import ntnu.idatt2105.group.model.Group
+import ntnu.idatt2105.reservation.dto.GroupReservationDto
+import ntnu.idatt2105.reservation.dto.ReservationDto
+import ntnu.idatt2105.section.dto.toSectionChildrenDto
 import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
@@ -21,6 +24,10 @@ class GroupReservation(
         override fun setRelation(entity: Group) {
                 this.group = entity
         }
-        override fun getEntityId() = id
+        override fun getEntityId() = group?.id
+        override fun toReservationDto(): ReservationDto  =
+                        GroupReservationDto(toTime = this.toTime, fromTime = this.fromTime, text = this.text, nrOfPeople =this.nrOfPeople,
+                                section =this.section?.toSectionChildrenDto(),
+                        )
 
 }

@@ -17,5 +17,6 @@ abstract class ReservationDto (
 ) {
     abstract fun getEntityId(): UUID?
     
-    abstract fun toReservation(): Reservation<*>
+        abstract fun toReservation(): Reservation<*>
+
 }

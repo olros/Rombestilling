@@ -3,6 +3,7 @@ package ntnu.idatt2105.reservation.model
 import com.querydsl.core.annotations.PropertyType
 import com.querydsl.core.annotations.QueryEntity
 import com.querydsl.core.annotations.QueryType
+import ntnu.idatt2105.reservation.dto.ReservationDto
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.user.model.User
 import org.springframework.format.annotation.DateTimeFormat
@@ -10,6 +11,7 @@ import java.time.ZonedDateTime
 import java.util.*
 import javax.persistence.*
 
+@Entity
 abstract class Reservation<T>(@Id
                        @Column(columnDefinition = "CHAR(32)")
                        open var id: UUID = UUID.randomUUID(),
@@ -26,7 +28,10 @@ abstract class Reservation<T>(@Id
                        @QueryType(PropertyType.DATETIME)
                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) var toTimeBefore: ZonedDateTime? = null) {
     abstract fun setRelation(entity: T)
-    abstract fun getEntityId(): UUID
+    @QueryType(PropertyType.STRING)
+    abstract fun getEntityId(): UUID?
+    abstract fun toReservationDto(): ReservationDto
+
 
 }
 

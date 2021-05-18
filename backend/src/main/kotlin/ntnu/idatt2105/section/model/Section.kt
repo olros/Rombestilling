@@ -3,6 +3,7 @@ package ntnu.idatt2105.section.model
 import com.querydsl.core.annotations.PropertyType
 import com.querydsl.core.annotations.QueryType
 import ntnu.idatt2105.reservation.model.Reservation
+import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.util.SectionType
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.ZonedDateTime
@@ -24,7 +25,7 @@ data class Section(
         @ManyToOne
         var parent: Section? = null,
         @OneToMany(fetch = FetchType.EAGER, mappedBy = "section")
-        var reservation: MutableList<Reservation> = mutableListOf()
+        var reservation: MutableList<Reservation<User>> = mutableListOf()
 ){
         fun getType(): String{
                 if (parent != null)

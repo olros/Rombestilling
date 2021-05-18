@@ -5,10 +5,15 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.reservation.dto.CreateUserReservationRequest
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
+import ntnu.idatt2105.reservation.dto.ReservationUserDto
 import ntnu.idatt2105.reservation.model.Reservation
+import ntnu.idatt2105.reservation.model.UserReservation
 import ntnu.idatt2105.reservation.service.ReservationService
+import ntnu.idatt2105.user.dto.UserRegistrationDto
+import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.util.PaginationConstants
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -46,7 +51,7 @@ interface ReservationController {
         ApiResponse(responseCode = "400", description = "Bad request: new reservation was not created"),
     ])
     @PostMapping
-    fun createReservation(@PathVariable sectionId: UUID, @RequestBody @Valid reservation: ReservationCreateDto): ReservationDto
+    fun createReservation(@PathVariable sectionId: UUID, @RequestBody @Valid reservation: CreateUserReservationRequest):  ReservationDto
 
     @Operation(summary = "Update existing reservation", responses = [
         ApiResponse(responseCode = "200", description = "Success: reservation was updated"),

@@ -19,9 +19,9 @@ class ReservationAllowedFromDateTimeValidator
 
         val isInTheFuture = ZonedDateTime.now().isBefore(reservation.fromTime)
         val isStartingAfterEarliestTimeOfDay = reservation.fromTime?.isAfter(
-            reservation.fromTime.with(ReservationConstants.EARLIEST_RESERVATION_TIME_OF_DAY)) ?: false
+            reservation.fromTime!!.with(ReservationConstants.EARLIEST_RESERVATION_TIME_OF_DAY)) ?: false
         val isStartingBeforeLatestTimeOfDay = reservation.fromTime?.isBefore(
-            reservation.fromTime.with(ReservationConstants.LATEST_RESERVATION_TIME_OF_DAY)) ?: false
+            reservation.fromTime!!.with(ReservationConstants.LATEST_RESERVATION_TIME_OF_DAY)) ?: false
         val isWithinMaxMonthsInTheFuture = isWithinMaxMonthsInTheFuture(reservation)
 
         return isInTheFuture

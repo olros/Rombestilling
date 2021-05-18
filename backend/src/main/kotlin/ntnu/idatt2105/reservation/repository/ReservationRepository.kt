@@ -1,7 +1,6 @@
 package ntnu.idatt2105.reservation.repository
 
 import com.querydsl.core.types.Predicate
-import ntnu.idatt2105.reservation.model.QReservation
 import ntnu.idatt2105.reservation.model.Reservation
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

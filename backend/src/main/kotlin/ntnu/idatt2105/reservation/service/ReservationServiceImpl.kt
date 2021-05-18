@@ -21,19 +21,18 @@ import java.util.*
 
 
 @Service
-class ReservationServiceImpl<T:Reservation<T>>(
+class ReservationServiceImpl<T>(
     val modelMapper: ModelMapper,
-    val userService: UserService,
     val sectionRepository: SectionRepository) : ReservationService<T> {
 
-    private lateinit var reservationRepository: ReservationRepository<T>
-    private lateinit var reservationRelationService: ReservationRelationService<T>
+    lateinit var reservationRepository: ReservationRepository<*>
+    lateinit var reservationRelationService: ReservationRelationService<T>
     
     override fun getAllReservation(sectionId: UUID, pageable: Pageable, predicate: Predicate): Page<ReservationDto> {
         val reservation = QReservation.reservation
         val newPredicate = ExpressionUtils.allOf(predicate, reservation.section.id.eq(sectionId))!!
         reservationRepository.findAll(newPredicate, pageable).run {
-            return this.map { modelMapper.map(it, ReservationDto::class.java) }
+            return this.map { it.toReservationDto() }
         }
     }
 
@@ -54,14 +53,14 @@ class ReservationServiceImpl<T:Reservation<T>>(
         newReservation.setRelation(entity)
         newReservation.section = section
         newReservation = reservationRepository.save(newReservation)
-        return modelMapper.map(newReservation, ReservationDto::class.java)
+        return newReservation.toReservationDto()
     }
 
     override fun getUserReservation(userId: UUID, pageable: Pageable, predicate: Predicate): Page<ReservationDto> {
         val reservation = QReservation.reservation
-        val newPredicate = ExpressionUtils.allOf(predicate, reservation.user.id.eq(userId))!!
+        val newPredicate = ExpressionUtils.allOf(predicate, reservation.entityId.eq(userId.toString()))!!
         reservationRepository.findAll(newPredicate, pageable).run {
-            return this.map { modelMapper.map(it, ReservationDto::class.java) }
+            return this.map { it.toReservationDto() }
         }
     }
 
@@ -79,7 +78,7 @@ class ReservationServiceImpl<T:Reservation<T>>(
                 this.text = reservation.text
                 this. nrOfPeople = reservation.nrOfPeople
                 reservationRepository.save(this).run {
-                    return modelMapper.map(this, ReservationDto::class.java)
+                    return this.toReservationDto()
                 }
             }
         }
