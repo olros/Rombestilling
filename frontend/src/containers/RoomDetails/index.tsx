@@ -14,6 +14,7 @@ import { makeStyles, Typography, Collapse } from '@material-ui/core';
 import CalendarIcon from '@material-ui/icons/EventRounded';
 import SectionsIcon from '@material-ui/icons/ViewModuleRounded';
 import ListIcon from '@material-ui/icons/ViewStreamRounded';
+import StatsIcon from '@material-ui/icons/QueryStatsRounded';
 
 // Project Components
 import Http404 from 'containers/Http404';
@@ -21,6 +22,7 @@ import Navigation from 'components/navigation/Navigation';
 import Paper from 'components/layout/Paper';
 import Tabs from 'components/layout/Tabs';
 import RoomSection from 'containers/RoomDetails/components/RoomSection';
+import RoomStatistics from 'containers/RoomDetails/components/RoomStatistics';
 import { SectionReservations } from 'containers/RoomDetails/components/RoomReservations';
 import CreateRoom from 'components/miscellaneous/CreateRoom';
 import EditRoom from 'components/miscellaneous/EditRoom';
@@ -68,7 +70,8 @@ const RoomDetails = () => {
   const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
   const calendarTab = { value: 'calendar', label: 'Kalender', icon: CalendarIcon };
   const sectionsTab = { value: 'sections', label: 'Deler', icon: SectionsIcon };
-  const tabs = [reservationsTab, calendarTab, ...(data?.type === 'room' ? [sectionsTab] : [])];
+  const statisticsTab = { value: 'statistics', label: 'Statistikk', icon: StatsIcon };
+  const tabs = [reservationsTab, calendarTab, ...(data?.type === 'room' ? [sectionsTab] : []), ...(isUserAdmin(user) ? [statisticsTab] : [])];
   const [tab, setTab] = useState(reservationsTab.value);
 
   useEffect(() => {
@@ -120,6 +123,9 @@ const RoomDetails = () => {
                       {!data.children.length && <Typography variant='subtitle1'>Dette rommet har ingen deler</Typography>}
                       {isUserAdmin(user) && <CreateRoom parentId={id}>Opprett ny del av rom</CreateRoom>}
                     </Paper>
+                  </Collapse>
+                  <Collapse in={tab === statisticsTab.value} mountOnEnter>
+                    <RoomStatistics sectionId={id} />
                   </Collapse>
                 </div>
               </div>
