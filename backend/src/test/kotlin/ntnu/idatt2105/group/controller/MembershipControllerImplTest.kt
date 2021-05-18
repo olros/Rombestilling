@@ -95,8 +95,7 @@ class MembershipControllerImplTest {
         this.mvc.perform(MockMvcRequestBuilders.delete("${getURI(group)}{userId}/", user.id))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].id", Matchers.hasItem(newUser.id.toString())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].id", Matchers.not(user.id.toString())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").isNotEmpty)
 
 
     }

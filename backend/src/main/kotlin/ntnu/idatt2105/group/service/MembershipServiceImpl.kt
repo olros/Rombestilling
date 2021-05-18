@@ -51,16 +51,13 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
         }
     }
 
-    override fun deleteMembership(groupId: UUID, userId: UUID, predicate: Predicate, pageable: Pageable): Page<UserListDto> {
+    override fun deleteMembership(groupId: UUID, userId: UUID) {
         groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(
                 EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }
                 .run {
                     val member = getUser(userId)
                     member.groups.remove(this)
                     userRepository.save(member)
-                    val user = QUser.user
-                    val newPredicate = ExpressionUtils.allOf(predicate, user.groups.any().id.eq(this.id))!!
-                    return userRepository.findAll(newPredicate, pageable).map { it.toUserListDto() }
                 }
     }
 

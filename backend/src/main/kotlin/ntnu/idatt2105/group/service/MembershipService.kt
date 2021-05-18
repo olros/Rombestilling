@@ -10,5 +10,5 @@ import java.util.*
 interface MembershipService {
     fun getMemberships(groupId: UUID, predicate: Predicate, pageable: Pageable) : Page<UserListDto>
     fun createMemberships(groupId: UUID, userId: UserIdDto, predicate: Predicate, pageable: Pageable) : Page<UserListDto>
-    fun deleteMembership(groupId: UUID, userId: UUID, predicate: Predicate, pageable: Pageable) : Page<UserListDto>
+    fun deleteMembership(groupId: UUID, userId: UUID)
 }

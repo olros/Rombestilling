@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate
 import io.swagger.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.section.dto.SectionDto
 import ntnu.idatt2105.section.model.Section
@@ -36,7 +37,7 @@ interface MembershipController {
                        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
                        sort= ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
                        @PathVariable groupId: UUID): Page<UserListDto>
-    @Operation(summary = "Create a new section", responses = [
+    @Operation(summary = "Create a new membership", responses = [
         ApiResponse(responseCode = "201", description = "Created: new membership was created"),
         ApiResponse(responseCode = "404", description = "Not found: new group or user does not exist"),
     ])
@@ -46,10 +47,11 @@ interface MembershipController {
                          sort= ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
                          @PathVariable groupId: UUID,
                          @RequestBody userId: UserIdDto):  Page<UserListDto>
+
+    @Operation(summary = "Delete a membership", responses = [
+        ApiResponse(responseCode = "200", description = "OK: membership was deleted"),
+        ApiResponse(responseCode = "404", description = "Not found: new group or user does not exist"),
+    ])
     @DeleteMapping("{userId}/")
-    fun deleteMembership(@QuerydslPredicate(root = User::class) predicate: Predicate,
-                         @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
-                         sort= ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
-                         @PathVariable groupId: UUID,
-                         @PathVariable userId: UUID):  Page<UserListDto>
+    fun deleteMembership(@PathVariable groupId: UUID,@PathVariable userId: UUID):  ResponseEntity<Response>
 }
