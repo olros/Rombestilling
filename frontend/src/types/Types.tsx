@@ -59,6 +59,13 @@ export type SectionCreate = Omit<Section, 'id'> & {
   parentId?: string;
 };
 
+export type Statistics = {
+  nrOfReservation: number;
+  hoursOfReservation: number;
+  daysWithReservation: number;
+  userReservationCount: number;
+};
+
 export type Reservation = {
   id: string;
   section: Omit<SectionList, 'parent' | 'children'>;
