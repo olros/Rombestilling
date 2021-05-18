@@ -74,7 +74,7 @@ const Profile = () => {
   }
 
   const makeAdmin = async () =>
-    makeUserAdmin.mutate(userId, {
+    makeUserAdmin.mutate(user.id, {
       onSuccess: () => {
         showSnackbar('Brukeren ble gjort til administrator', 'success');
       },

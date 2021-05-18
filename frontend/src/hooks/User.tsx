@@ -107,7 +107,7 @@ export const useMakeAdmin = (): UseMutationResult<User, RequestResponse, string,
   const queryClient = useQueryClient();
   return useMutation((userId) => API.makeAdmin(userId), {
     onSuccess: (user) => {
-      queryClient.invalidateQueries([USER_QUERY_KEY, user.id]);
+      queryClient.setQueryData([USER_QUERY_KEY, user.id], user);
     },
   });
 };
