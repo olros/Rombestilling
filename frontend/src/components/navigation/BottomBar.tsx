@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import URLS from 'URLS';
 import { Link, useLocation } from 'react-router-dom';
+import { useLogout, useIsAuthenticated } from 'hooks/User';
 
 // Material UI Components
 import { makeStyles, BottomNavigation, BottomNavigationAction } from '@material-ui/core';
 import ThemeIcon from '@material-ui/icons/LightModeRounded';
+import LogoutIcon from '@material-ui/icons/LogoutRounded';
 
 // Project components
 import Paper from 'components/layout/Paper';
@@ -43,11 +45,14 @@ export type BottomBarProps = {
 };
 
 const THEME_TAB_KEY = 'theme';
+const LOGOUT_TAB_KEY = 'logout';
 
 const BottomBar = ({ items }: BottomBarProps) => {
   const classes = useStyles();
   const [themeOpen, setThemeOpen] = useState(false);
   const location = useLocation();
+  const logout = useLogout();
+  const isAuthenticated = useIsAuthenticated();
   const routeVal = (path: string) => {
     if (path.substring(0, URLS.ROOMS.length) === URLS.ROOMS) {
       return URLS.ROOMS;
@@ -62,7 +67,7 @@ const BottomBar = ({ items }: BottomBarProps) => {
     <Paper blurred className={classes.root} noPadding>
       <BottomNavigation
         className={classes.navbar}
-        onChange={(event, newValue) => (newValue !== THEME_TAB_KEY ? setTab(newValue) : null)}
+        onChange={(event, newValue) => (items.some((item) => item.to === newValue) ? setTab(newValue) : null)}
         showLabels
         value={tab}>
         {items.map(({ text, to, icon: Icon }, i) => (
@@ -83,6 +88,15 @@ const BottomBar = ({ items }: BottomBarProps) => {
           onClick={() => setThemeOpen(true)}
           value={THEME_TAB_KEY}
         />
+        {isAuthenticated && (
+          <BottomNavigationAction
+            classes={{ root: classes.action, selected: classes.selected }}
+            icon={<LogoutIcon />}
+            label='Logg ut'
+            onClick={logout}
+            value={LOGOUT_TAB_KEY}
+          />
+        )}
       </BottomNavigation>
       <ThemeSettings onClose={() => setThemeOpen(false)} open={themeOpen} />
     </Paper>

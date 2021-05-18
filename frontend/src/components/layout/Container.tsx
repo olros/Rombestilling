@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Container = forwardRef(function Container({ className, children, maxWidth = 'xl', ...props }: ContainerProps, ref: Ref<HTMLDivElement>) {
+const Container = forwardRef(function Container({ className, children, maxWidth = 'lg', ...props }: ContainerProps, ref: Ref<HTMLDivElement>) {
   const classes = useStyles();
   return (
     <MuiContainer className={classnames(classes.container, className)} maxWidth={maxWidth} ref={ref} {...props}>

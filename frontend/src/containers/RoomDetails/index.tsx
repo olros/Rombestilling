@@ -14,6 +14,7 @@ import { makeStyles, Typography, Collapse } from '@material-ui/core';
 import CalendarIcon from '@material-ui/icons/EventRounded';
 import SectionsIcon from '@material-ui/icons/ViewModuleRounded';
 import ListIcon from '@material-ui/icons/ViewStreamRounded';
+import AboutIcon from '@material-ui/icons/InfoRounded';
 
 // Project Components
 import Http404 from 'containers/Http404';
@@ -34,16 +35,6 @@ const useStyles = makeStyles((theme) => ({
   },
   top: {
     gridTemplateColumns: '1fr auto',
-  },
-  content: {
-    gap: theme.spacing(2),
-    gridTemplateColumns: '1fr 350px',
-    [theme.breakpoints.down('xl')]: {
-      gridTemplateColumns: '1fr 300px',
-    },
-    [theme.breakpoints.down('lg')]: {
-      gridTemplateColumns: '1fr',
-    },
   },
   description: {
     whiteSpace: 'break-spaces',
@@ -68,7 +59,8 @@ const RoomDetails = () => {
   const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
   const calendarTab = { value: 'calendar', label: 'Kalender', icon: CalendarIcon };
   const sectionsTab = { value: 'sections', label: 'Deler', icon: SectionsIcon };
-  const tabs = [reservationsTab, calendarTab, ...(data?.type === 'room' ? [sectionsTab] : [])];
+  const aboutTab = { value: 'about', label: 'Om', icon: AboutIcon };
+  const tabs = [reservationsTab, calendarTab, ...(data?.type === 'room' ? [sectionsTab] : []), aboutTab];
   const [tab, setTab] = useState(reservationsTab.value);
 
   useEffect(() => {
@@ -84,49 +76,45 @@ const RoomDetails = () => {
         <title>{`${data?.name || 'Laster rom...'} - Rombestilling`}</title>
       </Helmet>
       {data && !isLoading && (
-        <div>
-          <div className={classes.grid}>
-            <div className={classnames(classes.grid, classes.top)}>
-              <div className={classes.grid}>
-                <Typography variant='h1'>{data.name}</Typography>
-                {data.type === 'section' && (
-                  <Typography variant='subtitle2'>
-                    {`Del av rommet: `}
-                    <Link to={`${URLS.ROOMS}${data.parent.id}/`}>{data.parent.name}</Link>
-                  </Typography>
-                )}
-              </div>
-              {isUserAdmin(user) && (
-                <EditRoom room={data} sectionType='room'>
-                  Endre rom
-                </EditRoom>
+        <div className={classes.grid}>
+          <div className={classnames(classes.grid, classes.top)}>
+            <div className={classes.grid}>
+              <Typography variant='h1'>{data.name}</Typography>
+              {data.type === 'section' && (
+                <Typography variant='subtitle2'>
+                  {`Del av rommet: `}
+                  <Link to={`${URLS.ROOMS}${data.parent.id}/`}>{data.parent.name}</Link>
+                </Typography>
               )}
             </div>
-            <div className={classnames(classes.grid, classes.content)}>
-              <div className={classes.grid}>
-                <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
-                <div>
-                  <Collapse in={tab === reservationsTab.value} mountOnEnter>
-                    <SectionReservations sectionId={id} />
-                  </Collapse>
-                  <Collapse in={tab === calendarTab.value} mountOnEnter>
-                    <SectionCalendar sectionId={id} />
-                  </Collapse>
-                  <Collapse in={tab === sectionsTab.value} mountOnEnter>
-                    <Paper className={classes.grid}>
-                      {data.children.map((section) => (
-                        <RoomSection key={section.id} section={section} />
-                      ))}
-                      {!data.children.length && <Typography variant='subtitle1'>Dette rommet har ingen deler</Typography>}
-                      {isUserAdmin(user) && <CreateRoom parentId={id}>Opprett ny del av rom</CreateRoom>}
-                    </Paper>
-                  </Collapse>
-                </div>
-              </div>
-              <div className={classes.grid}>
+            {isUserAdmin(user) && (
+              <EditRoom room={data} sectionType='room'>
+                Endre rom
+              </EditRoom>
+            )}
+          </div>
+          <div className={classes.grid}>
+            <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
+            <div>
+              <Collapse in={tab === reservationsTab.value} mountOnEnter>
+                <SectionReservations sectionId={id} />
+              </Collapse>
+              <Collapse in={tab === calendarTab.value} mountOnEnter>
+                <SectionCalendar sectionId={id} />
+              </Collapse>
+              <Collapse in={tab === sectionsTab.value} mountOnEnter>
+                <Paper className={classes.grid}>
+                  {data.children.map((section) => (
+                    <RoomSection key={section.id} section={section} />
+                  ))}
+                  {!data.children.length && <Typography variant='subtitle1'>Dette rommet har ingen deler</Typography>}
+                  {isUserAdmin(user) && <CreateRoom parentId={id}>Opprett ny del av rom</CreateRoom>}
+                </Paper>
+              </Collapse>
+              <Collapse in={tab === aboutTab.value} mountOnEnter>
                 <Typography className={classes.description}>{data.description}</Typography>
                 {data.image && <img alt={data.name} className={classes.image} src={data.image} />}
-              </div>
+              </Collapse>
             </div>
           </div>
         </div>
