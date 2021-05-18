@@ -41,14 +41,14 @@ interface GroupController {
         ApiResponse(responseCode = "201", description = "Created: new group was created"),
     ])
     @PostMapping
-    fun createSection(@RequestBody group: Group): ResponseEntity<GroupDto>
+    fun createGroup(@RequestBody group: Group): ResponseEntity<GroupDto>
 
     @Operation(summary = "Update existing group", responses = [
         ApiResponse(responseCode = "200", description = "Success: group was updated"),
         ApiResponse(responseCode = "404", description = "Not found: group with the given id does not exist"),
     ])
     @PutMapping("{groupId}/")
-    fun updateSection(@PathVariable groupId: UUID, @RequestBody group: Group): ResponseEntity<GroupDto>
+    fun updateGroup(@PathVariable groupId: UUID, @RequestBody group: Group): ResponseEntity<GroupDto>
 
     @Operation(summary = "Delete existing group", responses = [
         ApiResponse(responseCode = "200", description = "Success: group was deleted"),

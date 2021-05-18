@@ -19,11 +19,11 @@ class GroupControllerImpl(val groupService: GroupService) : GroupController {
     override fun getGroup(groupId: UUID): ResponseEntity<GroupDto> =
             ResponseEntity(groupService.getGroup(groupId), HttpStatus.OK)
 
-    override fun createSection(group: Group): ResponseEntity<GroupDto> =
+    override fun createGroup(group: Group): ResponseEntity<GroupDto> =
             ResponseEntity(groupService.createGroup(group), HttpStatus.CREATED)
 
 
-    override fun updateSection(groupId: UUID, group: Group): ResponseEntity<GroupDto> =
+    override fun updateGroup(groupId: UUID, group: Group): ResponseEntity<GroupDto> =
             ResponseEntity(groupService.updateGroup(groupId, group), HttpStatus.OK)
 
 
