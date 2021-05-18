@@ -51,6 +51,8 @@ const BottomBar = ({ items }: BottomBarProps) => {
   const routeVal = (path: string) => {
     if (path.substring(0, URLS.ROOMS.length) === URLS.ROOMS) {
       return URLS.ROOMS;
+    } else if (path.substring(0, URLS.GROUPS.length) === URLS.GROUPS) {
+      return URLS.GROUPS;
     } else if (path.substring(0, URLS.USERS.length) === URLS.USERS) {
       return URLS.USERS;
     } else {

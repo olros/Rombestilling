@@ -30,9 +30,9 @@ export const useCreateGroup = (): UseMutationResult<Group, RequestResponse, Grou
   });
 };
 
-export const useUpdateGroup = (): UseMutationResult<Group, RequestResponse, { groupId: string; group: Partial<Group> }, unknown> => {
+export const useUpdateGroup = (groupId: string): UseMutationResult<Group, RequestResponse, Partial<Group>, unknown> => {
   const queryClient = useQueryClient();
-  return useMutation(({ groupId, group }) => API.updateGroup(groupId, group), {
+  return useMutation((group) => API.updateGroup(groupId, group), {
     onSuccess: (group) => {
       queryClient.invalidateQueries([GROUP_QUERY_KEY, undefined]);
       queryClient.invalidateQueries([GROUP_QUERY_KEY, group.id]);
@@ -41,6 +41,6 @@ export const useUpdateGroup = (): UseMutationResult<Group, RequestResponse, { gr
   });
 };
 
-export const useDeleteGroup = (): UseMutationResult<RequestResponse, RequestResponse, string, unknown> => {
-  return useMutation((groupId) => API.deleteGroup(groupId));
+export const useDeleteGroup = (groupId: string): UseMutationResult<RequestResponse, RequestResponse, unknown, unknown> => {
+  return useMutation(() => API.deleteGroup(groupId));
 };

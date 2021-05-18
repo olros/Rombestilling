@@ -10,6 +10,7 @@ import { makeStyles, LinearProgress, Hidden } from '@material-ui/core';
 // Icons
 import SearchIcon from '@material-ui/icons/SearchRounded';
 import UsersIcon from '@material-ui/icons/PeopleOutlineRounded';
+import GroupsIcon from '@material-ui/icons/GroupsRounded';
 import ProfileIcon from '@material-ui/icons/AccountCircleRounded';
 import LoginIcon from '@material-ui/icons/LoginRounded';
 
@@ -21,9 +22,7 @@ const useStyles = makeStyles((theme) => ({
   main: {
     minHeight: '100vh',
     display: 'grid',
-    // gridTemplateColumns: '300px 1fr',
     [theme.breakpoints.down('lg')]: {
-      // gridTemplateColumns: '1fr',
       paddingBottom: 80,
     },
   },
@@ -55,7 +54,7 @@ const Navigation = ({ isLoading = false, children }: NavigationProps) => {
       isAuthenticated
         ? [
             { icon: SearchIcon, text: 'Finn rom', to: URLS.ROOMS },
-            { icon: SearchIcon, text: 'Grupper', to: URLS.GROUPS },
+            { icon: GroupsIcon, text: 'Grupper', to: URLS.GROUPS },
             ...(isUserAdmin(user) ? [{ icon: UsersIcon, text: 'Brukere', to: URLS.USERS }] : []),
             { icon: ProfileIcon, text: 'Profil', to: URLS.PROFILE },
           ]
