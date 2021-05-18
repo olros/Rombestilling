@@ -43,7 +43,7 @@ const AuthRoute = ({ children, path, element, onlyAdmin }: AuthRouteProps) => {
   const { data, isLoading } = useUser();
 
   if (isLoading) {
-    return <Navigation isLoading noFooter />;
+    return <Navigation isLoading />;
   } else if (!data || (onlyAdmin && !isUserAdmin(data))) {
     return <Navigate to={URLS.LOGIN} />;
   } else {
@@ -103,7 +103,7 @@ const AppRoutes = () => {
     <Routes>
       <Route element={<Auth />} path={`${URLS.LOGIN}*`} />
       <Route path='*'>
-        <Navigation maxWidth={false}>
+        <Navigation>
           <Routes>
             <Route element={<Landing />} path={URLS.LANDING} />
             <AuthRoute path={URLS.ROOMS}>

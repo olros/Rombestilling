@@ -6,6 +6,8 @@ import { Container as MuiContainer, makeStyles, ContainerProps } from '@material
 
 const useStyles = makeStyles((theme) => ({
   container: {
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
     [theme.breakpoints.down('md')]: {
       paddingRight: theme.spacing(2),
       paddingLeft: theme.spacing(2),
