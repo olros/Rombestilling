@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Path, UnpackNestedValue } from 'react-hook-form';
 
 // Material UI Components
 import { makeStyles, Divider, useMediaQuery, Theme, Collapse, Button, Typography } from '@material-ui/core';
@@ -8,7 +8,6 @@ import { makeStyles, Divider, useMediaQuery, Theme, Collapse, Button, Typography
 import TextField from 'components/inputs/TextField';
 import Paper from 'components/layout/Paper';
 import SubmitButton from 'components/inputs/SubmitButton';
-import { UsersFilters } from 'containers/Users';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -28,17 +27,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export type UsersFilterBoxProps = {
-  updateFilters: (newFilters: UsersFilters) => void;
-  filters: UsersFilters;
+export type UsersFilterBoxProps<Filters> = {
+  updateFilters: (newFilters: Partial<Filters>) => void;
+  filters: Partial<Filters>;
+  field: keyof Filters;
+  label: string;
 };
 
-const UsersFilterBox = ({ filters, updateFilters }: UsersFilterBoxProps) => {
+// eslint-disable-next-line comma-spacing
+const FilterBox = <Filters,>({ filters, updateFilters, field, label }: UsersFilterBoxProps<Filters>) => {
   const classes = useStyles();
   const [isOpen, setIsOpen] = useState(true);
   const mdDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
-  const { formState, handleSubmit, register, reset } = useForm<UsersFilters>();
-  const submit = async (data: UsersFilters) => {
+  const { formState, handleSubmit, register, reset } = useForm<Filters>();
+  const submit = async (data: UnpackNestedValue<Filters>) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     updateFilters({ ...data });
     setIsOpen(false);
   };
@@ -50,7 +54,7 @@ const UsersFilterBox = ({ filters, updateFilters }: UsersFilterBoxProps) => {
   return (
     <Paper blurred border className={classes.paper}>
       <Collapse in={!isOpen}>
-        {filters && <>{Boolean(filters.search?.length) && <Typography>{`Søkeord: "${filters.search}"`}</Typography>}</>}
+        {filters && <>{Boolean(filters[field]) && <Typography>{`Søkeord: "${filters[field]}"`}</Typography>}</>}
         <Button fullWidth onClick={() => setIsOpen(true)} variant='text'>
           Endre søk
         </Button>
@@ -60,7 +64,7 @@ const UsersFilterBox = ({ filters, updateFilters }: UsersFilterBoxProps) => {
       </Collapse>
       <Collapse in={isOpen}>
         <form className={classes.filter} onSubmit={handleSubmit(submit)}>
-          <TextField formState={formState} label='Søk etter navn, epost eller telefon' margin='dense' noDefaultShrink noOutline {...register('search')} />
+          <TextField formState={formState} label={label} margin='dense' noDefaultShrink noOutline {...register((field as unknown) as Path<Filters>)} />
           <Divider orientation={mdDown ? 'horizontal' : 'vertical'} />
           <div>
             <SubmitButton className={classes.submit} formState={formState} noFeedback variant='text'>
@@ -73,4 +77,4 @@ const UsersFilterBox = ({ filters, updateFilters }: UsersFilterBoxProps) => {
   );
 };
 
-export default UsersFilterBox;
+export default FilterBox;

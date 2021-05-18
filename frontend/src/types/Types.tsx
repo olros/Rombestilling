@@ -80,6 +80,13 @@ export type ReservationCreate = Pick<Reservation, 'nrOfPeople' | 'text' | 'fromT
   userId: string;
 };
 
+export type Group = {
+  id: string;
+  name: string;
+};
+
+export type GroupCreate = Pick<Group, 'name'>;
+
 export type FileUploadResponse = {
   data: {
     display_url: string;

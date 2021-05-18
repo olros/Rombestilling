@@ -27,6 +27,7 @@ import Navigation from 'components/navigation/Navigation';
 import Landing from 'containers/Landing';
 const Http404 = lazy(() => import('containers/Http404'));
 const Auth = lazy(() => import('containers/Auth'));
+const Groups = lazy(() => import('containers/Groups'));
 const Profile = lazy(() => import('containers/Profile'));
 const Rooms = lazy(() => import('containers/Rooms'));
 const RoomDetails = lazy(() => import('containers/RoomDetails'));
@@ -106,6 +107,7 @@ const AppRoutes = () => {
         <Navigation>
           <Routes>
             <Route element={<Landing />} path={URLS.LANDING} />
+            <Route element={<Groups />} path={URLS.GROUPS} />
             <AuthRoute path={URLS.ROOMS}>
               <Route element={<RoomDetails />} path=':id/' />
               <Route element={<Rooms />} path='' />

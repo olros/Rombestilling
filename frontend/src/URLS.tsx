@@ -14,6 +14,7 @@ export const AUTH_ROUTES = {
 
 export default {
   LANDING: '/',
+  GROUPS: '/groups/',
   PROFILE: '/profile/',
   ROOMS: '/rooms/',
   USERS: '/users/',

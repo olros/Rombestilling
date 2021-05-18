@@ -5,6 +5,8 @@ import { ACCESS_TOKEN, ACCESS_TOKEN_DURATION, REFRESH_TOKEN, REFRESH_TOKEN_DURAT
 import { logout } from 'hooks/User';
 import {
   FileUploadResponse,
+  Group,
+  GroupCreate,
   LoginRequestResponse,
   PaginationResponse,
   RequestResponse,
@@ -23,6 +25,7 @@ import {
 export const USERS = 'users';
 export const ME = 'me';
 export const AUTH = 'auth';
+export const GROUPS = 'groups';
 export const SECTIONS = 'sections';
 export const RESERVATIONS = 'reservations';
 export const STATISTICS = 'statistics';
@@ -77,10 +80,17 @@ export default {
   getSectionStatistics: (sectionId: string, filters?: any) =>
     IFetch<Statistics>({ method: 'GET', url: `${SECTIONS}/${sectionId}/${STATISTICS}/`, data: filters || {} }),
   getSections: (filters?: any) => IFetch<PaginationResponse<SectionList>>({ method: 'GET', url: `${SECTIONS}/`, data: filters || {} }),
-  createSection: (newPost: SectionCreate) => IFetch<Section>({ method: 'POST', url: `${SECTIONS}/`, data: newPost }),
+  createSection: (newSection: SectionCreate) => IFetch<Section>({ method: 'POST', url: `${SECTIONS}/`, data: newSection }),
   updateSection: (sectionId: string, updatedSection: Partial<Section>) =>
     IFetch<Section>({ method: 'PUT', url: `${SECTIONS}/${sectionId}/`, data: updatedSection }),
   deleteSection: (sectionId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${SECTIONS}/${sectionId}/` }),
+
+  // Groups
+  getGroup: (groupId: string) => IFetch<Group>({ method: 'GET', url: `${GROUPS}/${groupId}/` }),
+  getGroups: (filters?: any) => IFetch<PaginationResponse<Group>>({ method: 'GET', url: `${GROUPS}/`, data: filters || {} }),
+  createGroup: (newGroup: GroupCreate) => IFetch<Group>({ method: 'POST', url: `${GROUPS}/`, data: newGroup }),
+  updateGroup: (groupId: string, updatedGroup: Partial<Group>) => IFetch<Group>({ method: 'PUT', url: `${GROUPS}/${groupId}/`, data: updatedGroup }),
+  deleteGroup: (groupId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${GROUPS}/${groupId}/` }),
 
   // User
   getUser: (userId?: string) => IFetch<User>({ method: 'GET', url: `${USERS}/${userId || ME}/` }),

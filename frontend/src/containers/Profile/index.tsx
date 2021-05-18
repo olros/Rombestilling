@@ -3,11 +3,11 @@ import Helmet from 'react-helmet';
 import { useParams, useNavigate } from 'react-router-dom';
 import URLS from 'URLS';
 import { useSnackbar } from 'hooks/Snackbar';
-import { useUser, useMakeAdmin } from 'hooks/User';
+import { useUser, useMakeAdmin, useLogout } from 'hooks/User';
 import { isUserAdmin, urlEncode } from 'utils';
 
 // Material UI Components
-import { makeStyles, Typography, Avatar, Collapse, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
+import { makeStyles, Typography, Avatar, Collapse, ListItem, ListItemAvatar, ListItemText, Button } from '@material-ui/core';
 
 // Icons
 import EditIcon from '@material-ui/icons/EditRounded';
@@ -45,6 +45,7 @@ const Profile = () => {
   const { data: user, isLoading, isError } = useUser(userId);
   const showSnackbar = useSnackbar();
   const makeUserAdmin = useMakeAdmin();
+  const logout = useLogout();
   const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
   const bookings = { value: 'bookings', label: 'Kalender', icon: PostsIcon };
   const editTab = { value: 'edit', label: 'Rediger profil', icon: EditIcon };
@@ -102,6 +103,11 @@ const Profile = () => {
             titleText='Gjør til administrator'>
             Gjør til administrator
           </VerifyDialog>
+        )}
+        {!userId && (
+          <Button color='secondary' fullWidth onClick={logout} variant='outlined'>
+            Logg ut
+          </Button>
         )}
         <div className={classes.grid}>
           <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
