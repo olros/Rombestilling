@@ -1,12 +1,17 @@
 package ntnu.idatt2105.group.controller
 
+import com.querydsl.core.types.Predicate
 import io.swagger.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.group.model.Group
-import ntnu.idatt2105.section.dto.SectionCreateDto
-import ntnu.idatt2105.section.dto.SectionDto
+import ntnu.idatt2105.util.PaginationConstants
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.querydsl.binding.QuerydslPredicate
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -16,6 +21,14 @@ import javax.validation.Valid
 @Api(value = "Group services", tags = ["Group Services"], description = "Group Services")
 @RequestMapping("/groups/")
 interface GroupController {
+
+    @Operation(summary = "Fetch all groups", responses = [
+        ApiResponse(responseCode = "200", description = "Success"),
+    ])
+    @GetMapping
+    fun getAllGroups(@QuerydslPredicate(root = Group::class) predicate: Predicate,
+                     @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
+                             sort= ["name"], direction = Sort.Direction.DESC) pageable: Pageable): Page<Group>
 
     @Operation(summary = "Fetch group details for the given group id", responses = [
         ApiResponse(responseCode = "200", description = "Success"),

@@ -1,8 +1,10 @@
 package ntnu.idatt2105.group.controller
 
+import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.group.service.GroupService
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -10,6 +12,9 @@ import java.util.*
 
 @RestController
 class GroupControllerImpl(val groupService: GroupService) : GroupController {
+
+    override fun getAllGroups(predicate: Predicate, pageable: Pageable) = groupService.getAllGroups(pageable, predicate)
+
     override fun getGroup(groupId: UUID): ResponseEntity<Group> =
             ResponseEntity(groupService.getGroup(groupId), HttpStatus.OK)
 

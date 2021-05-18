@@ -36,6 +36,9 @@ class SectionServiceTest {
     @Mock
     private lateinit var sectionRepository: SectionRepository
 
+    @Mock
+    private lateinit var  sectionFactory: SectionFactoryImpl
+
     @Spy
     @Autowired
     private lateinit var modelMapper: ModelMapper
@@ -71,7 +74,8 @@ class SectionServiceTest {
         val newSection = SectionFactory().`object`
         val newSectionDto = CreateSectionRequest(UUID.randomUUID(), newSection.name,  newSection.description, newSection.capacity, newSection.image)
         lenient().`when`(sectionRepository.save(any(Section::class.java))).thenReturn(newSection)
-        assertThat(sectionService.createSection(newSectionDto).name).isEqualTo(newSectionDto.name)
+        lenient().`when`(sectionFactory.createParentSection(newSectionDto)).thenReturn(newSection)
+        assertThat(sectionService.createSection(newSectionDto).name).isEqualTo(newSection.name)
     }
 
     @Test
