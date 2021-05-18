@@ -16,6 +16,7 @@ abstract class ReservationDto (
         open val section : SectionChildrenDto? = null,
 ) {
     abstract fun getEntityId(): UUID?
+    abstract fun getType(): String
     
         abstract fun toReservation(): Reservation<*>
 

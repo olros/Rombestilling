@@ -20,7 +20,8 @@ data class ReservationUserDto(override val id : UUID? = null,
 ):
         ReservationDto(id, fromTime, toTime, text, nrOfPeople, section) {
     override fun getEntityId(): UUID? = user?.id
+    override fun getType(): String = "user"
 
-    override fun toReservation(): Reservation<*> = UserReservation(toTime = toTime, fromTime = fromTime, text = text, nrOfPeople = nrOfPeople)
+    override fun toReservation(): Reservation<*> = UserReservation(id = this.id!!, toTime = toTime, fromTime = fromTime, text = text, nrOfPeople = nrOfPeople)
 
 }

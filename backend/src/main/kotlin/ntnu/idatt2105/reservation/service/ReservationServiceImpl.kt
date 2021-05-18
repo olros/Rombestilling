@@ -7,12 +7,12 @@ import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
+import ntnu.idatt2105.reservation.model.QGroupReservation
 import ntnu.idatt2105.reservation.model.QReservation
+import ntnu.idatt2105.reservation.model.QUserReservation
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
 import ntnu.idatt2105.section.repository.SectionRepository
-import ntnu.idatt2105.user.model.User
-import ntnu.idatt2105.user.service.UserService
 import org.modelmapper.ModelMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -57,8 +57,8 @@ class ReservationServiceImpl<T>(
     }
 
     override fun getUserReservation(userId: UUID, pageable: Pageable, predicate: Predicate): Page<ReservationDto> {
-        val reservation = QReservation.reservation
-        val newPredicate = ExpressionUtils.allOf(predicate, reservation.entityId.eq(userId.toString()))!!
+        val reservation = QUserReservation.userReservation
+        val newPredicate = ExpressionUtils.allOf(predicate, reservation.user.id.eq(userId))!!
         reservationRepository.findAll(newPredicate, pageable).run {
             return this.map { it.toReservationDto() }
         }
@@ -92,6 +92,14 @@ class ReservationServiceImpl<T>(
                 .run {
             reservationRepository.delete(this)
 
+        }
+    }
+
+    override fun getGroupReservation(groupId: UUID, pageable: Pageable, predicate: Predicate): Page<ReservationDto> {
+        val reservation = QGroupReservation.groupReservation
+        val newPredicate = ExpressionUtils.allOf(predicate, reservation.group.id.eq(groupId))!!
+        reservationRepository.findAll(newPredicate, pageable).run {
+            return this.map { it.toReservationDto() }
         }
     }
 }

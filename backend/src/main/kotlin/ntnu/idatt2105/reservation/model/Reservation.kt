@@ -16,7 +16,8 @@ abstract class Reservation<T>(@Id
                        @Column(columnDefinition = "CHAR(32)")
                        open var id: UUID = UUID.randomUUID(),
                               @ManyToOne
-                       @JoinColumn(name = "section_id", referencedColumnName = "id") var section: Section? = null,
+                       @JoinColumn(name = "section_id", referencedColumnName = "id")
+                              open var section: Section? = null,
                               open var fromTime: ZonedDateTime? = null,
                               open var toTime: ZonedDateTime? = null,
                               open var text: String = "",

@@ -33,6 +33,7 @@ interface ReservationController {
     @Operation(summary = "Fetch reservations", responses = [ApiResponse(responseCode = "200", description = "Success")])
     @GetMapping
     fun getAllReservations(
+            @RequestParam group: Boolean = false,
             @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
             @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
             sort= ["fromTime"], direction = Sort.Direction.DESC) pageable: Pageable,
@@ -44,14 +45,14 @@ interface ReservationController {
         ApiResponse(responseCode = "404", description = "Not found: reservation with the given id does not exist")
     ])
     @GetMapping("{reservationId}/")
-    fun getReservation(@PathVariable sectionId: UUID, @PathVariable reservationId: UUID): ReservationDto
+    fun getReservation(@RequestParam group: Boolean = false, @PathVariable sectionId: UUID, @PathVariable reservationId: UUID): ReservationDto
 
     @Operation(summary = "Create a new reservation", responses = [
         ApiResponse(responseCode = "201", description = "Created: new reservation was created"),
         ApiResponse(responseCode = "400", description = "Bad request: new reservation was not created"),
     ])
     @PostMapping
-    fun createReservation(@PathVariable sectionId: UUID, @RequestBody @Valid reservation: CreateUserReservationRequest):  ReservationDto
+    fun createReservation(@RequestParam group: Boolean = false, @PathVariable sectionId: UUID, @RequestBody @Valid reservation: ReservationCreateDto):  ReservationDto
 
     @Operation(summary = "Update existing reservation", responses = [
         ApiResponse(responseCode = "200", description = "Success: reservation was updated"),
@@ -61,6 +62,7 @@ interface ReservationController {
     @PutMapping("{reservationId}/")
     @PreAuthorize("@securityService.reservationPermissions(#reservationId)")
     fun updateReservation(
+        @RequestParam group: Boolean = false,
         @PathVariable sectionId: UUID,
         @PathVariable reservationId: UUID,
         @RequestBody reservation: ReservationDto
@@ -72,5 +74,5 @@ interface ReservationController {
     ])
     @DeleteMapping("{reservationId}/")
     @PreAuthorize("@securityService.reservationPermissions(#reservationId)")
-    fun deleteReservation(@PathVariable sectionId: UUID, @PathVariable reservationId: UUID): ResponseEntity<Response>
+    fun deleteReservation(@RequestParam group: Boolean = false, @PathVariable sectionId: UUID, @PathVariable reservationId: UUID): ResponseEntity<Response>
 }

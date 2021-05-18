@@ -12,6 +12,7 @@ interface ReservationService<T> {
     fun getAllReservation(sectionId: UUID, pageable: Pageable, predicate: Predicate) : Page<ReservationDto>
     fun createReservation(sectionId: UUID, reservation : ReservationCreateDto) : ReservationDto
     fun getUserReservation(userId: UUID, pageable: Pageable, predicate: Predicate) : Page<ReservationDto>
+    fun getGroupReservation(groupId: UUID, pageable: Pageable, predicate: Predicate) : Page<ReservationDto>
     fun updateReservation(sectionId: UUID,reservationId: UUID, reservation: ReservationDto) : ReservationDto
     fun deleteReservation(sectionId: UUID,reservationId: UUID)
     fun getReservation(sectionId: UUID, reservationId: UUID): ReservationDto

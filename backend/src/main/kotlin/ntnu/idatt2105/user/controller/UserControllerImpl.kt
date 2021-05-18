@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @RestController
-class UserControllerImpl(val userService: UserService, val reservationService: ReservationService<Reservation<User>>) : UserController {
+class UserControllerImpl(val userService: UserService, val reservationService: ReservationService<User>) : UserController {
 
     override fun registerUser(userRegistrationDto: UserRegistrationDto): ResponseEntity<UserDto>  =
             ResponseEntity(userService.registerUser(userRegistrationDto), HttpStatus.CREATED)

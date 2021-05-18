@@ -1,11 +1,14 @@
 package ntnu.idatt2105.reservation.dto
 
+import com.fasterxml.jackson.annotation.JsonTypeName
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.reservation.model.GroupReservation
 import ntnu.idatt2105.reservation.model.Reservation
 import java.time.ZonedDateTime
 import java.util.*
 
+
+@JsonTypeName("group")
 data class CreateGroupReservationRequest( override val sectionId: UUID? = null,
 override val fromTime: ZonedDateTime? = null,
 override val toTime: ZonedDateTime? = null,

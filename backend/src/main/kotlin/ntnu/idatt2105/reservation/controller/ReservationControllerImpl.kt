@@ -2,6 +2,7 @@ package ntnu.idatt2105.reservation.controller
 
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.reservation.dto.CreateUserReservationRequest
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
@@ -20,26 +21,54 @@ import java.util.*
 
 
 @RestController
-class ReservationControllerImpl(val reservationService: ReservationService<User>) : ReservationController {
+class ReservationControllerImpl(val userReservationService: ReservationService<User>, val groupReservationService: ReservationService<Group>) : ReservationController {
 
     override fun getAllReservations(
+        @RequestParam group: Boolean,
         predicate: Predicate,
         pageable: Pageable,
         sectionId: UUID
-    ): Page<ReservationDto> =
-        reservationService.getAllReservation(sectionId, pageable, predicate)
+    ): Page<ReservationDto> {
+        return if (group) {
+            groupReservationService.getAllReservation(sectionId, pageable, predicate)
+        } else {
+            userReservationService.getAllReservation(sectionId, pageable, predicate)
+        }
+    }
 
-    override fun getReservation(sectionId: UUID, reservationId: UUID) =
-            reservationService.getReservation(sectionId, reservationId)
+    override fun getReservation(@RequestParam group: Boolean, sectionId: UUID, reservationId: UUID) : ReservationDto {
+        return if (group) {
+            groupReservationService.getReservation(sectionId, reservationId)
+        } else {
+            userReservationService.getReservation(sectionId, reservationId)
 
-    override fun createReservation(sectionId: UUID, reservation: CreateUserReservationRequest)  : ReservationDto=
-        reservationService.createReservation(sectionId, reservation)
+        }
+    }
 
-    override fun updateReservation(sectionId: UUID, reservationId: UUID, reservation: ReservationDto) =
-            reservationService.updateReservation(sectionId, reservationId, reservation)
+    override fun createReservation(@RequestParam group: Boolean, sectionId: UUID, reservation: ReservationCreateDto)  : ReservationDto {
+        return if (group){
+            groupReservationService.createReservation(sectionId, reservation)
 
-    override fun deleteReservation(sectionId: UUID, reservationId: UUID) : ResponseEntity<Response> {
-        reservationService.deleteReservation(sectionId, reservationId)
+        }else{
+            userReservationService.createReservation(sectionId, reservation)
+        }
+    }
+
+    override fun updateReservation(@RequestParam group: Boolean, sectionId: UUID, reservationId: UUID, reservation: ReservationDto) : ReservationDto{
+        return if (group){
+            groupReservationService.updateReservation(sectionId, reservationId, reservation)
+        }else{
+            userReservationService.updateReservation(sectionId, reservationId, reservation)
+        }
+    }
+
+    override fun deleteReservation(@RequestParam group: Boolean, sectionId: UUID, reservationId: UUID) : ResponseEntity<Response> {
+        if(group){
+            userReservationService.deleteReservation(sectionId, reservationId)
+
+        }else{
+            groupReservationService.deleteReservation(sectionId, reservationId)
+        }
         return ResponseEntity.ok(Response("Reservation deleted"))
     }
 }

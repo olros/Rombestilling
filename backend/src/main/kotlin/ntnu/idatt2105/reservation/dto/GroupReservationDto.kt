@@ -19,6 +19,7 @@ data class GroupReservationDto(override val id: UUID? = null,
 ) : ReservationDto(id, fromTime, toTime, text, nrOfPeople, section) {
 
     override fun getEntityId(): UUID? = group?.id
+    override fun getType(): String = "group"
 
-    override fun toReservation(): Reservation<*> = GroupReservation(toTime = toTime, fromTime = fromTime, text = text, nrOfPeople = nrOfPeople)
+    override fun toReservation(): Reservation<*> = GroupReservation(id = this.id!!,toTime = this.toTime, fromTime = this.fromTime, text = this.text, nrOfPeople = this.nrOfPeople)
 }
