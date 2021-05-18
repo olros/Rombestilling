@@ -16,5 +16,5 @@ data class Group(
         @JoinTable(name = "group_user",
                 joinColumns = [JoinColumn(name = "group_id", referencedColumnName = "id")],
                 inverseJoinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")])
-        var members: MutableList<User> = mutableListOf()
+        var members: MutableSet<User> = mutableSetOf()
 )
