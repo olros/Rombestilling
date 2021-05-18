@@ -10,7 +10,7 @@ import { isUserAdmin } from 'utils';
 import { makeStyles, Typography, SwipeableDrawer, Button } from '@material-ui/core';
 
 // Project Components
-import Navigation from 'components/navigation/Navigation';
+import Container from 'components/layout/Container';
 import ReserveForm from 'components/miscellaneous/ReserveForm';
 import RoomFilterBox from 'containers/Rooms/components/RoomFilterBox';
 import RoomListItem from 'containers/Rooms/components/RoomListItem';
@@ -64,7 +64,7 @@ const Rooms = () => {
     setSelectedSectionId(null);
   };
   return (
-    <Navigation>
+    <Container>
       <Helmet>
         <title>Finn rom - Rombestilling</title>
       </Helmet>
@@ -98,7 +98,7 @@ const Rooms = () => {
           </Button>
         </div>
       </SwipeableDrawer>
-    </Navigation>
+    </Container>
   );
 };
 

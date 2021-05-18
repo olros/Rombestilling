@@ -8,7 +8,7 @@ import { makeStyles, Button, Typography } from '@material-ui/core';
 
 // Project Components
 import Logo from 'components/miscellaneous/Logo';
-import Navigation from 'components/navigation/Navigation';
+import Container from 'components/layout/Container';
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
@@ -54,7 +54,7 @@ const Http404 = () => {
   const isAuthenticated = useIsAuthenticated();
 
   return (
-    <Navigation>
+    <Container>
       <Helmet>
         <title>404</title>
       </Helmet>
@@ -76,7 +76,7 @@ const Http404 = () => {
           )}
         </div>
       </div>
-    </Navigation>
+    </Container>
   );
 };
 
