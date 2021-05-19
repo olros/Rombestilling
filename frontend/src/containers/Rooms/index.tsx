@@ -37,11 +37,12 @@ const useStyles = makeStyles((theme) => ({
 
 export type RoomFilters = {
   name?: string;
-  from: string;
-  to: string;
+  from?: string;
+  to?: string;
 };
 
-const defaultFilters: RoomFilters = {
+const defaultFilters: Required<RoomFilters> = {
+  name: '',
   from: startOfHour(addHours(new Date(), 1)).toJSON(),
   to: startOfHour(addHours(new Date(), 2)).toJSON(),
 };
@@ -66,11 +67,11 @@ const Rooms = () => {
   return (
     <Container>
       <Helmet>
-        <title>Finn rom - Rombestilling</title>
+        <title>Reserver - Rombestilling</title>
       </Helmet>
       <div className={classes.list}>
         <div className={classnames(classes.list, classes.top)}>
-          <Typography variant='h1'>Finn rom</Typography>
+          <Typography variant='h1'>Reserver</Typography>
           {isUserAdmin(user) && <CreateRoom>Opprett rom</CreateRoom>}
         </div>
         <RoomFilterBox defaultFilters={defaultFilters} filters={filters} updateFilters={setFilters} />
@@ -78,7 +79,7 @@ const Rooms = () => {
           <div className={classes.list}>
             {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen ledige rom'} />}
             {results.map((room) => (
-              <RoomListItem key={room.id} reserve={startReservation} room={room} />
+              <RoomListItem key={room.id} reserve={startReservation} room={room} showReserve={Boolean(filters.to && filters.from)} />
             ))}
           </div>
         </Pagination>
@@ -92,7 +93,9 @@ const Rooms = () => {
         open={reservationOpen}
         swipeAreaWidth={56}>
         <div className={classes.list}>
-          {selectedSectionId && filters && <ReserveForm from={filters.from} onConfirm={stopReservation} sectionId={selectedSectionId} to={filters.to} />}
+          {selectedSectionId && filters.from && filters.to && (
+            <ReserveForm from={filters.from} onConfirm={stopReservation} sectionId={selectedSectionId} to={filters.to} />
+          )}
           <Button onClick={stopReservation} variant='text'>
             Avbryt
           </Button>
