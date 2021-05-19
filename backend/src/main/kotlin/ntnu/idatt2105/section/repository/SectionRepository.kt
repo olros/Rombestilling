@@ -1,9 +1,6 @@
 package ntnu.idatt2105.section.repository
 
 import com.querydsl.core.BooleanBuilder
-import com.querydsl.core.types.Predicate
-import com.querydsl.core.types.dsl.BooleanExpression
-import com.querydsl.core.types.dsl.DateTimePath
 import com.querydsl.jpa.JPAExpressions
 import ntnu.idatt2105.reservation.model.QReservation
 import ntnu.idatt2105.section.model.QSection
@@ -13,13 +10,10 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer
 import org.springframework.data.querydsl.binding.QuerydslBindings
 import java.util.*
-import com.querydsl.core.types.dsl.StringPath
-
-import org.springframework.data.querydsl.binding.MultiValueBinding
-import java.time.ZonedDateTime
 
 
-interface SectionRepository: JpaRepository<Section, UUID>, QuerydslPredicateExecutor<Section>, QuerydslBinderCustomizer<QSection> {
+interface SectionRepository : JpaRepository<Section, UUID>, QuerydslPredicateExecutor<Section>,
+    QuerydslBinderCustomizer<QSection> {
 
     @JvmDefault
     override fun customize(bindings: QuerydslBindings, section: QSection) {
@@ -40,12 +34,23 @@ interface SectionRepository: JpaRepository<Section, UUID>, QuerydslPredicateExec
             if (values.size == 2) {
                 val from = values.elementAt(0)
                 val to = values.elementAt(1)
-                Optional.of(section.id.`in`(
-                    JPAExpressions.selectFrom(reservation)
-                        .where(reservation.fromTime.before(to))
-                        .where(reservation.toTime.after(from))
-                        .select(reservation.section.id)
-                ).not())
+                predicate.and(
+                    section.id.`in`(
+                        JPAExpressions.selectFrom(reservation)
+                            .where(reservation.fromTime.before(to))
+                            .where(reservation.toTime.after(from))
+                            .select(reservation.section.id)
+                    )
+                    .or(
+                        section.parent.id.isNotNull.and(section.parent.id.`in`(
+                            JPAExpressions.selectFrom(reservation)
+                                .where(reservation.fromTime.before(to))
+                                .where(reservation.toTime.after(from))
+                                .select(reservation.section.id)
+                        ))
+                    )
+                ).not()
+
             }
             Optional.of(predicate)
         }
