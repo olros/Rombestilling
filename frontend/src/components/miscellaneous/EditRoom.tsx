@@ -103,7 +103,7 @@ const EditRoom = ({ room, sectionType, children, ...props }: EditRoomProps) => {
             className={classes.red}
             closeText='Avbryt'
             confirmText={sectionType === 'section' ? 'Slett delen av rommen' : 'Slett rommet'}
-            contentText='Sikker på at du vil slette dette? Du kan ikke angre dette. Bestillingene vil slettes og kan ikke gjennopprettes.'
+            contentText='Sikker på at du vil slette dette? Du kan ikke angre dette. Reservasjonene vil slettes og kan ikke gjennopprettes.'
             onConfirm={confirmedDeleteSection}>
             {sectionType === 'section' ? 'Slett delen av rommen' : 'Slett rommet'}
           </VerifyDialog>

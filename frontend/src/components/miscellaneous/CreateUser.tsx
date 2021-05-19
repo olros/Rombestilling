@@ -139,7 +139,7 @@ const CreateUser = ({ children, ...props }: ButtonProps) => {
           </Expand>
           <Expand primary='Opprett flere brukere' secondary='Opprett flere brukere samtidig ved å laste opp en CSV-fil'>
             <form className={classes.grid} onSubmit={batchHandleSubmit(batchCreate)}>
-              <Typography variant='subtitle2'>{`Last opp en CSV-fil med feltene: "firstName,surname,email,phoneNumber,expirationDate"`}</Typography>
+              <Typography variant='subtitle2'>{`Last opp en CSV-fil med feltene: "firstName,surname,email,phoneNumber,expirationDate" i første rad`}</Typography>
               <SingleFileSelect
                 disabled={batchCreateUser.isLoading}
                 formState={batchFormState}

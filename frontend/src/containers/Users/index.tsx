@@ -8,11 +8,11 @@ import { makeStyles, Typography } from '@material-ui/core';
 
 // Project Components
 import Container from 'components/layout/Container';
-import UsersFilterBox from 'containers/Users/components/UsersFilterBox';
-import UserListItem from 'containers/Users/components/UserListItem';
+import UserListItem, { UserListItemLoading } from 'containers/Users/components/UserListItem';
 import Pagination from 'components/layout/Pagination';
 import CreateUser from 'components/miscellaneous/CreateUser';
 import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
+import FilterBox from 'components/miscellaneous/FilterBox';
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -21,13 +21,6 @@ const useStyles = makeStyles((theme) => ({
   },
   top: {
     gridTemplateColumns: '1fr auto',
-  },
-  reservationPaper: {
-    maxWidth: theme.breakpoints.values.md,
-    margin: 'auto',
-    padding: theme.spacing(3, 2, 5),
-    borderRadius: `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0`,
-    background: theme.palette.background.paper,
   },
 }));
 
@@ -38,7 +31,7 @@ export type UsersFilters = {
 const Users = () => {
   const classes = useStyles();
   const [filters, setFilters] = useState<UsersFilters>({});
-  const { data, error, hasNextPage, fetchNextPage, isFetching } = useUsers(filters);
+  const { data, error, hasNextPage, fetchNextPage, isLoading, isFetching } = useUsers(filters);
   const results = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !results.length && !isFetching, [results, isFetching]);
   return (
@@ -51,9 +44,10 @@ const Users = () => {
           <Typography variant='h1'>Brukere</Typography>
           <CreateUser>Opprett bruker</CreateUser>
         </div>
-        <UsersFilterBox filters={filters} updateFilters={setFilters} />
-        <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
+        <FilterBox field='search' filters={filters} label='Søk etter navn, epost eller telefon' updateFilters={setFilters} />
+        <Pagination fullWidth hasNextPage={hasNextPage} nextPage={() => fetchNextPage()}>
           <div className={classes.list}>
+            {isLoading && <UserListItemLoading />}
             {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen brukere'} />}
             {results.map((user) => (
               <UserListItem key={user.id} user={user} />

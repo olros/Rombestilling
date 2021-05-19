@@ -47,12 +47,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export type RoomFilters = {
-  name: string;
-  from: string;
-  to: string;
-};
-
 const RoomDetails = () => {
   const classes = useStyles();
   const { data: user } = useUser();

@@ -79,8 +79,9 @@ class UserServiceImpl(
             val csvToBean = createCSVToBean(fileReader)
             val listOfDTO: List<UserRegistrationDto> = csvToBean.parse()
             val listOfObj = mutableListOf<User>()
+            if(listOfDTO.isEmpty()) throw Exception()
             listOfDTO.forEach {
-                listOfObj.add(modelMapper.map(it, User::class.java))
+                listOfObj.add(createUserObj(it))
             }
             userRepository.saveAll(listOfObj)
             logger.info("The users have been created. Sending emails...")
@@ -88,7 +89,7 @@ class UserServiceImpl(
                 forgotPassword(ForgotPassword(it.email))
             }
         } catch (ex: Exception) {
-            throw Exception("Something went wrong during parsing users", ex)
+            throw throw ApplicationException.throwExceptionWithId(EntityType.USER, ExceptionType.NOT_VALID, "batch.invalidFile")
         } finally {
             closeFileReader(fileReader)
         }
