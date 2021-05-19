@@ -6,9 +6,8 @@ Prosjektet er et bookingsystem for grupperom. Her kan brukere reservere ulike ro
 
 ## Krav for å kjøre applikasjonen
 ### Backend
-- [Maven](https://maven.apache.org/download.cgi)
 - [Docker](https://docs.docker.com/get-docker/)
-- [Make](https://www.gnu.org/software/make/) (Valgfri)
+- [Make](https://www.gnu.org/software/make/) 
 
 ### Frontend
 - [Yarn](https://classic.yarnpkg.com/en/docs/install/#debian-stable):
@@ -29,7 +28,7 @@ cd idatt2106_2021_2/backend
 
 # With Maven  
 #port 3306, 8080, and 8000 needs to be open for this to work
-docker-compose up & mvn dependency:resolve && mvn spring-boot:run
+docker-compose up & gradlew jibDockerBuild (./gradlew jibDockerBuild for unix/linux)
 
 # With Docker-compose
 docker-compose -f docker-compose.azure.yml build
@@ -37,7 +36,7 @@ docker-compose -f docker-compose.azure.yml up
 
 # Run the app with GNU Make
 
-make run 
+make run-unix og make run-windows
 
 ```
 
