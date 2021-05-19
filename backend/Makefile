@@ -19,5 +19,6 @@ PR:
 	git add .
 
 run:
+	./gradlew jibDockerBuild --image=rombestilling.azurecr.io/rombestilling:latest
 	docker-compose -f docker-compose.azure.yml build
 	docker-compose -f docker-compose.azure.yml up
