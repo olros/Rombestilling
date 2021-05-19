@@ -26,6 +26,7 @@ export const USERS = 'users';
 export const ME = 'me';
 export const AUTH = 'auth';
 export const GROUPS = 'groups';
+export const MEMBERSHIPS = 'memberships';
 export const SECTIONS = 'sections';
 export const RESERVATIONS = 'reservations';
 export const STATISTICS = 'statistics';
@@ -66,6 +67,8 @@ export default {
     IFetch<Reservation>({ method: 'GET', url: `${SECTIONS}/${sectionId}/${RESERVATIONS}/${reservationId}/` }),
   getSectionReservations: (sectionId: string, filters?: any) =>
     IFetch<PaginationResponse<Reservation>>({ method: 'GET', url: `${SECTIONS}/${sectionId}/${RESERVATIONS}/`, data: filters || {} }),
+  getGroupReservations: (groupId: string, filters?: any) =>
+    IFetch<PaginationResponse<Reservation>>({ method: 'GET', url: `${GROUPS}/${groupId}/${RESERVATIONS}/`, data: filters || {} }),
   getUserReservations: (userId?: string, filters?: any) =>
     IFetch<PaginationResponse<Reservation>>({ method: 'GET', url: `${USERS}/${userId || ME}/${RESERVATIONS}/`, data: filters || {} }),
   createReservation: (sectionId: string, newRegistration: ReservationCreate) =>
@@ -91,6 +94,18 @@ export default {
   createGroup: (newGroup: GroupCreate) => IFetch<Group>({ method: 'POST', url: `${GROUPS}/`, data: newGroup }),
   updateGroup: (groupId: string, updatedGroup: Partial<Group>) => IFetch<Group>({ method: 'PUT', url: `${GROUPS}/${groupId}/`, data: updatedGroup }),
   deleteGroup: (groupId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${GROUPS}/${groupId}/` }),
+
+  // Memberships
+  getMemberships: (groupId: string, filters?: any) =>
+    IFetch<PaginationResponse<UserList>>({ method: 'GET', url: `${GROUPS}/${groupId}/${MEMBERSHIPS}/`, data: filters || {} }),
+  createMembership: (groupId: string, email: string) =>
+    IFetch<PaginationResponse<UserList>>({ method: 'POST', url: `${GROUPS}/${groupId}/${MEMBERSHIPS}/`, data: { email } }),
+  deleteMembership: (groupId: string, userId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${GROUPS}/${groupId}/${MEMBERSHIPS}/${userId}/` }),
+  batchAddMembership: (groupId: string, csvFile: File | Blob) => {
+    const formData = new FormData();
+    formData.append('file', csvFile);
+    return IFetch<RequestResponse>({ method: 'POST', url: `${GROUPS}/${groupId}/${MEMBERSHIPS}/batch-memberships/`, formData });
+  },
 
   // User
   getUser: (userId?: string) => IFetch<User>({ method: 'GET', url: `${USERS}/${userId || ME}/` }),

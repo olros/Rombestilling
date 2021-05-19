@@ -20,17 +20,19 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 1000,
     borderBottomRightRadius: 0,
     borderBottomLeftRadius: 0,
+    borderTopLeftRadius: 2 * Number(theme.shape.borderRadius),
+    borderTopRightRadius: 2 * Number(theme.shape.borderRadius),
   },
   navbar: {
-    height: 64,
+    height: 80,
     background: 'transparent',
+    padding: theme.spacing(1, 0, 3),
   },
   action: {
     color: theme.palette.text.secondary,
     padding: 12,
     '&$selected': {
       color: theme.palette.text.primary,
-      paddingTop: 10,
     },
   },
   selected: {

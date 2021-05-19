@@ -53,7 +53,7 @@ const Navigation = ({ isLoading = false, children }: NavigationProps) => {
     () =>
       isAuthenticated
         ? [
-            { icon: SearchIcon, text: 'Finn rom', to: URLS.ROOMS },
+            { icon: SearchIcon, text: 'Reserver', to: URLS.ROOMS },
             { icon: GroupsIcon, text: 'Grupper', to: URLS.GROUPS },
             ...(isUserAdmin(user) ? [{ icon: UsersIcon, text: 'Brukere', to: URLS.USERS }] : []),
             { icon: ProfileIcon, text: 'Profil', to: URLS.PROFILE },

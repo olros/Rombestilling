@@ -18,9 +18,10 @@ import UsersIcon from '@material-ui/icons/PeopleOutlineRounded';
 import Http404 from 'containers/Http404';
 import Container from 'components/layout/Container';
 import Tabs from 'components/layout/Tabs';
-// import { GroupReservations } from 'containers/RoomDetails/components/RoomReservations';
+import { GroupReservations } from 'containers/RoomDetails/components/RoomReservations';
+import GroupMemberships from 'containers/GroupDetails/components/GroupMemberships';
 import EditGroup from 'components/miscellaneous/EditGroup';
-// import { GroupCalendar } from 'components/miscellaneous/Calendar';
+import { GroupCalendar } from 'components/miscellaneous/Calendar';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -67,15 +68,13 @@ const GroupDetails = () => {
             <Tabs selected={tab} setSelected={setTab} tabs={tabs} />
             <div>
               <Collapse in={tab === reservationsTab.value} mountOnEnter>
-                <Typography>Reservasjoner her</Typography>
-                {/* <GroupReservations sectionId={id} /> */}
+                <GroupReservations groupId={id} />
               </Collapse>
               <Collapse in={tab === calendarTab.value} mountOnEnter>
-                <Typography>Kalender her</Typography>
-                {/* <GroupCalendar sectionId={id} /> */}
+                <GroupCalendar groupId={id} />
               </Collapse>
               <Collapse in={tab === membersTab.value} mountOnEnter>
-                <Typography>Medlemmer her</Typography>
+                <GroupMemberships groupId={id} />
               </Collapse>
             </div>
           </div>

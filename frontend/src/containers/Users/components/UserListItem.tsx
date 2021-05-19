@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
@@ -30,9 +31,10 @@ const useStyles = makeStyles((theme) => ({
 
 export type UserListItemProps = {
   user: UserList;
+  children?: ReactNode;
 };
 
-const UserListItem = ({ user }: UserListItemProps) => {
+const UserListItem = ({ user, children }: UserListItemProps) => {
   const classes = useStyles();
   return (
     <Paper className={classnames(classes.paper, classes.grid)}>
@@ -45,6 +47,7 @@ const UserListItem = ({ user }: UserListItemProps) => {
           Profil
         </Button>
       </div>
+      {children}
     </Paper>
   );
 };

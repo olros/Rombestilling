@@ -21,6 +21,8 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-start',
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
+    borderTopRightRadius: 2 * Number(theme.shape.borderRadius),
+    borderBottomRightRadius: 2 * Number(theme.shape.borderRadius),
     position: 'fixed',
     top: 0,
     bottom: 0,

@@ -108,21 +108,21 @@ const AppRoutes = () => {
         <Navigation>
           <Routes>
             <Route element={<Landing />} path={URLS.LANDING} />
-            <AuthRoute path={URLS.GROUPS}>
+            <AuthRoute path={`${URLS.GROUPS}*`}>
               <Route element={<GroupDetails />} path=':id/' />
               <Route element={<Groups />} path='' />
             </AuthRoute>
-            <AuthRoute path={URLS.ROOMS}>
+            <AuthRoute path={`${URLS.ROOMS}*`}>
               <Route element={<RoomDetails />} path=':id/' />
               <Route element={<Rooms />} path='' />
             </AuthRoute>
             <AuthRoute element={<Profile />} path={URLS.PROFILE} />
-            <AuthRoute onlyAdmin path={URLS.USERS}>
+            <AuthRoute onlyAdmin path={`${URLS.USERS}*`}>
               <Route element={<Profile />} path=':userId/*' />
               <Route element={<Users />} path='' />
             </AuthRoute>
 
-            <Route element={<Http404 />} path='*' />
+            <Route element={<Http404 />} path='/*' />
           </Routes>
         </Navigation>
       </Route>
