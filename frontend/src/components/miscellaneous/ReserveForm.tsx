@@ -72,7 +72,7 @@ const ReserveForm = ({ onConfirm, sectionId, from, to, className }: ReserveFormP
         <Typography variant='subtitle2'>{`Fra: ${formatDate(parseISO(from))}`}</Typography>
         <Typography variant='subtitle2'>{`Til: ${formatDate(parseISO(to))}`}</Typography>
       </Paper>
-      <Select control={control} defaultValue={user.id} formState={formState} label='For hvem' margin='normal' name='entityId'>
+      <Select control={control} defaultValue={user.id} formState={formState} label='Hvem reserverer?' margin='normal' name='entityId'>
         <MenuItem value={user.id}>{`${user.firstName} ${user.surname} (Deg)`}</MenuItem>
         {Boolean(groups.length) && <ListSubheader>Dine grupper</ListSubheader>}
         {groups.map((group) => (

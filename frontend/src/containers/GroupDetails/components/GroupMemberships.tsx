@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 import { UserList } from 'types/Types';
-import { useMemberships, useDeleteMembership } from 'hooks/Group';
+import { useMemberships, useDeleteMembership, useGroup } from 'hooks/Group';
 import { useSnackbar } from 'hooks/Snackbar';
+import { useUser } from 'hooks/User';
 import { startOfDay } from 'date-fns';
+import { isUserAdmin } from 'utils';
 
 // Material UI Components
 import { makeStyles } from '@material-ui/core';
@@ -37,10 +39,13 @@ export type GroupMembershipsProps = {
 export const GroupMemberships = ({ groupId }: GroupMembershipsProps) => {
   const classes = useStyles();
   const showSnackbar = useSnackbar();
+  const { data: user } = useUser();
+  const { data: group } = useGroup(groupId);
   const filters = useMemo(() => ({ fromTimeAfter: startOfDay(new Date()).toJSON() }), []);
   const { data, error, hasNextPage, fetchNextPage, isLoading, isFetching } = useMemberships(groupId, filters);
   const memberships = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !memberships.length && !isFetching, [memberships, isFetching]);
+  const isAdmin = isUserAdmin(user) || Boolean(group?.creator.id === user?.id);
 
   const Membership = ({ user }: { user: UserList }) => {
     const deleteMembership = useDeleteMembership(groupId);
@@ -55,9 +60,11 @@ export const GroupMemberships = ({ groupId }: GroupMembershipsProps) => {
       });
     return (
       <UserListItem user={user}>
-        <VerifyDialog onConfirm={remove} titleText='Fjern fra gruppe?'>
-          Fjern fra gruppe
-        </VerifyDialog>
+        {isAdmin && (
+          <VerifyDialog color='secondary' onConfirm={remove} titleText='Fjern fra gruppe?'>
+            Fjern fra gruppe
+          </VerifyDialog>
+        )}
       </UserListItem>
     );
   };

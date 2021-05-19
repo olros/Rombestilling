@@ -89,7 +89,7 @@ export const useDeleteGroup = (groupId: string): UseMutationResult<RequestRespon
 export const useMemberships = (groupId: string, filters?: any) => {
   return useInfiniteQuery<PaginationResponse<UserList>, RequestResponse>(
     [GROUP_QUERY_KEY, groupId, MEMBERSHIPS_QUERY_KEY, filters],
-    ({ pageParam = 0 }) => API.getMemberships(groupId, { sort: 'name,ASC', ...filters, page: pageParam }),
+    ({ pageParam = 0 }) => API.getMemberships(groupId, { sort: 'firstName,surname,ASC', ...filters, page: pageParam }),
     {
       getNextPageParam: getNextPaginationPage,
     },
@@ -105,6 +105,7 @@ export const useCreateMembership = (groupId: string): UseMutationResult<Paginati
   return useMutation((email) => API.createMembership(groupId, email), {
     onSuccess: () => {
       queryClient.invalidateQueries([GROUP_QUERY_KEY, groupId, MEMBERSHIPS_QUERY_KEY]);
+      queryClient.invalidateQueries(USER_GROUPS_QUERY_KEY);
     },
   });
 };
@@ -118,6 +119,7 @@ export const useBatchCreateMemberships = (groupId: string): UseMutationResult<Re
   return useMutation((file) => API.batchAddMembership(groupId, file), {
     onSuccess: () => {
       queryClient.invalidateQueries([GROUP_QUERY_KEY, groupId, MEMBERSHIPS_QUERY_KEY]);
+      queryClient.invalidateQueries(USER_GROUPS_QUERY_KEY);
     },
   });
 };
@@ -131,6 +133,7 @@ export const useDeleteMembership = (groupId: string): UseMutationResult<RequestR
   return useMutation((userId) => API.deleteMembership(groupId, userId), {
     onSuccess: () => {
       queryClient.invalidateQueries([GROUP_QUERY_KEY, groupId, MEMBERSHIPS_QUERY_KEY]);
+      queryClient.invalidateQueries(USER_GROUPS_QUERY_KEY);
     },
   });
 };
