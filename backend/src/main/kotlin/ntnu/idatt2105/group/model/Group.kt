@@ -1,10 +1,8 @@
 package ntnu.idatt2105.group.model
 
+import ntnu.idatt2105.user.model.User
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
+import javax.persistence.*
 
 
 @Entity
@@ -14,4 +12,9 @@ data class Group(
         @Column(columnDefinition = "CHAR(32)")
         var id: UUID = UUID.randomUUID(),
         var name: String = "",
+        @ManyToMany
+        @JoinTable(name = "group_user",
+                joinColumns = [JoinColumn(name = "group_id", referencedColumnName = "id")],
+                inverseJoinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")])
+        var members: MutableSet<User> = mutableSetOf()
 )

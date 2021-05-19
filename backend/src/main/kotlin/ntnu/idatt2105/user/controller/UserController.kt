@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.user.dto.DetailedUserDto
@@ -101,4 +102,12 @@ interface UserController {
         @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
         @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
     ): Page<ReservationDto>
+    @Operation(summary = "Fetch groups for the given user", responses = [
+        ApiResponse(responseCode = "200", description = "Success"),
+        ApiResponse(responseCode = "404", description = "Not found: the authenticated was not found")
+    ])
+    @GetMapping("me/groups/")
+    fun getUserGroups(
+            @AuthenticationPrincipal principal: UserDetailsImpl
+    ): List<GroupDto>
 }
