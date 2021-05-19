@@ -79,7 +79,7 @@ class UserServiceImpl(
             val csvToBean = createCSVToBean(fileReader)
             val listOfDTO: List<UserRegistrationDto> = csvToBean.parse()
             val listOfObj = mutableListOf<User>()
-            if(listOfDTO.isEmpty()) throw ApplicationException.throwExceptionWithId(EntityType.USER, ExceptionType.NOT_VALID, "batch.invalidFile")
+            if(listOfDTO.isEmpty()) throw Exception()
             listOfDTO.forEach {
                 listOfObj.add(createUserObj(it))
             }
