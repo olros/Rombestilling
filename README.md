@@ -1,65 +1,75 @@
-# IDATT2105-project
+# IDATT2105-project - Rombestilling
 
-
-Prosjektet er et bookingsystem for grupperom. Her kan brukere reservere ulike rom og deler av rom. Reservasjon kan skje som enkeltperson eller som gruppe. Rom og brukere opprettes og administreres av administratorer.
-
+Prosjektet er et bookingsystem for rom. Her kan brukere reservere ulike rom og underdeler av rom. Reservasjon kan skje som enkeltperson eller på vegne av en gruppe. Rom og brukere opprettes og administreres av administratorer som har full tilgang til hele systemet. Administratorer kan batch-opprette mange bruker samtidig ved hjelp av CSV-filer, hvorpå de nye brukerne vil motta en epost med link til side der passord kan settes. Swagger-docs finnes på `/swagger-ui/`
 
 ## Krav for å kjøre applikasjonen
-### Backend
+
+**Backend**
 - [Docker](https://docs.docker.com/get-docker/)
-- [Make](https://www.gnu.org/software/make/) 
+- [Make](https://www.gnu.org/software/make/) (valgfritt)
 
-### Frontend
+**Frontend**
 - [Node](https://nodejs.org/en/download/):
-
 
 ## Installasjon
 
+```bash
+git clone https://github.com/olros/IDATT2105-project.git
+```
+
 ### Backend
 
 ```bash
-git clone https://github.com/olros/IDATT2105-project.git
-
 cd IDATT2105-project/backend/
+```
 
-# Run the app without GNU Make
+#### Unix/Linux:
 
-# With Maven  
-#port 3306, 8080, and 8000 needs to be open for this to work
-docker-compose up & gradlew jibDockerBuild (./gradlew jibDockerBuild for unix/linux)
+```bash
+# Med GNU Make:
+make run-unix
 
-# With Docker-compose
-docker-compose -f docker-compose.azure.yml build
-docker-compose -f docker-compose.azure.yml up
+# Uten GNU Make:
+./gradlew jib --image=rombestilling.azurecr.io/rombestilling:latest
+docker-compose -f docker-compose.azure.yml up --build
 
-# Run the app with GNU Make
+# Utvikling:
+make db / docker-compose up
+./gradlew bootRun
+```
 
-make run-unix og make run-windows
+#### Windows:
 
+```bash
+# Med GNU Make:
+make run-windows
+
+# Uten GNU Make:
+gradlew jib --image=rombestilling.azurecr.io/rombestilling:latest
+docker-compose -f docker-compose.azure.yml up --build
+
+# Utvikling:
+make db / docker-compose up
+gradlew bootRun
 ```
 
 ### Frontend
 
 ```bash
-git clone https://github.com/olros/IDATT2105-project.git
-
 cd IDATT2105-project/frontend/
 
-# Install dependencies
+# Installer avhengigheter
 yarn 
 
-# Run the app
+# Kjør i utviklingsmodus
 yarn start
 ```
-
-
 
 ## Medlemmer
 
 <img src="assets/Hermann.jpg" width="200">
 
 **Hermann Owren Elton -**
-
 
 <img src="assets/Mads.jpg" width="200">
 
