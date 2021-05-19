@@ -36,6 +36,7 @@ import Container from 'components/layout/Container';
 // Styles
 const useStyles = makeStyles((theme) => ({
   root: {
+    marginBottom: theme.spacing(8),
     '& > div': {
       maxHeight: 600,
     },
@@ -264,7 +265,7 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
     getHours(appointment.startDate) < 6 || (getHours(appointment.endDate) >= 20 && getMinutes(appointment.endDate) > 0);
 
   const isOverlap = (appointment: NewAppointmentType) =>
-    reservations.some((reservation) => parseISO(reservation.fromTime) < appointment.endDate && parseISO(reservation.toTime) >= appointment.startDate);
+    reservations.some((reservation) => parseISO(reservation.fromTime) < appointment.endDate && parseISO(reservation.toTime) > appointment.startDate);
 
   const ReactiveCalendar = () => (
     <Scheduler data={displayedReservations} firstDayOfWeek={1} locale='no-NB'>

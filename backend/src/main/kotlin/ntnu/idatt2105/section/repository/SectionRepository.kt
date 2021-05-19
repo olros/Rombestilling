@@ -13,8 +13,7 @@ interface SectionRepository: JpaRepository<Section, UUID>, QuerydslPredicateExec
     @JvmDefault
     override fun customize(bindings: QuerydslBindings, section: QSection) {
         bindings.bind(section.name).first { path, value -> section.name.contains(value) }
-        bindings.bind(section.from, section.to).first { path, value -> section.reservation.any().fromTime.before(value) }
-        bindings.bind(section.to).first { path, value ->!section.reservation.any().toTime.after(value) }
-
+        bindings.bind(section.from).first { path, value -> (section.reservation.any().toTime.after(value).and(section.reservation.any().fromTime.before(value))).not() }
+        bindings.bind(section.to).first { path, value -> (section.reservation.any().toTime.after(value).and(section.reservation.any().fromTime.before(value))).not() }
     }
 }
