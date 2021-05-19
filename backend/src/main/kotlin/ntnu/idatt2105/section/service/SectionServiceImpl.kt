@@ -1,17 +1,16 @@
 package ntnu.idatt2105.section.service
 
-import com.querydsl.core.types.ExpressionUtils
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
-import ntnu.idatt2105.reservation.model.QReservation
 import ntnu.idatt2105.section.dto.*
-import ntnu.idatt2105.section.model.QSection
+import ntnu.idatt2105.section.dto.CreateSectionRequest
+import ntnu.idatt2105.section.dto.SectionDto
+import ntnu.idatt2105.section.dto.SectionListDto
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
-import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -20,7 +19,9 @@ import java.util.*
 
 
 @Service
-class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapper: ModelMapper): SectionService {
+class SectionServiceImpl(val sectionRepository: SectionRepository,
+                         val sectionFactory: SectionFactoryImpl): SectionService {
+
     val logger = LoggerFactory.getLogger("SectionService")
 
     override fun getAllSections(pageable: Pageable, predicate: Predicate): Page<SectionListDto> {
@@ -28,30 +29,27 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
         return sections.map{ it.toSectionListDto() }
     }
 
-    override fun createSection(section: SectionCreateDto): SectionDto {
-        logger.info("Trying to create a new section with name ${section.name}")
-        var newSection = Section(section.id, section.name, section.description, section.capacity, section.image)
-        if(section.parentId != null) newSection.parent = sectionRepository.findById(section.parentId!!)
-                .orElseThrow { throw ApplicationException.throwException(
-                        EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, section.parentId.toString())  }
-        newSection.children = mutableListOf()
-        newSection = sectionRepository.save(newSection)
-        logger.info("Section ${newSection.id} was created")
-        if(section.parentId != null) return addChildToSection(section.parentId!!, newSection)
-        return newSection.toSectionDto()
+    override fun createSection(createSectionRequest: CreateSectionRequest): SectionDto {
+        if (createSectionRequest.parentId != null)
+            return getSection(createSectionRequest.parentId!!)
+                .run { sectionFactory.createChildSection(createSectionRequest, parent = this) }
+                .toSectionDto()
+
+        return sectionFactory.createParentSection(createSectionRequest).toSectionDto()
     }
 
+    private fun getSection(id: UUID): Section =
+        sectionRepository.findById(id).orElseThrow{ throw ApplicationException.throwException(
+            EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, id.toString())  }
 
     override fun getSectionById(id: UUID): SectionDto {
-        val section = sectionRepository.findById(id).orElseThrow{ throw ApplicationException.throwException(
-                EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, id.toString())  }
+        val section = getSection(id)
         logger.info("Finding section by id: $id")
-        return modelMapper.map(section, SectionDto::class.java)
+        return section.toSectionDto()
     }
 
     override fun updateSection(id: UUID, section: SectionDto): SectionDto {
-        sectionRepository.findById(id).orElseThrow { throw ApplicationException.throwException(
-                EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, id.toString())  }.run {
+        getSection(id).run {
             var updatedSection = this.copy(
                     name = section.name,
                     capacity = section.capacity,
@@ -66,21 +64,11 @@ class SectionServiceImpl(val sectionRepository: SectionRepository, val modelMapp
     }
 
     override fun deleteSection(id: UUID): Response {
-        sectionRepository.findById(id).orElseThrow { throw ApplicationException.throwException(
-                EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, id.toString()) }.run {
+        getSection(id).run {
             sectionRepository.delete(this)
             logger.info("Section with id: $id was deleted")
             return Response("Section was deleted")
         }
-
-    }
-
-    override fun addChildToSection(parentId: UUID, child: Section) : SectionDto{
-        val parent = sectionRepository.findById(parentId).orElseThrow { throw ApplicationException.throwException(
-                EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, parentId.toString())  }
-        parent.children.add(child)
-        sectionRepository.save(parent)
-        return child.toSectionDto()
 
     }
 }

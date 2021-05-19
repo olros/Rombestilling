@@ -10,6 +10,7 @@ import ntnu.idatt2105.user.dto.DetailedUserDto
 import org.junit.jupiter.params.provider.Arguments
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.model.User
+import ntnu.idatt2105.user.repository.RoleRepository
 import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.util.JpaUtils
 import org.assertj.core.api.Assertions.*
@@ -48,6 +49,9 @@ internal class UserServiceImplTest {
     @Mock
     private lateinit var passwordResetTokenRepository: PasswordResetTokenRepository
 
+    @Mock
+    private lateinit var roleRepository: RoleRepository
+
     private lateinit var modelMapper: ModelMapper
 
     private lateinit var userFactory: UserFactory
@@ -63,7 +67,8 @@ internal class UserServiceImplTest {
             modelMapper=modelMapper,
             passwordEncoder=passwordEncoder,
             mailService=mailService,
-            passwordResetTokenRepository=passwordResetTokenRepository
+            passwordResetTokenRepository=passwordResetTokenRepository,
+            roleRepository = roleRepository
         )
 
         defaultPageable = JpaUtils().getDefaultPageable()

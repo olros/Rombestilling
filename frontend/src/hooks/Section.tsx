@@ -1,9 +1,10 @@
 import { useMutation, useInfiniteQuery, useQuery, useQueryClient, UseMutationResult } from 'react-query';
 import API from 'api/api';
 import { getNextPaginationPage } from 'utils';
-import { SectionCreate, SectionList, Section, PaginationResponse, RequestResponse } from 'types/Types';
+import { SectionCreate, SectionList, Section, Statistics, PaginationResponse, RequestResponse } from 'types/Types';
 export const SECTION_QUERY_KEY = 'section';
 export const SECTION_ALL_QUERY_KEY = 'all_sections';
+export const SECTION_STATISTICS_QUERY_KEY = 'statistics';
 
 /**
  * Get a specific section
@@ -66,4 +67,23 @@ export const useDeleteSection = (sectionId: string): UseMutationResult<RequestRe
       queryClient.invalidateQueries(SECTION_QUERY_KEY);
     },
   });
+};
+
+// ------------------
+// Section statistics
+// ------------------
+
+/**
+ * Get statistics for a specific section
+ * @param sectionId - Id of section
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useSectionStatisticsById = (sectionId: string, filters?: any) => {
+  return useQuery<Statistics, RequestResponse>(
+    [SECTION_QUERY_KEY, sectionId, SECTION_STATISTICS_QUERY_KEY, filters],
+    () => API.getSectionStatistics(sectionId, filters),
+    {
+      enabled: sectionId !== '',
+    },
+  );
 };

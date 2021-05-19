@@ -103,6 +103,15 @@ export const useUpdateUser = (): UseMutationResult<User, RequestResponse, { user
   });
 };
 
+export const useMakeAdmin = (): UseMutationResult<User, RequestResponse, string, unknown> => {
+  const queryClient = useQueryClient();
+  return useMutation((userId) => API.makeAdmin(userId), {
+    onSuccess: (user) => {
+      queryClient.setQueryData([USER_QUERY_KEY, user.id], user);
+    },
+  });
+};
+
 export const useChangePassword = (): UseMutationResult<RequestResponse, RequestResponse, { oldPassword: string; newPassword: string }, unknown> => {
   return useMutation(({ oldPassword, newPassword }) => API.changePassword(oldPassword, newPassword));
 };

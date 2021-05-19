@@ -15,6 +15,7 @@ import {
   SectionCreate,
   SectionList,
   Section,
+  Statistics,
   ReservationCreate,
   Reservation,
 } from 'types/Types';
@@ -24,6 +25,7 @@ export const ME = 'me';
 export const AUTH = 'auth';
 export const SECTIONS = 'sections';
 export const RESERVATIONS = 'reservations';
+export const STATISTICS = 'statistics';
 
 export default {
   // Auth
@@ -53,7 +55,8 @@ export default {
       }),
   changePassword: (oldPassword: string, newPassword: string) =>
     IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/change-password/`, data: { oldPassword, newPassword } }),
-  deleteUser: () => IFetch<RequestResponse>({ method: 'DELETE', url: `${USERS}/me/` }),
+  makeAdmin: (userId: string) => IFetch<User>({ method: 'POST', url: `${AUTH}/make-admin/`, data: { userId } }),
+  deleteUser: () => IFetch<RequestResponse>({ method: 'DELETE', url: `${USERS}/${ME}/` }),
 
   // Reservation
   getReservation: (sectionId: string, reservationId: string) =>
@@ -71,6 +74,8 @@ export default {
 
   // Section
   getSection: (sectionId: string) => IFetch<Section>({ method: 'GET', url: `${SECTIONS}/${sectionId}/` }),
+  getSectionStatistics: (sectionId: string, filters?: any) =>
+    IFetch<Statistics>({ method: 'GET', url: `${SECTIONS}/${sectionId}/${STATISTICS}/`, data: filters || {} }),
   getSections: (filters?: any) => IFetch<PaginationResponse<SectionList>>({ method: 'GET', url: `${SECTIONS}/`, data: filters || {} }),
   createSection: (newPost: SectionCreate) => IFetch<Section>({ method: 'POST', url: `${SECTIONS}/`, data: newPost }),
   updateSection: (sectionId: string, updatedSection: Partial<Section>) =>

@@ -2,7 +2,7 @@ package ntnu.idatt2105.section.service;
 
 
 import com.querydsl.core.types.Predicate
-import ntnu.idatt2105.section.dto.SectionCreateDto
+import ntnu.idatt2105.section.dto.CreateSectionRequest
 import ntnu.idatt2105.section.dto.SectionDto
 import ntnu.idatt2105.factories.SectionFactory
 import ntnu.idatt2105.section.model.Section
@@ -35,6 +35,9 @@ class SectionServiceTest {
 
     @Mock
     private lateinit var sectionRepository: SectionRepository
+
+    @Mock
+    private lateinit var  sectionFactory: SectionFactoryImpl
 
     @Spy
     @Autowired
@@ -69,9 +72,10 @@ class SectionServiceTest {
     @Test
     fun `test section service createSection returns new section`(){
         val newSection = SectionFactory().`object`
-        val newSectionDto = SectionCreateDto(UUID.randomUUID(), newSection.name,  newSection.description, newSection.capacity, newSection.image)
+        val newSectionDto = CreateSectionRequest(UUID.randomUUID(), newSection.name,  newSection.description, newSection.capacity, newSection.image)
         lenient().`when`(sectionRepository.save(any(Section::class.java))).thenReturn(newSection)
-        assertThat(sectionService.createSection(newSectionDto).name).isEqualTo(newSectionDto.name)
+        lenient().`when`(sectionFactory.createParentSection(newSectionDto)).thenReturn(newSection)
+        assertThat(sectionService.createSection(newSectionDto).name).isEqualTo(newSection.name)
     }
 
     @Test

@@ -1,47 +1,81 @@
-import { ReactNode, ReactElement } from 'react';
+import { ComponentType, useMemo, ReactNode } from 'react';
 import Helmet from 'react-helmet';
+import { useIsAuthenticated, useUser } from 'hooks/User';
+import { isUserAdmin } from 'utils';
+import URLS from 'URLS';
 
 // Material UI Components
-import { makeStyles, LinearProgress } from '@material-ui/core';
+import { makeStyles, LinearProgress, Hidden } from '@material-ui/core';
+
+// Icons
+import SearchIcon from '@material-ui/icons/SearchRounded';
+import UsersIcon from '@material-ui/icons/PeopleOutlineRounded';
+import ProfileIcon from '@material-ui/icons/AccountCircleRounded';
+import LoginIcon from '@material-ui/icons/LoginRounded';
 
 // Project Components
-import Footer from 'components/navigation/Footer';
-import Topbar from 'components/navigation/Topbar';
-import Container from 'components/layout/Container';
+import BottomBar from 'components/navigation/BottomBar';
+import SideMenu from 'components/navigation/SideMenu';
 
 const useStyles = makeStyles((theme) => ({
   main: {
-    minHeight: '101vh',
-    paddingTop: 64,
-    [theme.breakpoints.down('sm')]: {
-      paddingTop: 56,
+    minHeight: '100vh',
+    display: 'grid',
+    // gridTemplateColumns: '300px 1fr',
+    [theme.breakpoints.down('lg')]: {
+      // gridTemplateColumns: '1fr',
+      paddingBottom: 80,
+    },
+  },
+  content: {
+    [theme.breakpoints.up('lg')]: {
+      marginLeft: 300,
     },
   },
 }));
 
 export type NavigationProps = {
   children?: ReactNode;
-  banner?: ReactElement;
-  maxWidth?: false | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   isLoading?: boolean;
-  noFooter?: boolean;
 };
 
-const Navigation = ({ isLoading = false, noFooter = false, maxWidth, banner, children }: NavigationProps) => {
+export type NavigationItem = {
+  icon: ComponentType<{ className?: string }>;
+  text: string;
+  to: string;
+};
+
+const Navigation = ({ isLoading = false, children }: NavigationProps) => {
   const classes = useStyles();
+  const isAuthenticated = useIsAuthenticated();
+  const { data: user } = useUser();
+
+  const items = useMemo<Array<NavigationItem>>(
+    () =>
+      isAuthenticated
+        ? [
+            { icon: SearchIcon, text: 'Finn rom', to: URLS.ROOMS },
+            ...(isUserAdmin(user) ? [{ icon: UsersIcon, text: 'Brukere', to: URLS.USERS }] : []),
+            { icon: ProfileIcon, text: 'Profil', to: URLS.PROFILE },
+          ]
+        : [{ icon: LoginIcon, text: 'Logg inn', to: URLS.LOGIN }],
+    [isAuthenticated, user],
+  );
 
   return (
     <>
       <Helmet>
         <title>Rombestilling - Reserver et rom nå!</title>
       </Helmet>
-      <Topbar />
       <main className={classes.main}>
-        {isLoading && <LinearProgress />}
-        {banner}
-        {maxWidth === false ? <>{children}</> : <Container maxWidth={maxWidth || 'xl'}>{children || <></>}</Container>}
+        <Hidden lgDown>
+          <SideMenu items={items} />
+        </Hidden>
+        <div className={classes.content}>{isLoading ? <LinearProgress /> : children}</div>
+        <Hidden lgUp>
+          <BottomBar items={items} />
+        </Hidden>
       </main>
-      {!noFooter && !isLoading && <Footer />}
     </>
   );
 };

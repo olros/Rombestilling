@@ -7,7 +7,7 @@ import { useIsAuthenticated } from 'hooks/User';
 import { makeStyles, Typography, Button } from '@material-ui/core';
 
 // Project Components
-import Navigation from 'components/navigation/Navigation';
+import Container from 'components/layout/Container';
 import Logo from 'components/miscellaneous/Logo';
 
 const useStyles = makeStyles((theme) => ({
@@ -54,7 +54,7 @@ const Landing = () => {
   const isAuthenticated = useIsAuthenticated();
 
   return (
-    <Navigation noFooter>
+    <Container>
       <Helmet>
         <title>Forsiden - Rombestilling</title>
       </Helmet>
@@ -76,7 +76,7 @@ const Landing = () => {
           </Button>
         )}
       </div>
-    </Navigation>
+    </Container>
   );
 };
 

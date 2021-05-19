@@ -56,7 +56,7 @@ interface UserController {
         ApiResponse(responseCode = "404", description = "Not found: user with the given id does not exist")
     ])
     @GetMapping("{userId}/")
-    fun getUser(@PathVariable userId: UUID): ResponseEntity<UserDto>
+    fun getUser(@PathVariable userId: UUID): ResponseEntity<DetailedUserDto>
 
     @Operation(summary = "Fetch users", responses = [ApiResponse(responseCode = "200", description = "Success")])
     @GetMapping
@@ -85,9 +85,20 @@ interface UserController {
         ApiResponse(responseCode = "404", description = "Not found: the authenticated was not found")
     ])
     @GetMapping("me/reservations/")
-    fun getUserReservations(
+    fun getMyReservations(
             @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
             @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
             @AuthenticationPrincipal principal: UserDetailsImpl
+    ): Page<ReservationDto>
+
+    @Operation(summary = "Fetch reservations for the given user", responses = [
+        ApiResponse(responseCode = "200", description = "Success"),
+        ApiResponse(responseCode = "404", description = "Not found: the authenticated was not found")
+    ])
+    @GetMapping("{userId}/reservations/")
+    fun getUserReservations(
+        @PathVariable userId: UUID,
+        @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
     ): Page<ReservationDto>
 }
