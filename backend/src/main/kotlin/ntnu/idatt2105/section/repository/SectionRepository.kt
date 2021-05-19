@@ -17,44 +17,37 @@ interface SectionRepository : JpaRepository<Section, UUID>, QuerydslPredicateExe
 
     @JvmDefault
     override fun customize(bindings: QuerydslBindings, section: QSection) {
-        val reservation = QReservation.reservation
-        //        var available: BooleanExpression = section.id.`in`(section.reservation.any().id)
-//        val available: BooleanExpression = section.id.`in`(
-//            JPAExpressions.selectFrom(reservation)
-//                .where(reservation.fromTime.before(section.to))
-//                .where(reservation.toTime.before(section.interval))
-//                .select(reservation.section.id)
-//        )
-//        var exp: BooleanExpression = section.reservation.any().supplier.number.`in`(
-//            JPAExpressions.selectFrom<Any>(company).where(company.active.isTrue()).select(company.nu‌​ mber))
         bindings.bind(section.name).first { path, value -> section.name.contains(value) }
-//        bindings.bind(section.from, section.to).first { path, value -> available }
         bindings.bind(section.from, section.to).all { path, values ->
             val predicate = BooleanBuilder()
             if (values.size == 2) {
                 val from = values.elementAt(0)
                 val to = values.elementAt(1)
+                val reservation = QReservation.reservation
+                val conflictingReservations = JPAExpressions.selectFrom(reservation)
+                    .where(reservation.fromTime.before(to))
+                    .where(reservation.toTime.after(from))
+                    .select(reservation.section.id)
                 predicate.and(
                     section.id.`in`(
-                        JPAExpressions.selectFrom(reservation)
-                            .where(reservation.fromTime.before(to))
-                            .where(reservation.toTime.after(from))
-                            .select(reservation.section.id)
+                        conflictingReservations
                     )
-                    .or(
-                        section.parent.id.isNotNull.and(section.parent.id.`in`(
-                            JPAExpressions.selectFrom(reservation)
-                                .where(reservation.fromTime.before(to))
-                                .where(reservation.toTime.after(from))
-                                .select(reservation.section.id)
-                        ))
-                    )
+                        .or(
+                            section.parent.id.isNotNull.and(
+                                section.parent.id.`in`(
+                                    conflictingReservations
+                                )
+                            )
+                        )
+                        .or(
+                            section.children.any().id.`in`(
+                                conflictingReservations
+                            )
+                        )
                 ).not()
 
             }
             Optional.of(predicate)
         }
-//        bindings.bind(section.from).first { path, value -> (section.reservation.any().toTime.after(value).and(section.reservation.any().fromTime.before(value))).not() }
-//        bindings.bind(section.to).first { path, value -> (section.reservation.any().toTime.after(value).and(section.reservation.any().fromTime.before(value))).not() }
     }
 }
