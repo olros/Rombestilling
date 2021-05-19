@@ -5,6 +5,7 @@ import { getNextPaginationPage } from 'utils';
 
 export const GROUP_QUERY_KEY = 'group';
 export const GROUPS_QUERY_KEY = 'groups';
+export const USER_GROUPS_QUERY_KEY = 'user_groups';
 export const MEMBERSHIPS_QUERY_KEY = 'memberships';
 
 /**
@@ -13,6 +14,14 @@ export const MEMBERSHIPS_QUERY_KEY = 'memberships';
  */
 export const useGroup = (groupId: string) => {
   return useQuery<Group, RequestResponse>([GROUP_QUERY_KEY, groupId], () => API.getGroup(groupId));
+};
+
+/**
+ * Get a groups where the user is creator or member
+ * @param userId - Id of user
+ */
+export const useUserGroups = (userId?: string) => {
+  return useQuery<Array<Group>, RequestResponse>([USER_GROUPS_QUERY_KEY, userId], () => API.getUserGroups(userId));
 };
 
 /**

@@ -73,7 +73,7 @@ export default {
     IFetch<PaginationResponse<Reservation>>({ method: 'GET', url: `${USERS}/${userId || ME}/${RESERVATIONS}/`, data: filters || {} }),
   createReservation: (sectionId: string, newRegistration: ReservationCreate) =>
     IFetch<Reservation>({ method: 'POST', url: `${SECTIONS}/${sectionId}/${RESERVATIONS}/`, data: newRegistration }),
-  updateReservation: (sectionId: string, reservationId: string, updatedReservation: Partial<Section>) =>
+  updateReservation: (sectionId: string, reservationId: string, updatedReservation: Partial<Reservation>) =>
     IFetch<Reservation>({ method: 'PUT', url: `${SECTIONS}/${sectionId}/${RESERVATIONS}/${reservationId}/`, data: updatedReservation }),
   deleteReservation: (sectionId: string, reservationId: string) =>
     IFetch<RequestResponse>({ method: 'DELETE', url: `${SECTIONS}/${sectionId}/${RESERVATIONS}/${reservationId}/` }),
@@ -109,6 +109,7 @@ export default {
 
   // User
   getUser: (userId?: string) => IFetch<User>({ method: 'GET', url: `${USERS}/${userId || ME}/` }),
+  getUserGroups: (userId?: string) => IFetch<Array<Group>>({ method: 'GET', url: `${USERS}/${userId || ME}/${GROUPS}/` }),
   getUsers: (filters?: any) => IFetch<PaginationResponse<UserList>>({ method: 'GET', url: `${USERS}/`, data: filters || {} }),
   updateUser: (userId: string, item: Partial<User>) => IFetch<User>({ method: 'PUT', url: `${USERS}/${userId}/`, data: item }),
   batchAddUser: (csvFile: File | Blob) => {

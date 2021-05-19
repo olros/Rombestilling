@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import classnames from 'classnames';
 import { formatDate } from 'utils';
 import { parseISO } from 'date-fns';
+import { useUserGroups } from 'hooks/Group';
 import { useCreateReservation } from 'hooks/Reservation';
 import { useSectionById } from 'hooks/Section';
 import { useSnackbar } from 'hooks/Snackbar';
@@ -9,10 +10,11 @@ import { useUser } from 'hooks/User';
 import { ReservationCreate } from 'types/Types';
 
 // Material UI
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Typography, MenuItem, ListSubheader } from '@material-ui/core';
 
 // Project Components
 import Paper from 'components/layout/Paper';
+import Select from 'components/inputs/Select';
 import TextField from 'components/inputs/TextField';
 import SubmitButton from 'components/inputs/SubmitButton';
 
@@ -30,21 +32,22 @@ export type ReserveFormProps = {
   className?: string;
 };
 
-type FormValues = Pick<ReservationCreate, 'nrOfPeople' | 'text'>;
+type FormValues = Pick<ReservationCreate, 'nrOfPeople' | 'text' | 'entityId'>;
 
 const ReserveForm = ({ onConfirm, sectionId, from, to, className }: ReserveFormProps) => {
   const classes = useStyles();
+  const { data: groups } = useUserGroups();
   const { data: user } = useUser();
   const { data: section } = useSectionById(sectionId);
   const reserve = useCreateReservation(sectionId);
-  const { formState, handleSubmit, register } = useForm<FormValues>();
+  const { formState, handleSubmit, register, control } = useForm<FormValues>();
   const showSnackbar = useSnackbar();
+  if (!section || !groups || !user) {
+    return null;
+  }
   const submit = async (data: FormValues) => {
-    if (!user) {
-      return;
-    }
     reserve.mutate(
-      { ...data, userId: user.id, fromTime: from, toTime: to },
+      { ...data, userId: user.id, fromTime: from, toTime: to, type: data.entityId === user.id ? 'user' : 'group' },
       {
         onSuccess: () => {
           showSnackbar('Reservasjonen var vellykket!', 'success');
@@ -58,9 +61,6 @@ const ReserveForm = ({ onConfirm, sectionId, from, to, className }: ReserveFormP
       },
     );
   };
-  if (!section) {
-    return null;
-  }
   return (
     <form className={classnames(classes.form, className)} onSubmit={handleSubmit(submit)}>
       <Typography variant='h2'>{`Reserver ${section.name}`}</Typography>
@@ -72,6 +72,15 @@ const ReserveForm = ({ onConfirm, sectionId, from, to, className }: ReserveFormP
         <Typography variant='subtitle2'>{`Fra: ${formatDate(parseISO(from))}`}</Typography>
         <Typography variant='subtitle2'>{`Til: ${formatDate(parseISO(to))}`}</Typography>
       </Paper>
+      <Select control={control} defaultValue={user.id} formState={formState} label='For hvem' margin='normal' name='entityId'>
+        <MenuItem value={user.id}>{`${user.firstName} ${user.surname} (Deg)`}</MenuItem>
+        {Boolean(groups.length) && <ListSubheader>Dine grupper</ListSubheader>}
+        {groups.map((group) => (
+          <MenuItem key={group.id} value={group.id}>
+            {group.name}
+          </MenuItem>
+        ))}
+      </Select>
       <TextField
         formState={formState}
         InputProps={{ type: 'number' }}

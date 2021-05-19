@@ -74,9 +74,11 @@ export type Reservation = {
   text: string;
   nrOfPeople: number;
   user: UserList;
+  entityId: string;
+  type: 'user' | 'group';
 };
 
-export type ReservationCreate = Pick<Reservation, 'nrOfPeople' | 'text' | 'fromTime' | 'toTime'> & {
+export type ReservationCreate = Pick<Reservation, 'nrOfPeople' | 'text' | 'fromTime' | 'toTime' | 'entityId' | 'type'> & {
   userId: string;
 };
 
