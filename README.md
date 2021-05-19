@@ -20,9 +20,9 @@ npm install -g yarn
 ### Backend
 
 ```bash
-git clone https://gitlab.stud.idi.ntnu.no/team-2-sysutv/idatt2106_2021_2.git
+git clone https://github.com/olros/IDATT2105-project.git
 
-cd idatt2106_2021_2/backend
+cd IDATT2105-project/backend/
 
 # Run the app without GNU Make
 
@@ -43,12 +43,9 @@ make run-unix og make run-windows
 ### Frontend
 
 ```bash
-git clone https://gitlab.stud.idi.ntnu.no/team-2-sysutv/idatt2106_2021_2.git
+git clone https://github.com/olros/IDATT2105-project.git
 
-cd idatt2106_2021_2/frontend
-
-# Set url to api in env-file
-echo REACT_APP_API_URL=http://localhost:8080/api/  > .env
+cd IDATT2105-project/frontend/
 
 # Install dependencies
 yarn 
