@@ -30,6 +30,9 @@ const useStyles = makeStyles((theme) => ({
   },
   header: {
     alignSelf: 'center',
+    '& a': {
+      color: theme.palette.text.primary,
+    },
   },
   remove: {
     color: theme.palette.error.main,

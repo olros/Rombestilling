@@ -212,8 +212,8 @@ const Calendar = ({ data, isLoading, setFilters, sectionId }: CalendarProps) => 
             {data.text}
           </Typography>
         </Appointments.Appointment>
-        {open && data.id && data.id !== NEW_APPOINTMENT.id && sectionId && (
-          <ReservationInfoDialog onClose={() => setOpen(false)} open={open} reservationId={String(data.id)} sectionId={String(sectionId)} />
+        {open && data.id && data.id !== NEW_APPOINTMENT.id && (
+          <ReservationInfoDialog onClose={() => setOpen(false)} open={open} reservationId={String(data.id)} sectionId={String(data.section.id)} />
         )}
       </>
     );
