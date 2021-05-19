@@ -27,6 +27,4 @@ run-unix:
 	make run
 
 run:
-	docker-compose -f docker-compose.azure.yml build
-	docker-compose -f docker-compose.azure.yml up
-
+	docker-compose -f docker-compose.azure.yml up --build
