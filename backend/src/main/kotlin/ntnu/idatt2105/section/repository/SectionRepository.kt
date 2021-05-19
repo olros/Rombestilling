@@ -17,12 +17,13 @@ interface SectionRepository : JpaRepository<Section, UUID>, QuerydslPredicateExe
 
     @JvmDefault
     override fun customize(bindings: QuerydslBindings, section: QSection) {
-        bindings.bind(section.name).first { path, value -> section.name.contains(value) }
-        bindings.bind(section.from, section.to).all { path, values ->
+        bindings.bind(section.name).first { _, value -> section.name.contains(value) }
+        bindings.bind(section.from, section.to).all { _, values ->
             val predicate = BooleanBuilder()
             if (values.size == 2) {
-                val from = values.elementAt(0)
-                val to = values.elementAt(1)
+                val sortedList = values.sorted()
+                val from = sortedList.elementAt(0)
+                val to = sortedList.elementAt(1)
                 val reservation = QReservation.reservation
                 val conflictingReservations = JPAExpressions.selectFrom(reservation)
                     .where(reservation.fromTime.before(to))
@@ -32,18 +33,18 @@ interface SectionRepository : JpaRepository<Section, UUID>, QuerydslPredicateExe
                     section.id.`in`(
                         conflictingReservations
                     )
-                        .or(
-                            section.parent.id.isNotNull.and(
-                                section.parent.id.`in`(
-                                    conflictingReservations
-                                )
-                            )
-                        )
-                        .or(
-                            section.children.any().id.`in`(
+                    .or(
+                        section.parent.id.isNotNull.and(
+                            section.parent.id.`in`(
                                 conflictingReservations
                             )
                         )
+                    )
+                    .or(
+                        section.children.any().id.`in`(
+                            conflictingReservations
+                        )
+                    )
                 ).not()
 
             }
