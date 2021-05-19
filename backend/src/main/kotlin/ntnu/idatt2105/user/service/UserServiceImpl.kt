@@ -89,7 +89,7 @@ class UserServiceImpl(
                 forgotPassword(ForgotPassword(it.email))
             }
         } catch (ex: Exception) {
-            throw Exception("Something went wrong during parsing users", ex)
+            throw throw ApplicationException.throwExceptionWithId(EntityType.USER, ExceptionType.NOT_VALID, "batch.invalidFile")
         } finally {
             closeFileReader(fileReader)
         }

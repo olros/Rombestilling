@@ -399,14 +399,10 @@ class UserControllerImplTest {
                     "Frankie,frankie.jackson@codersee.com,777 777 777,2007-07-07\n").byteInputStream()
         )
 
-        try {
-            mockMvc.perform(
-                multipart(URI + "batch-users/").file(file)
-                    .with(user(adminUserDetails))
-            )
-            fail("Should throw exception")
-        } catch (ex: Exception) {
-        }
+        mockMvc.perform(
+            multipart(URI + "batch-users/").file(file)
+                .with(user(adminUserDetails))
+        ).andExpect(status().isBadRequest)
     }
 
 
@@ -444,7 +440,7 @@ class UserControllerImplTest {
         mockMvc.perform(
             multipart(URI + "batch-users/").file(file)
                 .with(user(adminUserDetails))
-        ).andExpect(status().isNotFound)
+        ).andExpect(status().isBadRequest)
 
         assert(size == userRepository.findAll().size)
     }
