@@ -51,7 +51,10 @@ const ReservationInfo = ({ sectionId, reservationId, onDelete }: ReservationInfo
   const { data: user } = useUser();
   const showSnackbar = useSnackbar();
   const deleteReservation = useDeleteReservation(sectionId, reservationId);
-  const canEdit = useMemo(() => isUserAdmin(user) || Boolean(data && user && data?.user.id === user?.id), [data, user]);
+  const canEdit = useMemo(
+    () => isUserAdmin(user) || Boolean((data?.type === 'user' && data.user.id === user?.id) || (data?.type === 'group' && data.group.isMember)),
+    [data, user],
+  );
   const removeReservation = async () =>
     deleteReservation.mutate(null, {
       onSuccess: () => {
@@ -69,6 +72,8 @@ const ReservationInfo = ({ sectionId, reservationId, onDelete }: ReservationInfo
     return null;
   }
 
+  const creator = data.type === 'group' ? data.group.name : `${data.user.firstName} ${data.user.surname}`;
+
   return (
     <div className={classes.grid}>
       <div className={classnames(classes.grid, classes.top)}>
@@ -85,7 +90,7 @@ const ReservationInfo = ({ sectionId, reservationId, onDelete }: ReservationInfo
 Til: ${formatDate(parseISO(data.toTime))}
 Personer: ${data.nrOfPeople}
 Beskrivelse: ${data.text}
-${canEdit ? `Reservert av: ${data.user.firstName} ${data.user.surname}` : ''}`}</Typography>
+${canEdit ? `Reservert av: ${creator}` : ''}`}</Typography>
       {canEdit && <ReservationEditDialog reservation={data} variant='text' />}
     </div>
   );

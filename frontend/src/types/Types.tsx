@@ -73,10 +73,17 @@ export type Reservation = {
   toTime: string;
   text: string;
   nrOfPeople: number;
-  user: UserList;
   entityId: string;
-  type: 'user' | 'group';
-};
+} & (
+  | {
+      type: 'user';
+      user: UserList;
+    }
+  | {
+      type: 'group';
+      group: Group;
+    }
+);
 
 export type ReservationCreate = Pick<Reservation, 'nrOfPeople' | 'text' | 'fromTime' | 'toTime' | 'entityId' | 'type'> & {
   userId: string;
@@ -85,6 +92,8 @@ export type ReservationCreate = Pick<Reservation, 'nrOfPeople' | 'text' | 'fromT
 export type Group = {
   id: string;
   name: string;
+  isMember: boolean;
+  creator: UserList;
 };
 
 export type GroupCreate = Pick<Group, 'name'>;
