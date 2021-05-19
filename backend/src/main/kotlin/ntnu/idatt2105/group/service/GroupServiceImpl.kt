@@ -8,6 +8,8 @@ import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.group.dto.toGroupDto
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.group.repository.GroupRepository
+import ntnu.idatt2105.user.model.User
+import ntnu.idatt2105.user.service.UserService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -15,9 +17,11 @@ import java.util.*
 
 
 @Service
-class GroupServiceImpl(val groupRepository: GroupRepository) : GroupService {
-    override fun createGroup(group: Group): GroupDto {
+class GroupServiceImpl(val groupRepository: GroupRepository, val userService: UserService) : GroupService {
+    override fun createGroup(group: Group, id: UUID): GroupDto {
         group.id = UUID.randomUUID()
+        group.members = mutableSetOf()
+        group.creator = userService.getUser(id, User::class.java)
         return groupRepository.save(group).toGroupDto()
     }
 
@@ -53,6 +57,6 @@ class GroupServiceImpl(val groupRepository: GroupRepository) : GroupService {
     }
 
     override fun getUserGroups(userId: UUID): List<GroupDto> {
-        return groupRepository.findAllByMembers_Id(userId).map { it.toGroupDto() }
+        return groupRepository.findAllByMembers_IdOrCreator_id(userId, userId).map { it.toGroupDto() }
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.querydsl.binding.QuerydslPredicate
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -38,6 +39,7 @@ interface MembershipController {
         ApiResponse(responseCode = "404", description = "Not found: new group or user does not exist"),
     ])
     @PostMapping
+    @PreAuthorize("@securityService.groupPermissions(#groupId)")
     fun createMembership(@QuerydslPredicate(root = User::class) predicate: Predicate,
                          @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
                          sort= ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
@@ -49,5 +51,6 @@ interface MembershipController {
         ApiResponse(responseCode = "404", description = "Not found: new group or user does not exist"),
     ])
     @DeleteMapping("{userId}/")
+    @PreAuthorize("@securityService.groupPermissions(#groupId)")
     fun deleteMembership(@PathVariable groupId: UUID,@PathVariable userId: UUID):  ResponseEntity<Response>
 }

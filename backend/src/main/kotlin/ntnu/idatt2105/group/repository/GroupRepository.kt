@@ -12,7 +12,7 @@ import java.util.*
 
 interface GroupRepository: JpaRepository<Group, UUID>, QuerydslPredicateExecutor<Group>, QuerydslBinderCustomizer<QGroup> {
 
-    fun findAllByMembers_Id(members_id: UUID): List<Group>
+    fun findAllByMembers_IdOrCreator_id(members_id: UUID, creator_id: UUID): List<Group>
     @JvmDefault
     override fun customize(bindings: QuerydslBindings, group: QGroup) {
         bindings.bind(group.name).first{_, value -> group.name.contains(value)}

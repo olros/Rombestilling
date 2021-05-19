@@ -1,13 +1,13 @@
 package ntnu.idatt2105.group.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.factories.GroupFactory
-import ntnu.idatt2105.factories.ReservationFactory
+import ntnu.idatt2105.group.dto.toGroupDto
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.group.repository.GroupRepository
-import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.user.model.User
+import ntnu.idatt2105.user.repository.UserRepository
+import ntnu.idatt2105.user.service.UserService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -15,10 +15,10 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.beans.factory.annotation.Autowired
 import org.assertj.core.api.Assertions.assertThat
+import org.mockito.Spy
+import org.springframework.boot.test.mock.mockito.SpyBean
 
-import org.springframework.test.web.servlet.MockMvc
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
@@ -33,18 +33,24 @@ class GroupServiceImplTest {
     @InjectMocks
     private lateinit var groupService: GroupServiceImpl
 
+    @Mock
+    private lateinit var userService: UserService
+
+    @SpyBean
     private lateinit var group: Group
 
     @BeforeEach
     fun setUp(){
         group = GroupFactory().`object`
+        Mockito.lenient().`when`(userService.getUser(group.creator?.id!!, User::class.java)).thenReturn(group.creator)
         Mockito.lenient().`when`(groupRepository.findById(Mockito.any(UUID::class.java))).thenReturn(Optional.of(group))
         Mockito.lenient().`when`(groupRepository.save(Mockito.any(Group::class.java))).thenReturn(group)
+
     }
 
     @Test
     fun `test create group returns a group`(){
-        assertThat(groupService.createGroup(group).name).isEqualTo(group.name)
+        assertThat(groupService.createGroup(group, group.creator?.id!!).name).isEqualTo(group.name)
 
     }
 

@@ -1,6 +1,8 @@
 package ntnu.idatt2105.group.model
 
 import ntnu.idatt2105.user.model.User
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
 import javax.persistence.*
 
@@ -16,5 +18,17 @@ data class Group(
         @JoinTable(name = "group_user",
                 joinColumns = [JoinColumn(name = "group_id", referencedColumnName = "id")],
                 inverseJoinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")])
-        var members: MutableSet<User> = mutableSetOf()
-)
+        var members: MutableSet<User> = mutableSetOf(),
+        @OneToOne
+        @JoinColumn(name="user_id", referencedColumnName = "id")
+        var creator: User? = null,
+){
+        fun isMember(): Boolean {
+                val user = SecurityContextHolder.getContext()?.authentication?.principal as UserDetails? ?: return false
+                return containsContextUser(user) || this.creator?.email == user.username
+
+        }
+        private fun containsContextUser(user : UserDetails): Boolean{
+                return this.members.firstOrNull { it.email == user.username } != null
+        }
+}

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable
 import java.util.*
 
 interface GroupService {
-    fun createGroup(group: Group) : GroupDto
+    fun createGroup(group: Group, id: UUID) : GroupDto
     fun updateGroup(groupId: UUID, group: Group) : GroupDto
     fun deleteGroup(groupId: UUID)
     fun getGroup(groupId: UUID) : GroupDto
