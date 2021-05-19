@@ -25,8 +25,24 @@ export const useReservationById = (sectionId: string, reservationId: string) => 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useSectionReservations = (sectionId: string, filters?: any) => {
   return useInfiniteQuery<PaginationResponse<Reservation>, RequestResponse>(
-    [RESERVATION_QUERY_KEY, sectionId, filters],
+    [RESERVATION_QUERY_KEY, 'section', sectionId, filters],
     ({ pageParam = 0 }) => API.getSectionReservations(sectionId, { sort: 'fromTime,ASC', ...filters, page: pageParam }),
+    {
+      getNextPageParam: getNextPaginationPage,
+    },
+  );
+};
+
+/**
+ * Get group reservations, paginated
+ * @param groupId - Id of group
+ * @param filters - Filtering
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useGroupReservations = (groupId: string, filters?: any) => {
+  return useInfiniteQuery<PaginationResponse<Reservation>, RequestResponse>(
+    [RESERVATION_QUERY_KEY, 'group', groupId, filters],
+    ({ pageParam = 0 }) => API.getGroupReservations(groupId, { sort: 'fromTime,ASC', ...filters, page: pageParam }),
     {
       getNextPageParam: getNextPaginationPage,
     },
@@ -41,7 +57,7 @@ export const useSectionReservations = (sectionId: string, filters?: any) => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useUserReservations = (userId?: string, filters?: any) => {
   return useInfiniteQuery<PaginationResponse<Reservation>, RequestResponse>(
-    [RESERVATION_QUERY_KEY, userId, filters],
+    [RESERVATION_QUERY_KEY, 'user', userId, filters],
     ({ pageParam = 0 }) => API.getUserReservations(userId, { sort: 'fromTime,ASC', ...filters, page: pageParam }),
     {
       getNextPageParam: getNextPaginationPage,

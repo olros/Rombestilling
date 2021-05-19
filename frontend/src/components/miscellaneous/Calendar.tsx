@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, ReactNode } from 'react';
 import { InfiniteData } from 'react-query';
 import { Reservation, PaginationResponse } from 'types/Types';
-import { useUserReservations, useSectionReservations } from 'hooks/Reservation';
+import { useUserReservations, useSectionReservations, useGroupReservations } from 'hooks/Reservation';
 import { useSnackbar } from 'hooks/Snackbar';
 import { useUser } from 'hooks/User';
 import { parseISO, endOfWeek, startOfWeek, endOfDay, startOfDay, endOfMonth, startOfMonth, getHours, getMinutes, isAfter, isBefore, addMonths } from 'date-fns';
@@ -82,6 +82,10 @@ const useStyles = makeStyles((theme) => ({
     left: 0,
     right: 0,
     paddingBottom: theme.spacing(1),
+    zIndex: 1,
+    [theme.breakpoints.down('lg')]: {
+      bottom: 70,
+    },
   },
   text: {
     padding: theme.spacing(0, 1),
@@ -105,6 +109,16 @@ export type UserCalendarProps = {
 export const UserCalendar = ({ userId }: UserCalendarProps) => {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const { data, isLoading } = useUserReservations(userId, filters);
+  return <Calendar data={data} isLoading={isLoading} setFilters={setFilters} />;
+};
+
+export type GroupCalendarProps = {
+  groupId: string;
+};
+
+export const GroupCalendar = ({ groupId }: GroupCalendarProps) => {
+  const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
+  const { data, isLoading } = useGroupReservations(groupId, filters);
   return <Calendar data={data} isLoading={isLoading} setFilters={setFilters} />;
 };
 

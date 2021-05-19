@@ -1,10 +1,11 @@
+import { ReactNode } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
 import { UserList } from 'types/Types';
 
 // Material UI Components
-import { makeStyles, Button, Typography } from '@material-ui/core';
+import { makeStyles, Button, Typography, Skeleton } from '@material-ui/core';
 
 // Icons
 import ArrowIcon from '@material-ui/icons/ArrowForwardRounded';
@@ -30,9 +31,10 @@ const useStyles = makeStyles((theme) => ({
 
 export type UserListItemProps = {
   user: UserList;
+  children?: ReactNode;
 };
 
-const UserListItem = ({ user }: UserListItemProps) => {
+const UserListItem = ({ user, children }: UserListItemProps) => {
   const classes = useStyles();
   return (
     <Paper className={classnames(classes.paper, classes.grid)}>
@@ -45,8 +47,28 @@ const UserListItem = ({ user }: UserListItemProps) => {
           Profil
         </Button>
       </div>
+      {children}
     </Paper>
   );
 };
 
 export default UserListItem;
+
+export const UserListItemLoading = () => {
+  const classes = useStyles();
+  return (
+    <Paper className={classnames(classes.paper, classes.grid)}>
+      <div className={classnames(classes.top, classes.grid)}>
+        <div className={classnames(classes.topText, classes.grid)}>
+          <Typography variant='h3'>
+            <Skeleton width={130} />
+          </Typography>
+          <Typography variant='caption'>
+            <Skeleton width={180} />
+          </Typography>
+        </div>
+        <Skeleton height={50} width={100} />
+      </div>
+    </Paper>
+  );
+};

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { UseInfiniteQueryResult } from 'react-query';
 import { Reservation, PaginationResponse, RequestResponse } from 'types/Types';
-import { useSectionReservations, useUserReservations } from 'hooks/Reservation';
+import { useSectionReservations, useUserReservations, useGroupReservations } from 'hooks/Reservation';
 import { parseISO, startOfDay } from 'date-fns';
 import { formatDate } from 'utils';
 
@@ -37,6 +37,16 @@ export type UserReservationsProps = {
 export const UserReservations = ({ userId }: UserReservationsProps) => {
   const filters = useMemo(() => ({ fromTimeAfter: startOfDay(new Date()).toJSON() }), []);
   const result = useUserReservations(userId, filters);
+  return <Reservations result={result} />;
+};
+
+export type GroupReservationsProps = {
+  groupId: string;
+};
+
+export const GroupReservations = ({ groupId }: GroupReservationsProps) => {
+  const filters = useMemo(() => ({ fromTimeAfter: startOfDay(new Date()).toJSON() }), []);
+  const result = useGroupReservations(groupId, filters);
   return <Reservations result={result} />;
 };
 

@@ -41,9 +41,10 @@ const useStyles = makeStyles((theme) => ({
 export type RoomListItemProps = {
   room: SectionList;
   reserve: (sectionId: string) => void;
+  showReserve?: boolean;
 };
 
-const RoomListItem = ({ room, reserve }: RoomListItemProps) => {
+const RoomListItem = ({ room, reserve, showReserve }: RoomListItemProps) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const isRoom = room.type === 'room';
@@ -54,9 +55,11 @@ const RoomListItem = ({ room, reserve }: RoomListItemProps) => {
           <Typography variant='h3'>{room.name}</Typography>
           <Typography variant='caption'>{`${isRoom ? 'Rom' : 'Del av rom'} | Kapasitet: ${room.capacity}`}</Typography>
         </div>
-        <Button endIcon={<ArrowIcon />} onClick={() => reserve(room.id)} variant='outlined'>
-          Reserver
-        </Button>
+        {showReserve && (
+          <Button endIcon={<ArrowIcon />} onClick={() => reserve(room.id)} variant='outlined'>
+            Reserver
+          </Button>
+        )}
       </div>
       <div className={classnames(classes.actions, classes.grid)}>
         {((room.type === 'room' && Boolean(room.children.length)) || room.type === 'section') && (
@@ -74,11 +77,13 @@ const RoomListItem = ({ room, reserve }: RoomListItemProps) => {
             room.children.map((section) => (
               <ListItem component={Paper} key={section.id} noPadding>
                 <ListItemText primary={section.name} secondary={`Kapasitet: ${section.capacity}`} />
-                <ListItemSecondaryAction>
-                  <Button className={classes.button} endIcon={<ArrowIcon />} onClick={() => reserve(section.id)} variant='outlined'>
-                    Reserver
-                  </Button>
-                </ListItemSecondaryAction>
+                {showReserve && (
+                  <ListItemSecondaryAction>
+                    <Button className={classes.button} endIcon={<ArrowIcon />} onClick={() => reserve(section.id)} variant='outlined'>
+                      Reserver
+                    </Button>
+                  </ListItemSecondaryAction>
+                )}
               </ListItem>
             ))
           ) : (

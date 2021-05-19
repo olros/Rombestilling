@@ -2,12 +2,10 @@ import { useMemo, useState } from 'react';
 import URLS from 'URLS';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
-import { useLogout, useIsAuthenticated } from 'hooks/User';
 
 // Material UI Components
 import { makeStyles, ListItem, ListItemText, ListItemIcon } from '@material-ui/core';
 import ThemeIcon from '@material-ui/icons/LightModeRounded';
-import LogoutIcon from '@material-ui/icons/LogoutRounded';
 
 // Project components
 import Paper from 'components/layout/Paper';
@@ -23,6 +21,8 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-start',
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
+    borderTopRightRadius: 2 * Number(theme.shape.borderRadius),
+    borderBottomRightRadius: 2 * Number(theme.shape.borderRadius),
     position: 'fixed',
     top: 0,
     bottom: 0,
@@ -69,8 +69,6 @@ export type SideMenuProps = {
 const SideMenu = ({ items }: SideMenuProps) => {
   const classes = useStyles();
   const [themeOpen, setThemeOpen] = useState(false);
-  const logout = useLogout();
-  const isAuthenticated = useIsAuthenticated();
   return (
     <Paper className={classes.root}>
       <Link to={URLS.LANDING}>
@@ -87,16 +85,6 @@ const SideMenu = ({ items }: SideMenuProps) => {
           <ListItemText primary='Tema' />
         </ListItem>
       </Paper>
-      {isAuthenticated && (
-        <Paper className={classes.itemPaper} noPadding>
-          <ListItem button className={classes.item} onClick={logout}>
-            <ListItemIcon>
-              <LogoutIcon />
-            </ListItemIcon>
-            <ListItemText primary='Logg ut' />
-          </ListItem>
-        </Paper>
-      )}
       <ThemeSettings onClose={() => setThemeOpen(false)} open={themeOpen} />
     </Paper>
   );

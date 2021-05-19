@@ -27,6 +27,8 @@ import Navigation from 'components/navigation/Navigation';
 import Landing from 'containers/Landing';
 const Http404 = lazy(() => import('containers/Http404'));
 const Auth = lazy(() => import('containers/Auth'));
+const Groups = lazy(() => import('containers/Groups'));
+const GroupDetails = lazy(() => import('containers/GroupDetails'));
 const Profile = lazy(() => import('containers/Profile'));
 const Rooms = lazy(() => import('containers/Rooms'));
 const RoomDetails = lazy(() => import('containers/RoomDetails'));
@@ -106,17 +108,21 @@ const AppRoutes = () => {
         <Navigation>
           <Routes>
             <Route element={<Landing />} path={URLS.LANDING} />
-            <AuthRoute path={URLS.ROOMS}>
+            <AuthRoute path={`${URLS.GROUPS}*`}>
+              <Route element={<GroupDetails />} path=':id/' />
+              <Route element={<Groups />} path='' />
+            </AuthRoute>
+            <AuthRoute path={`${URLS.ROOMS}*`}>
               <Route element={<RoomDetails />} path=':id/' />
               <Route element={<Rooms />} path='' />
             </AuthRoute>
             <AuthRoute element={<Profile />} path={URLS.PROFILE} />
-            <AuthRoute onlyAdmin path={URLS.USERS}>
+            <AuthRoute onlyAdmin path={`${URLS.USERS}*`}>
               <Route element={<Profile />} path=':userId/*' />
               <Route element={<Users />} path='' />
             </AuthRoute>
 
-            <Route element={<Http404 />} path='*' />
+            <Route element={<Http404 />} path='/*' />
           </Routes>
         </Navigation>
       </Route>
