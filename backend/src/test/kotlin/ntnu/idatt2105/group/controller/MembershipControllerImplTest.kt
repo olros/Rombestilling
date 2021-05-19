@@ -117,7 +117,7 @@ class MembershipControllerImplTest {
 
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.ADMIN])
-    fun `test batch create with multiple valid email`() {
+    fun `test batch create with single valid email`() {
         val newUser =  userRepository.save(UserFactory().`object`)
 
         val file = MockMultipartFile(
@@ -130,5 +130,42 @@ class MembershipControllerImplTest {
             MockMvcRequestBuilders.multipart(getURI(group) + "batch-memberships/").file(file)
         ).andExpect(MockMvcResultMatchers.status().isOk)
     }
+
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.ADMIN])
+    fun `test batch create with multiple valid emails`() {
+        val newUser =  userRepository.save(UserFactory().`object`)
+        val newUser2 =  userRepository.save(UserFactory().`object`)
+
+        val file = MockMultipartFile(
+            "file",
+            "test.csv",
+            "csv",
+            ("email\n" + newUser.email+"\n" + newUser2.email).byteInputStream())
+
+        mvc.perform(
+            MockMvcRequestBuilders.multipart(getURI(group) + "batch-memberships/").file(file)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].id", Matchers.hasItem(newUser.id.toString())))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].id", Matchers.hasItem(newUser2.id.toString())))
+
+    }
+
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.ADMIN])
+    fun `test batch create with single invalid email`() {
+
+        val file = MockMultipartFile(
+            "file",
+            "test.csv",
+            "csv",
+            ("email\n" + "test").byteInputStream())
+
+        mvc.perform(
+            MockMvcRequestBuilders.multipart(getURI(group) + "batch-memberships/").file(file)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+
 
 }
