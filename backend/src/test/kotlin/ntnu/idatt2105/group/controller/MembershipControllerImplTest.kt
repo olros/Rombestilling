@@ -159,7 +159,7 @@ class MembershipControllerImplTest {
             "file",
             "test.csv",
             "csv",
-            ("email\n" + "test").byteInputStream())
+            ("email\n" + "test@mail.com").byteInputStream())
 
         mvc.perform(
             MockMvcRequestBuilders.multipart(getURI(group) + "batch-memberships/").file(file)

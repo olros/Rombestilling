@@ -58,7 +58,7 @@ interface MembershipController {
                               sort = ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
                               @PathVariable groupId: UUID,
                               @RequestParam("file") file: MultipartFile
-    ): Page<UserListDto>
+    ): Response
 
     @Operation(summary = "Delete a membership", responses = [
         ApiResponse(responseCode = "200", description = "OK: membership was deleted"),

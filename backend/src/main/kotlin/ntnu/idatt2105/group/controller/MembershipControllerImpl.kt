@@ -26,7 +26,7 @@ class MembershipControllerImpl(val membershipService: MembershipService) : Membe
         pageable: Pageable,
         groupId: UUID,
         file: MultipartFile
-    ): Page<UserListDto> = membershipService.createMembershipBatch(predicate, pageable, file, groupId)
+    ): Response = membershipService.createMembershipBatch(predicate, pageable, file, groupId)
 
 
     override fun deleteMembership(groupId: UUID, userId: UUID): ResponseEntity<Response> {

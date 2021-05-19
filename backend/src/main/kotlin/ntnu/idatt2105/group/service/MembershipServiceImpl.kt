@@ -4,6 +4,8 @@ import com.opencsv.bean.CsvToBean
 import com.opencsv.bean.CsvToBeanBuilder
 import com.querydsl.core.types.ExpressionUtils
 import com.querydsl.core.types.Predicate
+import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.dto.response.ResponseError
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
@@ -14,6 +16,7 @@ import ntnu.idatt2105.user.dto.toUserListDto
 import ntnu.idatt2105.user.model.QUser
 import ntnu.idatt2105.user.repository.UserRepository
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -21,6 +24,7 @@ import java.io.BufferedReader
 import java.io.FileReader
 import java.io.IOException
 import java.io.InputStreamReader
+import java.lang.IllegalStateException
 import java.util.*
 
 
@@ -78,10 +82,11 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
         pageable: Pageable,
         file: MultipartFile,
         groupId: UUID
-    ): Page<UserListDto> {
+    ): Response {
         val group = groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString())}
         throwIfFileEmpty(file)
         var fileReader : BufferedReader? = null
+        val invalidUsers = mutableListOf<UserEmailDto>()
 
         try{
             fileReader = BufferedReader(InputStreamReader(file.inputStream))
@@ -90,15 +95,22 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
             if(listOfDto.isEmpty()) throw Exception()
 
             listOfDto.forEach{
-                val user = getUser(it.email)
-                user.groups.add(group)
-                userRepository.save(user)
+                try {
+                    val user = getUser(it.email)
+                    user.groups.add(group)
+                    userRepository.save(user)
+                } catch (ex: Exception) {
+                    invalidUsers.add(it)
+                }
             }
-            val user = QUser.user
-            val newPredicate = ExpressionUtils.allOf(predicate, user.groups.any().id.eq(group.id))!!
-            return userRepository.findAll(newPredicate, pageable).map { it.toUserListDto() }
-        }catch (ex: Exception) {
-            throw throw ApplicationException.throwExceptionWithId(EntityType.USER, ExceptionType.NOT_VALID, "batch.invalidFile")
+            if (invalidUsers.isNotEmpty()) return Response("${invalidUsers.map { it.email }}, tilhører ingen lagret brukere")
+            return Response("Medlemskapene ble opprettet")
+        } catch (ex: IllegalStateException) {
+            throw ApplicationException.throwExceptionWithId(
+                EntityType.USER,
+                ExceptionType.NOT_VALID,
+                "batch.invalidFile"
+            )
         } finally {
             closeFileReader(fileReader)
         }
