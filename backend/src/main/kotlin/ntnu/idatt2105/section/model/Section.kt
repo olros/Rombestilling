@@ -39,17 +39,16 @@ data class Section(
     private fun getPreoccupationDegree(): Int = children.fold(0, { acc, next -> acc + next.capacity})
 
     override fun toString(): String {
-        return "Section(id=$id, name='$name', description='$description', capacity=$capacity, image='$image', children=$children, reservation=$reservation, from=$from, to=$to)"
+        return "Section(id=$id, name='$name', description='$description', capacity=$capacity, image='$image', children=$children, reservation=$reservation)"
     }
 
     @Transient
-        @QueryType(PropertyType.DATETIME)
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        var from: ZonedDateTime? = null
-        @Transient
-        @QueryType(PropertyType.DATETIME)
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        var to: ZonedDateTime? = null
-
+    @QueryType(PropertyType.DATETIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    var from: ZonedDateTime? = null
+    @Transient
+    @QueryType(PropertyType.DATETIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    var to: ZonedDateTime? = null
 }
 

@@ -66,7 +66,7 @@ const RoomFilterBox = ({ defaultFilters, filters, updateFilters }: RoomFilterBox
         setError('to', { message: `"Til" må være etter "Fra"` });
         return;
       }
-      updateFilters({ ...data, to: data.to.toJSON(), from: data.from.toJSON() });
+      updateFilters({ ...data, to: `${data.from.toJSON()}&to=${data.to.toJSON()}`, from: data.from.toJSON() });
     }
     setIsOpen(false);
   };
