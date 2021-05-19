@@ -45,10 +45,6 @@ data class Section(
     @Transient
     @QueryType(PropertyType.DATETIME)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    var from: ZonedDateTime? = null
-    @Transient
-    @QueryType(PropertyType.DATETIME)
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    var to: ZonedDateTime? = null
+    var interval: ZonedDateTime? = null
 }
 

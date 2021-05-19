@@ -51,7 +51,11 @@ const Rooms = () => {
   const classes = useStyles();
   const { data: user } = useUser();
   const [filters, setFilters] = useState<RoomFilters>(defaultFilters);
-  const { data, error, hasNextPage, fetchNextPage, isFetching } = useSections(filters);
+  const finalFilters = useMemo(
+    () => (filters.from && filters.to ? { name: filters.name, interval: `${filters.from}&interval=${filters.to}` } : { name: filters.name }),
+    [filters],
+  );
+  const { data, error, hasNextPage, fetchNextPage, isFetching } = useSections(finalFilters);
   const results = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !results.length && !isFetching, [results, isFetching]);
   const [reservationOpen, setReservationOpen] = useState(false);

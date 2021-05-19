@@ -78,7 +78,7 @@ class ReservationServiceTest {
 
     @Test
     fun `test create reservation creates a reservation`(){
-        Mockito.lenient().`when`(reservationRepository.existsInterval(reservation.fromTime!!, reservation.toTime!!)).thenReturn(false)
+        Mockito.lenient().`when`(reservationRepository.existsInterval(reservation.fromTime!!, reservation.toTime!!, reservation.section!!.id)).thenReturn(false)
         val text = faker.aquaTeenHungerForce.quote()
         reservation.text = text
         val newReservation = ReservationCreateDto(userId = reservation.user?.id,

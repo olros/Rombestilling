@@ -18,7 +18,7 @@ interface SectionRepository : JpaRepository<Section, UUID>, QuerydslPredicateExe
     @JvmDefault
     override fun customize(bindings: QuerydslBindings, section: QSection) {
         bindings.bind(section.name).first { _, value -> section.name.contains(value) }
-        bindings.bind(section.from, section.to).all { _, values ->
+        bindings.bind(section.interval).all { _, values ->
             val predicate = BooleanBuilder()
             if (values.size == 2) {
                 val sortedList = values.sorted()
