@@ -10,10 +10,8 @@ Prosjektet er et bookingsystem for grupperom. Her kan brukere reservere ulike ro
 - [Make](https://www.gnu.org/software/make/) 
 
 ### Frontend
-- [Yarn](https://classic.yarnpkg.com/en/docs/install/#debian-stable):
-```bash
-npm install -g yarn
-```
+- [Node](https://nodejs.org/en/download/):
+
 
 ## Installasjon
 
