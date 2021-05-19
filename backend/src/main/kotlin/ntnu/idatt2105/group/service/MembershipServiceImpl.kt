@@ -6,7 +6,7 @@ import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
 import ntnu.idatt2105.group.repository.GroupRepository
-import ntnu.idatt2105.user.dto.UserIdDto
+import ntnu.idatt2105.user.dto.UserEmailDto
 import ntnu.idatt2105.user.dto.UserListDto
 import ntnu.idatt2105.user.dto.toUserListDto
 import ntnu.idatt2105.user.model.QUser
@@ -23,13 +23,18 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
     private fun getGroup(id:UUID) = groupRepository.findById(id).orElseThrow{throw ApplicationException.throwException(
             EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, id.toString()) }
 
-    private fun getUser(id :UUID) = userRepository.findById(id).orElseThrow {
+    private fun getUser(email :String) = userRepository.findByEmail(email).run {
+        if (this != null) return@run this
         throw ApplicationException.throwException(
                 EntityType.USER,
                 ExceptionType.ENTITY_NOT_FOUND,
-                id.toString()
-        )
+                email)
     }
+
+    private fun getUser(id: UUID) = userRepository.findById(id).orElseThrow{throw ApplicationException.throwException(
+            EntityType.USER,
+            ExceptionType.ENTITY_NOT_FOUND,
+            id.toString())}
 
     override fun getMemberships(groupId: UUID, predicate: Predicate, pageable: Pageable): Page<UserListDto> =
         getGroup(groupId).run {
@@ -38,11 +43,11 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
             return userRepository.findAll(newPredicate, pageable).map { it.toUserListDto() }
         }
 
-    override fun createMemberships(groupId: UUID, userId: UserIdDto, predicate: Predicate, pageable: Pageable): Page<UserListDto> {
+    override fun createMemberships(groupId: UUID, userEmail: UserEmailDto, predicate: Predicate, pageable: Pageable): Page<UserListDto> {
         groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(
                 EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }
                 .run {
-                    val member = getUser(userId.userId!!)
+                    val member = getUser(userEmail.email)
                     member.groups.add(this)
                     userRepository.save(member)
                     val user = QUser.user

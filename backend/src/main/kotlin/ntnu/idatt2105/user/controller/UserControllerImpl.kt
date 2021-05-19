@@ -1,6 +1,8 @@
 package ntnu.idatt2105.user.controller
 
 import com.querydsl.core.types.Predicate
+import ntnu.idatt2105.group.dto.GroupDto
+import ntnu.idatt2105.group.service.GroupService
 import ntnu.idatt2105.reservation.dto.ReservationDto
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.service.ReservationService
@@ -21,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @RestController
-class UserControllerImpl(val userService: UserService, val reservationService: ReservationService) : UserController {
+class UserControllerImpl(val userService: UserService, val reservationService: ReservationService, val groupService: GroupService) : UserController {
 
     override fun registerUser(userRegistrationDto: UserRegistrationDto): ResponseEntity<UserDto>  =
             ResponseEntity(userService.registerUser(userRegistrationDto), HttpStatus.CREATED)
@@ -58,4 +60,8 @@ class UserControllerImpl(val userService: UserService, val reservationService: R
         pageable: Pageable,
     ) =
         reservationService.getUserReservation(userId, pageable, predicate)
+
+    override fun getUserGroups(principal: UserDetailsImpl): List<GroupDto> {
+        return groupService.getUserGroups(principal.getId())
+    }
 }

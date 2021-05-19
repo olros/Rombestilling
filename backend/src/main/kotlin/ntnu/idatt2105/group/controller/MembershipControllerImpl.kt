@@ -3,7 +3,7 @@ package ntnu.idatt2105.group.controller
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.group.service.MembershipService
-import ntnu.idatt2105.user.dto.UserIdDto
+import ntnu.idatt2105.user.dto.UserEmailDto
 import ntnu.idatt2105.user.dto.UserListDto
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -17,8 +17,8 @@ class MembershipControllerImpl(val membershipService: MembershipService) : Membe
     override fun getMemberships(predicate: Predicate, pageable: Pageable, groupId: UUID): Page<UserListDto> =
             membershipService.getMemberships(groupId, predicate, pageable)
 
-    override fun createMembership(predicate: Predicate, pageable: Pageable, groupId: UUID, userId: UserIdDto): Page<UserListDto> =
-            membershipService.createMemberships(groupId,userId, predicate, pageable)
+    override fun createMembership(predicate: Predicate, pageable: Pageable, groupId: UUID, userEmail: UserEmailDto): Page<UserListDto> =
+            membershipService.createMemberships(groupId,userEmail, predicate, pageable)
 
     override fun deleteMembership(groupId: UUID, userId: UUID): ResponseEntity<Response> {
         membershipService.deleteMembership(groupId, userId)

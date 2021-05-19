@@ -5,10 +5,7 @@ import io.swagger.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import ntnu.idatt2105.dto.response.Response
-import ntnu.idatt2105.group.dto.GroupDto
-import ntnu.idatt2105.section.dto.SectionDto
-import ntnu.idatt2105.section.model.Section
-import ntnu.idatt2105.user.dto.UserIdDto
+import ntnu.idatt2105.user.dto.UserEmailDto
 import ntnu.idatt2105.user.dto.UserListDto
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.util.PaginationConstants
@@ -20,7 +17,6 @@ import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
-import javax.validation.Valid
 
 
 @Api(value = "Group services", tags = ["Group Services"], description = "Group Services")
@@ -46,7 +42,7 @@ interface MembershipController {
                          @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
                          sort= ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
                          @PathVariable groupId: UUID,
-                         @RequestBody userId: UserIdDto):  Page<UserListDto>
+                         @RequestBody userEmail: UserEmailDto):  Page<UserListDto>
 
     @Operation(summary = "Delete a membership", responses = [
         ApiResponse(responseCode = "200", description = "OK: membership was deleted"),

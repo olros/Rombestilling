@@ -12,6 +12,7 @@ interface GroupService {
     fun updateGroup(groupId: UUID, group: Group) : GroupDto
     fun deleteGroup(groupId: UUID)
     fun getGroup(groupId: UUID) : GroupDto
-    fun getAllGroups(pageable: Pageable, predicate: Predicate) : Page<Group>
+    fun getAllGroups(pageable: Pageable, predicate: Predicate) : Page<GroupDto>
+    fun getUserGroups(userId:UUID) : List<GroupDto>
 
 }

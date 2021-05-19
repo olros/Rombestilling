@@ -11,6 +11,8 @@ import org.springframework.data.querydsl.binding.QuerydslBindings
 import java.util.*
 
 interface GroupRepository: JpaRepository<Group, UUID>, QuerydslPredicateExecutor<Group>, QuerydslBinderCustomizer<QGroup> {
+
+    fun findAllByMembers_Id(members_id: UUID): List<Group>
     @JvmDefault
     override fun customize(bindings: QuerydslBindings, group: QGroup) {
         bindings.bind(group.name).first{_, value -> group.name.contains(value)}

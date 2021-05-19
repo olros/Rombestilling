@@ -6,7 +6,7 @@ import ntnu.idatt2105.factories.GroupFactory
 import ntnu.idatt2105.factories.UserFactory
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.group.repository.GroupRepository
-import ntnu.idatt2105.user.dto.UserIdDto
+import ntnu.idatt2105.user.dto.UserEmailDto
 import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.UserRepository
@@ -80,7 +80,7 @@ class MembershipControllerImplTest {
         val newUser =  userRepository.save(UserFactory().`object`)
         this.mvc.perform(MockMvcRequestBuilders.post(getURI(group))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(UserIdDto(newUser.id))))
+                .content(objectMapper.writeValueAsString(UserEmailDto(newUser.email))))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].id", Matchers.hasItem(newUser.id.toString())))

@@ -46,7 +46,13 @@ class GroupServiceImpl(val groupRepository: GroupRepository) : GroupService {
         return group.toGroupDto()
     }
 
-    override fun getAllGroups(pageable: Pageable, predicate: Predicate): Page<Group> {
-        return groupRepository.findAll(predicate, pageable)
+    override fun getAllGroups(pageable: Pageable, predicate: Predicate): Page<GroupDto> {
+        return groupRepository.findAll(predicate, pageable).map {
+            it.toGroupDto()
+        }
+    }
+
+    override fun getUserGroups(userId: UUID): List<GroupDto> {
+        return groupRepository.findAllByMembers_Id(userId).map { it.toGroupDto() }
     }
 }
