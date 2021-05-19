@@ -12,7 +12,7 @@ import VerifyDialog from 'components/layout/VerifyDialog';
 import Pagination from 'components/layout/Pagination';
 import AddMembership from 'components/miscellaneous/AddMembership';
 import NotFoundIndicator from 'components/miscellaneous/NotFoundIndicator';
-import UserListItem from 'containers/Users/components/UserListItem';
+import UserListItem, { UserListItemLoading } from 'containers/Users/components/UserListItem';
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -38,7 +38,7 @@ export const GroupMemberships = ({ groupId }: GroupMembershipsProps) => {
   const classes = useStyles();
   const showSnackbar = useSnackbar();
   const filters = useMemo(() => ({ fromTimeAfter: startOfDay(new Date()).toJSON() }), []);
-  const { data, error, hasNextPage, fetchNextPage, isFetching } = useMemberships(groupId, filters);
+  const { data, error, hasNextPage, fetchNextPage, isLoading, isFetching } = useMemberships(groupId, filters);
   const memberships = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !memberships.length && !isFetching, [memberships, isFetching]);
 
@@ -65,8 +65,9 @@ export const GroupMemberships = ({ groupId }: GroupMembershipsProps) => {
   return (
     <div className={classes.grid}>
       <AddMembership groupId={groupId}>Legg til bruker i gruppe</AddMembership>
-      <Pagination fullWidth hasNextPage={hasNextPage} isLoading={isFetching} nextPage={() => fetchNextPage()}>
+      <Pagination fullWidth hasNextPage={hasNextPage} nextPage={() => fetchNextPage()}>
         <div className={classes.grid}>
+          {isLoading && <UserListItemLoading />}
           {isEmpty && <NotFoundIndicator header={error?.message || 'Fant ingen medlemmer'} />}
           {memberships.map((user) => (
             <Membership key={user.id} user={user} />
