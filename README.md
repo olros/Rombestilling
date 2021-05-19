@@ -30,7 +30,7 @@ cd IDATT2105-project/backend/
 make run-unix
 
 # Uten GNU Make:
-./gradlew jib --image=rombestilling.azurecr.io/rombestilling:latest
+./gradlew jibDockerBuild --image=rombestilling.azurecr.io/rombestilling:latest
 docker-compose -f docker-compose.azure.yml up --build
 
 # Utvikling:
@@ -45,7 +45,7 @@ make db / docker-compose up
 make run-windows
 
 # Uten GNU Make:
-gradlew jib --image=rombestilling.azurecr.io/rombestilling:latest
+gradlew jibDockerBuild --image=rombestilling.azurecr.io/rombestilling:latest
 docker-compose -f docker-compose.azure.yml up --build
 
 # Utvikling:
