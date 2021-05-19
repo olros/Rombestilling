@@ -18,6 +18,13 @@ deploy:
 PR:
 	git add .
 
+run-windows:
+	gradlew jibDockerBuild --image=rombestilling.azurecr.io/rombestilling:latest
+	make run
+
+run-unix:
+	./gradlew jibDockerBuild --image=rombestilling.azurecr.io/rombestilling:latest
+	make run
+
 run:
-	docker-compose -f docker-compose.azure.yml build
-	docker-compose -f docker-compose.azure.yml up
+	docker-compose -f docker-compose.azure.yml up --build

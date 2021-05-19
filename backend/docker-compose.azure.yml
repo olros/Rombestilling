@@ -3,8 +3,6 @@ services:
   rb_db:
     image: mysql:5.7
     container_name: rb_db
-    volumes:
-      - ${WEBAPP_STORAGE_HOME}:var/lib/mysql
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=password
