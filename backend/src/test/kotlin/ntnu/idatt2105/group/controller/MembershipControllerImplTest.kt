@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.test.context.support.WithMockUser
@@ -112,4 +113,22 @@ class MembershipControllerImplTest {
 
 
     }
+
+
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.ADMIN])
+    fun `test batch create with multiple valid email`() {
+        val newUser =  userRepository.save(UserFactory().`object`)
+
+        val file = MockMultipartFile(
+            "file",
+            "test.csv",
+            "csv",
+            ("email\n" + newUser.email).byteInputStream())
+
+        mvc.perform(
+            MockMvcRequestBuilders.multipart(getURI(group) + "batch-memberships/").file(file)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
+    }
+
 }

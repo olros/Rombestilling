@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @RestController
@@ -19,6 +20,14 @@ class MembershipControllerImpl(val membershipService: MembershipService) : Membe
 
     override fun createMembership(predicate: Predicate, pageable: Pageable, groupId: UUID, userEmail: UserEmailDto): Page<UserListDto> =
             membershipService.createMemberships(groupId,userEmail, predicate, pageable)
+
+    override fun createMembershipBatch(
+        predicate: Predicate,
+        pageable: Pageable,
+        groupId: UUID,
+        file: MultipartFile
+    ): Page<UserListDto> = membershipService.createMembershipBatch(predicate, pageable, file, groupId)
+
 
     override fun deleteMembership(groupId: UUID, userId: UUID): ResponseEntity<Response> {
         membershipService.deleteMembership(groupId, userId)

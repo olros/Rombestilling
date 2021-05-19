@@ -1,5 +1,7 @@
 package ntnu.idatt2105.group.service
 
+import com.opencsv.bean.CsvToBean
+import com.opencsv.bean.CsvToBeanBuilder
 import com.querydsl.core.types.ExpressionUtils
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.exception.ApplicationException
@@ -14,6 +16,11 @@ import ntnu.idatt2105.user.repository.UserRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
+import java.io.BufferedReader
+import java.io.FileReader
+import java.io.IOException
+import java.io.InputStreamReader
 import java.util.*
 
 
@@ -66,6 +73,56 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
                 }
     }
 
+    override fun createMembershipBatch(
+        predicate: Predicate,
+        pageable: Pageable,
+        file: MultipartFile,
+        groupId: UUID
+    ): Page<UserListDto> {
+        val group = groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString())}
+        throwIfFileEmpty(file)
+        var fileReader : BufferedReader? = null
+
+        try{
+            fileReader = BufferedReader(InputStreamReader(file.inputStream))
+            val csvToBean = createCSVToBean(fileReader)
+            val listOfDto: List<UserEmailDto> = csvToBean.parse()
+            if(listOfDto.isEmpty()) throw Exception()
+
+            listOfDto.forEach{
+                val user = getUser(it.email)
+                user.groups.add(group)
+                userRepository.save(user)
+            }
+            val user = QUser.user
+            val newPredicate = ExpressionUtils.allOf(predicate, user.groups.any().id.eq(group.id))!!
+            return userRepository.findAll(newPredicate, pageable).map { it.toUserListDto() }
+        }catch (ex: Exception) {
+            throw throw ApplicationException.throwExceptionWithId(EntityType.USER, ExceptionType.NOT_VALID, "batch.invalidFile")
+        } finally {
+            closeFileReader(fileReader)
+        }
+    }
+
+    private fun createCSVToBean(fileReader: BufferedReader?): CsvToBean<UserEmailDto> =
+        CsvToBeanBuilder<UserEmailDto>(fileReader)
+            .withType(UserEmailDto::class.java)
+            .withIgnoreLeadingWhiteSpace(true)
+            .build()
+
+    private fun closeFileReader(fileReader: BufferedReader?) {
+        try {
+            fileReader!!.close()
+        } catch (ex: IOException) {
+            throw RuntimeException("Error during csv import")
+        }
+    }
+
+    private fun throwIfFileEmpty(file: MultipartFile) {
+        if (file.isEmpty) {
+            throw RuntimeException("Empty file")
+        }
+    }
 
 
 }
