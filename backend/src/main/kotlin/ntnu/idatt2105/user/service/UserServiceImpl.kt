@@ -25,6 +25,9 @@ import ntnu.idatt2105.security.token.isAfter
 import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.RoleType.USER
 import ntnu.idatt2105.user.repository.RoleRepository
+import ntnu.idatt2105.util.CsvToBean.Companion.closeFileReader
+import ntnu.idatt2105.util.CsvToBean.Companion.createCSVToBean
+import ntnu.idatt2105.util.CsvToBean.Companion.throwIfFileEmpty
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -74,7 +77,7 @@ class UserServiceImpl(
 
         try {
             fileReader = BufferedReader(InputStreamReader(file.inputStream))
-            val csvToBean = createCSVToBean(fileReader)
+            val csvToBean = createCSVToBean(fileReader, UserRegistrationDto::class.java)
             val listOfDTO: List<UserRegistrationDto> = csvToBean.parse()
             val listOfObj = mutableListOf<User>()
             if(listOfDTO.isEmpty()) throw Exception()
@@ -94,26 +97,6 @@ class UserServiceImpl(
         return Response("The users have been created")
     }
 
-    private fun createCSVToBean(fileReader: BufferedReader?): CsvToBean<UserRegistrationDto> =
-        CsvToBeanBuilder<UserRegistrationDto>(fileReader)
-            .withType(UserRegistrationDto::class.java)
-            .withIgnoreLeadingWhiteSpace(true)
-            .build()
-
-    private fun closeFileReader(fileReader: BufferedReader?) {
-        try {
-            fileReader!!.close()
-        } catch (ex: IOException) {
-            throw RuntimeException("Error during csv import")
-        }
-    }
-
-    private fun throwIfFileEmpty(file: MultipartFile) {
-        if (file.isEmpty) {
-            logger.error("File is empty!")
-            throw RuntimeException("Empty file")
-        }
-    }
 
     private fun existsByEmail(email: String): Boolean {
         return userRepository.existsByEmail(email)

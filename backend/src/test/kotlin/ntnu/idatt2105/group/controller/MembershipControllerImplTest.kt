@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.test.context.support.WithMockUser
@@ -112,4 +113,61 @@ class MembershipControllerImplTest {
 
 
     }
+
+
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test batch create with single valid email`() {
+        val newUser =  userRepository.save(UserFactory().`object`)
+
+        val file = MockMultipartFile(
+            "file",
+            "test.csv",
+            "csv",
+            ("email\n" + newUser.email).byteInputStream())
+
+        mvc.perform(
+            MockMvcRequestBuilders.multipart(getURI(group) + "batch-memberships/").file(file)
+                .with(SecurityMockMvcRequestPostProcessors.user(userDetails)))
+                .andExpect(MockMvcResultMatchers.status().isOk)
+    }
+
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test batch create with multiple valid emails`() {
+        val newUser =  userRepository.save(UserFactory().`object`)
+        val newUser2 =  userRepository.save(UserFactory().`object`)
+
+        val file = MockMultipartFile(
+            "file",
+            "test.csv",
+            "csv",
+            ("email\n" + newUser.email+"\n" + newUser2.email).byteInputStream())
+
+        mvc.perform(
+            MockMvcRequestBuilders.multipart(getURI(group) + "batch-memberships/").file(file)
+                .with(SecurityMockMvcRequestPostProcessors.user(userDetails)))
+                .andExpect(MockMvcResultMatchers.status().isOk)
+    }
+
+    @Test
+    @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
+    fun `test batch create with single valid email but no registered user returns OK and contains email that did not work`() {
+        val email = "test@mail.com"
+        val file = MockMultipartFile(
+            "file",
+            "test.csv",
+            "csv",
+            ("email\n" + email).byteInputStream())
+
+        mvc.perform(
+            MockMvcRequestBuilders.multipart(getURI(group) + "batch-memberships/").file(file)
+                .with(SecurityMockMvcRequestPostProcessors.user(userDetails)))
+                .andExpect(MockMvcResultMatchers.status().isOk)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.containsString(email)))
+
+    }
+
+
+
 }

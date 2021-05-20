@@ -17,6 +17,7 @@ import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 
@@ -36,6 +37,7 @@ interface MembershipController {
                        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
                        sort= ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
                        @PathVariable groupId: UUID): Page<UserListDto>
+
     @Operation(summary = "Create a new membership", responses = [
         ApiResponse(responseCode = "201", description = "Created: new membership was created"),
         ApiResponse(responseCode = "404", description = "Not found: new group or user does not exist"),
@@ -46,6 +48,15 @@ interface MembershipController {
                          sort= ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
                          @PathVariable groupId: UUID,
                          @RequestBody userEmail: UserEmailDto):  Page<UserListDto>
+
+    @Operation(summary = "Create a batch of memberships", responses = [
+        ApiResponse(responseCode = "201", description = "Created: new memberships was created"),
+        ApiResponse(responseCode = "404", description = "Not found: new group or user does not exist")
+    ])
+    @PostMapping("batch-memberships/")
+    fun createMembershipBatch(@PathVariable groupId: UUID,
+                              @RequestParam("file") file: MultipartFile
+    ): Response
 
     @Operation(summary = "Delete a membership", responses = [
         ApiResponse(responseCode = "200", description = "OK: membership was deleted"),
