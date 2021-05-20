@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import Helmet from 'react-helmet';
 import { useParams } from 'react-router-dom';
 import { useGroup } from 'hooks/Group';
@@ -15,13 +15,13 @@ import ListIcon from '@material-ui/icons/ViewStreamRounded';
 import UsersIcon from '@material-ui/icons/PeopleOutlineRounded';
 
 // Project Components
-import Http404 from 'containers/Http404';
 import Container from 'components/layout/Container';
 import Tabs from 'components/layout/Tabs';
 import { GroupReservations } from 'containers/RoomDetails/components/RoomReservations';
 import GroupMemberships from 'containers/GroupDetails/components/GroupMemberships';
 import EditGroup from 'components/miscellaneous/EditGroup';
-import { GroupCalendar } from 'components/miscellaneous/Calendar';
+const Http404 = lazy(() => import(/* webpackChunkName: "http404" */ 'containers/Http404'));
+const GroupCalendar = lazy(() => import(/* webpackChunkName: "group_calendar" */ 'components/miscellaneous/calendar/GroupCalendar'));
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -51,7 +51,11 @@ const GroupDetails = () => {
   }, [id]);
 
   if (isError) {
-    return <Http404 />;
+    return (
+      <Suspense fallback={null}>
+        <Http404 />
+      </Suspense>
+    );
   }
   return (
     <Container>
@@ -71,7 +75,9 @@ const GroupDetails = () => {
                 <GroupReservations groupId={id} />
               </Collapse>
               <Collapse in={tab === calendarTab.value} mountOnEnter>
-                <GroupCalendar groupId={id} />
+                <Suspense fallback={null}>
+                  <GroupCalendar groupId={id} />
+                </Suspense>
               </Collapse>
               <Collapse in={tab === membersTab.value} mountOnEnter>
                 <GroupMemberships groupId={id} />

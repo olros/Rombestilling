@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
+import ntnu.idatt2105.group.dto.CreateGroupDto
 import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.group.dto.toGroupDto
 import ntnu.idatt2105.group.model.Group
@@ -18,11 +19,9 @@ import java.util.*
 
 @Service
 class GroupServiceImpl(val groupRepository: GroupRepository, val userService: UserService) : GroupService {
-    override fun createGroup(group: Group, creatorId: UUID): GroupDto {
-        group.id = UUID.randomUUID()
-        group.members = mutableSetOf()
-        group.creator = userService.getUser(creatorId, User::class.java)
-        return groupRepository.save(group).toGroupDto()
+    override fun createGroup(group: CreateGroupDto, creatorId: UUID): GroupDto {
+        val newGroup = Group(id = UUID.randomUUID(), members = mutableSetOf(), creator = userService.getUser(creatorId, User::class.java), name = group.name)
+        return groupRepository.save(newGroup).toGroupDto()
     }
 
     override fun updateGroup(groupId: UUID, group: Group): GroupDto {

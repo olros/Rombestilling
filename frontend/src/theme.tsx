@@ -138,6 +138,7 @@ export const getTheme = (theme: ThemeTypes, prefersDarkMode: boolean) => {
       mode: get<'light' | 'dark'>({ light: 'light', dark: 'dark' }),
       primary: {
         main: get<string>({ light: '#4e7bea', dark: '#67e0f5' }),
+        light: get<string>({ light: '#7195ee', dark: '#85e6f7' }),
         contrastText: get<string>({ light: '#ffffff', dark: '#000000' }),
       },
       secondary: {

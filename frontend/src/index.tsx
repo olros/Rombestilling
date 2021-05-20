@@ -25,14 +25,14 @@ import Navigation from 'components/navigation/Navigation';
 
 // Project containers
 import Landing from 'containers/Landing';
-const Http404 = lazy(() => import('containers/Http404'));
-const Auth = lazy(() => import('containers/Auth'));
-const Groups = lazy(() => import('containers/Groups'));
-const GroupDetails = lazy(() => import('containers/GroupDetails'));
-const Profile = lazy(() => import('containers/Profile'));
-const Rooms = lazy(() => import('containers/Rooms'));
-const RoomDetails = lazy(() => import('containers/RoomDetails'));
-const Users = lazy(() => import('containers/Users'));
+const Http404 = lazy(() => import(/* webpackChunkName: "http404" */ 'containers/Http404'));
+const Auth = lazy(() => import(/* webpackChunkName: "auth" */ 'containers/Auth'));
+const Groups = lazy(() => import(/* webpackChunkName: "groups" */ 'containers/Groups'));
+const GroupDetails = lazy(() => import(/* webpackChunkName: "group_details" */ 'containers/GroupDetails'));
+const Profile = lazy(() => import(/* webpackChunkName: "profile" */ 'containers/Profile'));
+const Rooms = lazy(() => import(/* webpackChunkName: "rooms" */ 'containers/Rooms'));
+const RoomDetails = lazy(() => import(/* webpackChunkName: "room_details" */ 'containers/RoomDetails'));
+const Users = lazy(() => import(/* webpackChunkName: "users" */ 'containers/Users'));
 
 type AuthRouteProps = {
   path: string;

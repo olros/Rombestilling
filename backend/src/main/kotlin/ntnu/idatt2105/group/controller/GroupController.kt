@@ -5,6 +5,7 @@ import io.swagger.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.group.dto.CreateGroupDto
 import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.user.service.UserDetailsImpl
@@ -45,7 +46,7 @@ interface GroupController {
         ApiResponse(responseCode = "201", description = "Created: new group was created"),
     ])
     @PostMapping
-    fun createGroup(@RequestBody group: Group, @AuthenticationPrincipal principal: UserDetailsImpl): ResponseEntity<GroupDto>
+    fun createGroup(@RequestBody group: CreateGroupDto, @AuthenticationPrincipal principal: UserDetailsImpl): ResponseEntity<GroupDto>
 
     @Operation(summary = "Update existing group", responses = [
         ApiResponse(responseCode = "200", description = "Success: group was updated"),

@@ -4,29 +4,51 @@ import { ComponentType } from 'react';
 import { makeStyles, Tabs as MaterialTabs, Tab } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
+  tabsFlexContainer: {
+    position: 'relative',
+    zIndex: 1,
+  },
   tabsIndicator: {
-    backgroundColor: theme.palette.primary.main,
-    borderTopLeftRadius: 3,
-    borderTopRightRadius: 3,
-    height: 3,
+    top: 0,
+    bottom: 0,
+    height: 'auto',
+    background: 'none',
+    '&:after': {
+      content: '""',
+      display: 'block',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: `${theme.palette.primary.light}80`,
+    },
+  },
+  selected: {
+    color: `${theme.palette.get<string>({ light: theme.palette.common.black, dark: theme.palette.common.white })} !important`,
   },
   tabRoot: {
-    textTransform: 'none',
-    fontSize: '0.9rem',
-    minWidth: 92,
     color: theme.palette.text.primary,
+    borderRadius: theme.shape.borderRadius,
     '&:hover': {
-      color: theme.palette.primary.main,
-      opacity: 0.85,
+      opacity: 1,
     },
-    '&$selected': {
-      color: theme.palette.primary.main,
-    },
-    '&:focus': {
-      color: theme.palette.primary.dark,
+    padding: theme.spacing(2),
+    minHeight: 44,
+    minWidth: 96,
+    [theme.breakpoints.up('md')]: {
+      minWidth: 120,
     },
   },
-  selected: {},
+  tabWrapper: {
+    color: 'inherit',
+    textTransform: 'initial',
+    whiteSpace: 'nowrap',
+  },
+  marginBottom: {
+    marginBottom: theme.spacing(2),
+  },
   icon: {
     verticalAlign: 'middle',
     marginRight: 7,
@@ -60,14 +82,13 @@ const Tabs = ({ tabs, selected, setSelected }: IProps) => {
   return (
     <MaterialTabs
       aria-label='Tabs'
-      classes={{ indicator: classes.tabsIndicator }}
+      classes={{ flexContainer: classes.tabsFlexContainer, indicator: classes.tabsIndicator }}
       onChange={(e, newTab) => setSelected(newTab)}
       value={selected}
       variant='scrollable'>
       {tabs.map((tab, index) => (
         <Tab
-          classes={{ root: classes.tabRoot, selected: classes.selected }}
-          disableRipple
+          classes={{ root: classes.tabRoot, wrapper: classes.tabWrapper, selected: classes.selected }}
           key={index}
           label={
             <div>

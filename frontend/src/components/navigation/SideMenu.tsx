@@ -41,8 +41,11 @@ const useStyles = makeStyles((theme) => ({
   item: {
     padding: theme.spacing(2),
   },
-  selectedItem: {
+  selectedBackground: {
     background: theme.palette.primary.light,
+    color: theme.palette.getContrastText(theme.palette.primary.light),
+  },
+  selectedColor: {
     color: theme.palette.getContrastText(theme.palette.primary.light),
   },
 }));
@@ -51,9 +54,9 @@ const SidebarItem = ({ icon: Icon, text, to }: NavigationItem) => {
   const classes = useStyles();
   const equal = useMemo(() => location.pathname === to, [location.pathname, to]);
   return (
-    <Paper className={classnames(classes.itemPaper, equal && classes.selectedItem)} noPadding>
+    <Paper className={classnames(classes.itemPaper, equal && classes.selectedBackground, equal && classes.selectedBackground)} noPadding>
       <ListItem button className={classes.item} component={Link} to={to}>
-        <ListItemIcon className={classnames(equal && classes.selectedItem)}>
+        <ListItemIcon className={classnames(equal && classes.selectedColor)}>
           <Icon />
         </ListItemIcon>
         <ListItemText primary={text} />

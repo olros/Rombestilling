@@ -2,6 +2,7 @@ package ntnu.idatt2105.group.controller
 
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.group.dto.CreateGroupDto
 import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.group.service.GroupService
@@ -20,7 +21,7 @@ class GroupControllerImpl(val groupService: GroupService) : GroupController {
     override fun getGroup(groupId: UUID): ResponseEntity<GroupDto> =
             ResponseEntity(groupService.getGroup(groupId), HttpStatus.OK)
 
-    override fun createGroup(group: Group, principal: UserDetailsImpl): ResponseEntity<GroupDto> =
+    override fun createGroup(group: CreateGroupDto, principal: UserDetailsImpl): ResponseEntity<GroupDto> =
             ResponseEntity(groupService.createGroup(group, principal.getId()), HttpStatus.CREATED)
 
 
