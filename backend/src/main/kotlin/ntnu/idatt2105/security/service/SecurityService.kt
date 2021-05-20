@@ -31,20 +31,26 @@ class SecurityService(val userRepository: UserRepository,
     }
 
     fun reservationPermissions(reservationId: UUID) : Boolean {
-        val user = getUser()
+        val user = getUser() ?: return false
+        if(user.roles.contains(roleRepository.findByName(RoleType.ADMIN))){
+            return true
+        }
         val reservation =  reservationRepository.findById(reservationId).orElse(null)
-        if(user != null && reservation != null){
-            return reservation.user?.equals(user) == true || user.roles.contains(roleRepository.findByName(RoleType.ADMIN))
+        if(reservation != null){
+            return reservation.user?.equals(user) == true
         }
         return false
     }
 
     fun groupPermissions(groupId: UUID) : Boolean {
-        val user = getUser()
+        val user = getUser() ?: return false
+        if(user.roles.contains(roleRepository.findByName(RoleType.ADMIN))){
+            return true
+        }
         val group =  groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(
                 EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }
-        if(user != null && group != null){
-            return group.creator == user || user.roles.contains(roleRepository.findByName(RoleType.ADMIN))
+        if(group != null){
+            return group.creator == user
         }
         return false
     }

@@ -8,17 +8,14 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
 
 data class GroupDto(
-        var id: UUID? = null,
+        var id: UUID,
         var name: String = "",
-        var creator: UserListDto? =null,
+        var creator: UserListDto,
         var isMember: Boolean = false,
-){
-
-
-}
+)
 fun Group.toGroupDto() = GroupDto(
         id = this.id,
         name = this.name,
-        creator = this.creator?.toUserListDto(),
+        creator = this.creator.toUserListDto(),
         isMember = this.isMember()
 )

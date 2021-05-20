@@ -22,6 +22,7 @@ import java.util.*
 
 @Api(value = "Group services", tags = ["Group Services"], description = "Group Services")
 @RequestMapping("/groups/{groupId}/memberships/")
+@PreAuthorize("@securityService.groupPermissions(#groupId)")
 interface MembershipController {
 
     @Operation(summary = "Fetch memberships for the given group", responses = [
@@ -39,7 +40,6 @@ interface MembershipController {
         ApiResponse(responseCode = "404", description = "Not found: new group or user does not exist"),
     ])
     @PostMapping
-    @PreAuthorize("@securityService.groupPermissions(#groupId)")
     fun createMembership(@QuerydslPredicate(root = User::class) predicate: Predicate,
                          @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
                          sort= ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
@@ -51,6 +51,5 @@ interface MembershipController {
         ApiResponse(responseCode = "404", description = "Not found: new group or user does not exist"),
     ])
     @DeleteMapping("{userId}/")
-    @PreAuthorize("@securityService.groupPermissions(#groupId)")
     fun deleteMembership(@PathVariable groupId: UUID,@PathVariable userId: UUID):  ResponseEntity<Response>
 }

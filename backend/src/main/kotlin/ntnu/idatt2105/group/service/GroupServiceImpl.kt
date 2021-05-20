@@ -18,10 +18,10 @@ import java.util.*
 
 @Service
 class GroupServiceImpl(val groupRepository: GroupRepository, val userService: UserService) : GroupService {
-    override fun createGroup(group: Group, id: UUID): GroupDto {
+    override fun createGroup(group: Group, creatorId: UUID): GroupDto {
         group.id = UUID.randomUUID()
         group.members = mutableSetOf()
-        group.creator = userService.getUser(id, User::class.java)
+        group.creator = userService.getUser(creatorId, User::class.java)
         return groupRepository.save(group).toGroupDto()
     }
 

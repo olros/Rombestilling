@@ -21,11 +21,11 @@ data class Group(
         var members: MutableSet<User> = mutableSetOf(),
         @OneToOne
         @JoinColumn(name="user_id", referencedColumnName = "id")
-        var creator: User? = null,
+        var creator: User,
 ){
         fun isMember(): Boolean {
                 val user = SecurityContextHolder.getContext()?.authentication?.principal as UserDetails? ?: return false
-                return containsContextUser(user) || this.creator?.email == user.username
+                return containsContextUser(user) || this.creator.email == user.username
 
         }
         private fun containsContextUser(user : UserDetails): Boolean{
