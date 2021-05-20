@@ -4,12 +4,13 @@ import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
 import ntnu.idatt2105.group.repository.GroupRepository
+import ntnu.idatt2105.reservation.model.GroupReservation
+import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
 import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.RoleRepository
 import ntnu.idatt2105.user.repository.UserRepository
-import ntnu.idatt2105.user.service.UserDetailsImpl
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
@@ -19,7 +20,6 @@ import java.util.*
 
 @Service
 class SecurityService(val userRepository: UserRepository,
-                      val roleRepository: RoleRepository,
                       val groupRepository: GroupRepository,
                       val reservationRepository: ReservationRepository){
 
@@ -32,19 +32,24 @@ class SecurityService(val userRepository: UserRepository,
 
     fun reservationPermissions(reservationId: UUID) : Boolean {
         val user = getUser() ?: return false
-        if(user.roles.contains(roleRepository.findByName(RoleType.ADMIN))){
+        if(user.isAdmin()){
             return true
         }
-        val reservation =  reservationRepository.findById(reservationId).orElse(null)
-        if(reservation != null){
-            return reservation.user?.equals(user) == true
-        }
-        return false
+        val reservation: Reservation? =  reservationRepository.findById(reservationId).orElse(null)
+        return isOwnReservation(reservation, user) || isMemberOfGroupReservation(reservation)
     }
+
+    private fun isOwnReservation(
+        reservation: Reservation?,
+        user: User
+    ) = reservation?.getEntityId() == user.id
+
+    private fun isMemberOfGroupReservation(reservation: Reservation?) =
+        (reservation as? GroupReservation)?.group?.isMember() == true
 
     fun groupPermissions(groupId: UUID) : Boolean {
         val user = getUser() ?: return false
-        if(user.roles.contains(roleRepository.findByName(RoleType.ADMIN))){
+        if(user.isAdmin()){
             return true
         }
         val group =  groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(

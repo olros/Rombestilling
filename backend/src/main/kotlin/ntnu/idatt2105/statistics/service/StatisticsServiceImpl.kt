@@ -5,6 +5,7 @@ import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.reservation.model.QReservation
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
+import ntnu.idatt2105.section.repository.SectionRepository
 import ntnu.idatt2105.statistics.dto.StatisticsDto
 import org.apache.commons.collections4.IterableUtils
 import org.slf4j.LoggerFactory
@@ -15,9 +16,10 @@ import java.util.*
 
 @Service
 class StatisticsServiceImpl(
+    val sectionRepository: SectionRepository,
     val reservationRepository: ReservationRepository
 ) : StatisticsService {
-    val logger = LoggerFactory.getLogger("StatsService")
+    val logger = LoggerFactory.getLogger("StatisticsService")
 
     override fun getStatisticsForSection(sectionID: UUID, predicate: Predicate): StatisticsDto {
         val reservation = QReservation.reservation
@@ -29,12 +31,12 @@ class StatisticsServiceImpl(
             nrOfReservation = getNrOfReservations(reservations),
             hoursOfReservation = getHoursOfReservation(reservations),
             daysWithReservation = getDaysWithReservation(reservations),
-            userReservationCount = getUserReservationCount(reservations),
+            userReservationCount = getuserReservationCount(reservations),
         )
     }
 
-    private fun getUserReservationCount(reservations: Iterable<Reservation>): Int {
-        return reservations.map { it.user }.distinct().size
+    private fun getuserReservationCount(reservations: Iterable<Reservation>): Int {
+        return reservations.map { it.getEntityId() }.distinct().size
     }
 
     private fun getDaysWithReservation(reservations: Iterable<Reservation>): Int {

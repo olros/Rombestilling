@@ -2,7 +2,7 @@ package ntnu.idatt2105.section.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.JsonPath
-import ntnu.idatt2105.factories.ReservationFactory
+import ntnu.idatt2105.factories.UserReservationFactory
 import ntnu.idatt2105.section.dto.CreateSectionRequest
 import ntnu.idatt2105.factories.SectionFactory
 import ntnu.idatt2105.reservation.repository.ReservationRepository
@@ -12,7 +12,6 @@ import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.repository.UserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.modelmapper.ModelMapper
 import org.springframework.http.MediaType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -266,12 +265,13 @@ class SectionControllerImplTest {
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test section controller GET all returns OK and page of sections with time filter`() {
-        var newReservation = ReservationFactory().`object`
+        var newReservation = UserReservationFactory().`object`
         userRepository.save(newReservation.user!!)
         sectionRepository.save(newReservation.section!!)
         newReservation.fromTime = ZonedDateTime.now().minusDays(50)
         newReservation.toTime = ZonedDateTime.now().minusDays(25)
         newReservation = reservationRepository.save(newReservation)
+
         this.mvc.perform(
             get(URL)
                 .param("to", newReservation.toTime?.plusHours(1).toString())
@@ -326,11 +326,11 @@ class SectionControllerImplTest {
         newSection.parent = section
         sectionRepository.save(newSection)
 
-        val reservation = ReservationFactory().`object`
+        val reservation = UserReservationFactory().`object`
         reservation.section = newSection
         reservation.fromTime = ZonedDateTime.now().minusHours(1)
         reservation.toTime = ZonedDateTime.now().plusHours(1)
-        newSection.reservation.add(reservation)
+        newSection.userReservation.add(reservation)
 
         userRepository.save(reservation.user!!)
         reservationRepository.save(reservation)
@@ -357,11 +357,11 @@ class SectionControllerImplTest {
         newSection.parent = section
         sectionRepository.save(newSection)
 
-        val reservation = ReservationFactory().`object`
+        val reservation = UserReservationFactory().`object`
         reservation.section = newSection
         reservation.fromTime = ZonedDateTime.now().minusHours(1)
         reservation.toTime = ZonedDateTime.now().plusHours(1)
-        newSection.reservation.add(reservation)
+        newSection.userReservation.add(reservation)
 
         userRepository.save(reservation.user!!)
         reservationRepository.save(reservation)
@@ -382,17 +382,17 @@ class SectionControllerImplTest {
         newSection.parent = section
         sectionRepository.save(newSection)
 
-        val reservation1 = ReservationFactory().`object`
+        val reservation1 = UserReservationFactory().`object`
         reservation1.section = newSection
         reservation1.fromTime = ZonedDateTime.now().minusHours(1)
         reservation1.toTime = ZonedDateTime.now().plusHours(1)
-        newSection.reservation.add(reservation1)
+        newSection.userReservation.add(reservation1)
 
-        val reservation2 = ReservationFactory().`object`
+        val reservation2 = UserReservationFactory().`object`
         reservation2.section = newSection
         reservation2.fromTime = ZonedDateTime.now().plusHours(2)
         reservation2.toTime = ZonedDateTime.now().plusHours(4)
-        newSection.reservation.add(reservation2)
+        newSection.userReservation.add(reservation2)
 
 
         userRepository.save(reservation1.user!!)
@@ -425,17 +425,17 @@ class SectionControllerImplTest {
         wrongSection.parent = section
         sectionRepository.save(wrongSection)
 
-        val correctReservation = ReservationFactory().`object`
+        val correctReservation = UserReservationFactory().`object`
         correctReservation.section = correctSection
         correctReservation.fromTime = ZonedDateTime.now().minusHours(1)
         correctReservation.toTime = ZonedDateTime.now().plusHours(1)
-        correctSection.reservation.add(correctReservation)
+        correctSection.userReservation.add(correctReservation)
 
-        val wrongReservation = ReservationFactory().`object`
+        val wrongReservation = UserReservationFactory().`object`
         wrongReservation.section = wrongSection
         wrongReservation.fromTime = ZonedDateTime.now().plusHours(2)
         wrongReservation.toTime = ZonedDateTime.now().plusHours(4)
-        wrongSection.reservation.add(wrongReservation)
+        wrongSection.userReservation.add(wrongReservation)
 
 
         userRepository.save(correctReservation.user!!)
@@ -464,30 +464,30 @@ class SectionControllerImplTest {
         newSection.parent = section
         sectionRepository.save(newSection)
 
-        val reservation1 = ReservationFactory().`object`
+        val reservation1 = UserReservationFactory().`object`
         reservation1.section = newSection
         reservation1.fromTime = ZonedDateTime.now().minusHours(1)
         reservation1.toTime = ZonedDateTime.now().plusHours(1)
-        newSection.reservation.add(reservation1)
+        newSection.userReservation.add(reservation1)
 
-        val reservation2 = ReservationFactory().`object`
+        val reservation2 = UserReservationFactory().`object`
         reservation2.section = newSection
         reservation2.fromTime = ZonedDateTime.now().plusDays(1).plusHours(2)
         reservation2.toTime = ZonedDateTime.now().plusDays(1).plusHours(4)
-        newSection.reservation.add(reservation2)
+        newSection.userReservation.add(reservation2)
 
-        val reservation3 = ReservationFactory().`object`
+        val reservation3 = UserReservationFactory().`object`
         reservation3.section = newSection
         reservation3.fromTime = ZonedDateTime.now().plusMonths(1).plusHours(2)
         reservation3.toTime = ZonedDateTime.now().plusMonths(1).plusHours(4)
-        newSection.reservation.add(reservation3)
+        newSection.userReservation.add(reservation3)
 
 
-        val reservation4 = ReservationFactory().`object`
+        val reservation4 = UserReservationFactory().`object`
         reservation4.section = newSection
         reservation4.fromTime = ZonedDateTime.now().minusMonths(1).plusHours(2)
         reservation4.toTime = ZonedDateTime.now().minusMonths(1).plusHours(4)
-        newSection.reservation.add(reservation4)
+        newSection.userReservation.add(reservation4)
 
 
         userRepository.save(reservation1.user!!)
@@ -520,30 +520,30 @@ class SectionControllerImplTest {
         newSection.parent = section
         sectionRepository.save(newSection)
 
-        val reservation1 = ReservationFactory().`object`
+        val reservation1 = UserReservationFactory().`object`
         reservation1.section = newSection
         reservation1.fromTime = ZonedDateTime.now().minusHours(1)
         reservation1.toTime = ZonedDateTime.now().plusHours(1)
-        newSection.reservation.add(reservation1)
+        newSection.userReservation.add(reservation1)
 
-        val reservation2 = ReservationFactory().`object`
+        val reservation2 = UserReservationFactory().`object`
         reservation2.section = newSection
         reservation2.fromTime = ZonedDateTime.now().plusDays(1).plusHours(2)
         reservation2.toTime = ZonedDateTime.now().plusDays(1).plusHours(4)
-        newSection.reservation.add(reservation2)
+        newSection.userReservation.add(reservation2)
 
-        val wrongReservation1 = ReservationFactory().`object`
+        val wrongReservation1 = UserReservationFactory().`object`
         wrongReservation1.section = newSection
         wrongReservation1.fromTime = ZonedDateTime.now().plusYears(2).plusHours(2)
         wrongReservation1.toTime = ZonedDateTime.now().plusYears(2).plusHours(4)
-        newSection.reservation.add(wrongReservation1)
+        newSection.userReservation.add(wrongReservation1)
 
 
-        val wrongReservation2 = ReservationFactory().`object`
+        val wrongReservation2 = UserReservationFactory().`object`
         wrongReservation2.section = newSection
         wrongReservation2.fromTime = ZonedDateTime.now().minusYears(2).plusHours(2)
         wrongReservation2.toTime = ZonedDateTime.now().minusYears(2).plusHours(4)
-        newSection.reservation.add(wrongReservation2)
+        newSection.userReservation.add(wrongReservation2)
 
 
         userRepository.save(reservation1.user!!)

@@ -4,6 +4,7 @@ package ntnu.idatt2105.factories
 import io.github.serpro69.kfaker.Faker
 import io.github.serpro69.kfaker.FakerConfig
 import io.github.serpro69.kfaker.create
+import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.model.UserBuilder
 import org.springframework.beans.factory.FactoryBean
@@ -41,6 +42,12 @@ class UserFactory : FactoryBean<User> {
             roles = mutableSetOf(userRole)
         ).build()
     }
+
+    fun admin(): User =
+        this.`object`.copy(roles = mutableSetOf(
+            RoleFactory().`object`,
+            RoleFactory().getObject(RoleType.ADMIN)
+        ))
 
     override fun getObjectType(): Class<*>? {
         return null

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.querydsl.core.annotations.PropertyType
 import com.querydsl.core.annotations.QueryType
 import ntnu.idatt2105.group.model.Group
+import ntnu.idatt2105.reservation.model.Reserver
 import ntnu.idatt2105.security.token.PasswordResetToken
 import java.time.LocalDate
 import java.util.*
@@ -22,7 +23,7 @@ data class User(@Id
                 var image: String = "",
                 var expirationDate: LocalDate = LocalDate.now().plusYears(1),
                 var password: String = "",
-                @ManyToMany(cascade = [CascadeType.MERGE, CascadeType.PERSIST], fetch = FetchType.EAGER)
+                @ManyToMany(fetch= FetchType.EAGER ,cascade = [CascadeType.MERGE, CascadeType.PERSIST])
                 @JoinTable(name = "user_roles",
                         joinColumns = [JoinColumn(name = "USER_ID", referencedColumnName = "id")],
                         inverseJoinColumns = [JoinColumn(name = "ROLE_ID", referencedColumnName = "id")])
@@ -36,7 +37,10 @@ data class User(@Id
                 uniqueConstraints = [UniqueConstraint(columnNames = ["group_id", "user_id"])])
                 @JsonIgnore
                 var groups: MutableList<Group> = mutableListOf()
-){
+): Reserver {
+
+    fun isAdmin() = roles.any { it.name == RoleType.ADMIN }
+
     @Transient
     @QueryType(PropertyType.STRING)
     val search: String? = null

@@ -9,15 +9,12 @@ import ntnu.idatt2105.reservation.service.ReservationService
 import ntnu.idatt2105.user.dto.DetailedUserDto
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
+import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.service.UserDetailsImpl
 import ntnu.idatt2105.user.service.UserService
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.querydsl.binding.QuerydslPredicate
-import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
@@ -54,7 +51,7 @@ class UserControllerImpl(val userService: UserService, val reservationService: R
     ) =
         reservationService.getUserReservation(principal.getId(), pageable, predicate)
 
-    override fun getUserReservations(
+    override fun getuserReservations(
         userId: UUID,
         predicate: Predicate,
         pageable: Pageable,
