@@ -10,4 +10,5 @@ data class Role(
     @Id
     @Column(columnDefinition = "CHAR(32)")
     val id: UUID = UUID.randomUUID(),
-    val name: String)
+    val name: String
+)

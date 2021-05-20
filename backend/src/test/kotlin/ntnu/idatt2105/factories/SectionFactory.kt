@@ -1,11 +1,9 @@
-package ntnu.idatt2105.factories;
+package ntnu.idatt2105.factories
 
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.section.model.Section
 import org.springframework.beans.factory.FactoryBean
 import java.util.*
-import kotlin.random.asKotlinRandom
-import kotlin.random.nextUInt
 
 class SectionFactory : FactoryBean<Section> {
 

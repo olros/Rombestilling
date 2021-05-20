@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 
-
 @RestController
 class AuthenticationControllerImpl(val jwtConfig: JWTConfig, val jwtService: JwtService, val userService: UserServiceImpl) :
     AuthenticationController {
@@ -25,12 +24,12 @@ class AuthenticationControllerImpl(val jwtConfig: JWTConfig, val jwtService: Jwt
         return jwtService.refreshToken(header)
     }
 
-    override fun forgotPassword(email: ForgotPassword) : ResponseEntity<Response>{
+    override fun forgotPassword(email: ForgotPassword): ResponseEntity<Response> {
         userService.forgotPassword(email)
         return ResponseEntity(Response("Password was changed"), HttpStatus.OK)
     }
 
-    override fun resetPassword(passwordResetTokenId: UUID, reset: ResetPasswordDto) : ResponseEntity<Response> {
+    override fun resetPassword(passwordResetTokenId: UUID, reset: ResetPasswordDto): ResponseEntity<Response> {
         userService.resetPassword(reset, passwordResetTokenId)
         return ResponseEntity(Response("Password was reset"), HttpStatus.OK)
     }

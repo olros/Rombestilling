@@ -18,16 +18,17 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
-
 @Service
-class SectionServiceImpl(val sectionRepository: SectionRepository,
-                         val sectionFactory: SectionFactoryImpl): SectionService {
+class SectionServiceImpl(
+    val sectionRepository: SectionRepository,
+    val sectionFactory: SectionFactoryImpl
+) : SectionService {
 
     val logger = LoggerFactory.getLogger("SectionService")
 
     override fun getAllSections(pageable: Pageable, predicate: Predicate): Page<SectionListDto> {
-        val sections = sectionRepository.findAll(predicate,pageable)
-        return sections.map{ it.toSectionListDto() }
+        val sections = sectionRepository.findAll(predicate, pageable)
+        return sections.map { it.toSectionListDto() }
     }
 
     @Transactional
@@ -41,8 +42,8 @@ class SectionServiceImpl(val sectionRepository: SectionRepository,
     }
 
     private fun getSection(id: UUID): Section =
-        sectionRepository.findById(id).orElseThrow{ throw ApplicationException.throwException(
-            EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, id.toString())  }
+        sectionRepository.findById(id).orElseThrow { throw ApplicationException.throwException(
+            EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, id.toString()) }
 
     override fun getSectionById(id: UUID): SectionDto {
         val section = getSection(id)
@@ -63,7 +64,6 @@ class SectionServiceImpl(val sectionRepository: SectionRepository,
             logger.info("Section: ${section.name} was updated")
             return updatedSection.toSectionDto()
         }
-
     }
 
     @Transactional
@@ -73,6 +73,5 @@ class SectionServiceImpl(val sectionRepository: SectionRepository,
             logger.info("Section with id: $id was deleted")
             return Response("Section was deleted")
         }
-
     }
 }

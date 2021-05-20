@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
-
 @Api(value = "Group services", tags = ["Group Services"], description = "Group Services")
 @RequestMapping("/groups/{groupId}/memberships/")
 @PreAuthorize("@securityService.groupPermissions(#groupId, false)")
@@ -43,11 +42,13 @@ interface MembershipController {
         ApiResponse(responseCode = "404", description = "Not found: new group or user does not exist"),
     ])
     @PostMapping
-    fun createMembership(@QuerydslPredicate(root = User::class) predicate: Predicate,
-                         @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
-                         sort= ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
-                         @PathVariable groupId: UUID,
-                         @RequestBody userEmail: UserEmailDto):  Page<UserListDto>
+    fun createMembership(
+        @QuerydslPredicate(root = User::class) predicate: Predicate,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
+        sort = ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
+        @PathVariable groupId: UUID,
+        @RequestBody userEmail: UserEmailDto
+    ): Page<UserListDto>
 
     @Operation(summary = "Create a batch of memberships", responses = [
         ApiResponse(responseCode = "201", description = "Created: new memberships was created"),
@@ -63,5 +64,5 @@ interface MembershipController {
         ApiResponse(responseCode = "404", description = "Not found: new group or user does not exist"),
     ])
     @DeleteMapping("{userId}/")
-    fun deleteMembership(@PathVariable groupId: UUID,@PathVariable userId: UUID):  ResponseEntity<Response>
+    fun deleteMembership(@PathVariable groupId: UUID, @PathVariable userId: UUID): ResponseEntity<Response>
 }

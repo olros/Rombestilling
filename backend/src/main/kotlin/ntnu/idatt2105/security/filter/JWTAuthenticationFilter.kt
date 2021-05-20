@@ -19,9 +19,7 @@ import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-
-class JWTAuthenticationFilter(val jwtConfig: JWTConfig, val jwtUtil: JwtUtil) : OncePerRequestFilter(){
-
+class JWTAuthenticationFilter(val jwtConfig: JWTConfig, val jwtUtil: JwtUtil) : OncePerRequestFilter() {
 
     @Throws(IOException::class, ServletException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
@@ -33,13 +31,11 @@ class JWTAuthenticationFilter(val jwtConfig: JWTConfig, val jwtUtil: JwtUtil) : 
         }
         chain.doFilter(request, response)
         return
-
     }
 
-    private fun extractAuthorizationHeaderFromRequest(request: HttpServletRequest): String?  {
+    private fun extractAuthorizationHeaderFromRequest(request: HttpServletRequest): String? {
         return request.getHeader(jwtConfig.header)
     }
-
 
     private fun processAuthentication(request: HttpServletRequest) {
         try {

@@ -5,4 +5,4 @@ data class StatisticsDto(
     val hoursOfReservation: Long,
     val daysWithReservation: Int,
     val userReservationCount: Int,
-                    )
+)

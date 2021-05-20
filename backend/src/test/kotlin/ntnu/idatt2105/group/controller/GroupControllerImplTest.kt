@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.util.*
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 class GroupControllerImplTest {
@@ -31,7 +30,7 @@ class GroupControllerImplTest {
     private val URI = "/groups/"
 
     @Autowired
-    private lateinit var  groupRepository : GroupRepository
+    private lateinit var groupRepository: GroupRepository
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -40,7 +39,7 @@ class GroupControllerImplTest {
     private lateinit var mvc: MockMvc
 
     @Autowired
-    private lateinit var  userRepository: UserRepository
+    private lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var userDetailsService: UserDetailsService
@@ -51,7 +50,7 @@ class GroupControllerImplTest {
 
     private val faker = Faker()
     @BeforeEach
-    fun setup(){
+    fun setup() {
         group = GroupFactory().`object`
         userRepository.save(group.creator!!)
         group = groupRepository.save(group)
@@ -59,7 +58,7 @@ class GroupControllerImplTest {
     }
 
     @AfterEach
-    fun cleanUp(){
+    fun cleanUp() {
         groupRepository.deleteAll()
         userRepository.deleteAll()
     }
@@ -67,12 +66,11 @@ class GroupControllerImplTest {
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test reservation controller GET returns OK and given group`() {
-        this.mvc.perform(MockMvcRequestBuilders.get("$URI{groupId}/",group.id)
+        this.mvc.perform(MockMvcRequestBuilders.get("$URI{groupId}/", group.id)
                 .with(SecurityMockMvcRequestPostProcessors.user(userDetails)))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(group.name))
-
     }
 
     @Test
@@ -80,11 +78,10 @@ class GroupControllerImplTest {
     fun `test reservation controller GET returns NOT FOUND when group does not exist`() {
         val name = faker.coffee.blendName()
         group.name = name
-        this.mvc.perform(MockMvcRequestBuilders.get("$URI{groupId}/",UUID.randomUUID())
+        this.mvc.perform(MockMvcRequestBuilders.get("$URI{groupId}/", UUID.randomUUID())
                 .with(SecurityMockMvcRequestPostProcessors.user(userDetails)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-
     }
 
     @Test
@@ -97,7 +94,6 @@ class GroupControllerImplTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(group.name))
-
     }
 
     @Test
@@ -105,30 +101,27 @@ class GroupControllerImplTest {
     fun `test reservation controller PUT returns OK and Updated group`() {
         val name = faker.coffee.blendName()
         group.name = name
-        this.mvc.perform(MockMvcRequestBuilders.put("$URI{groupId}/",group.id)
+        this.mvc.perform(MockMvcRequestBuilders.put("$URI{groupId}/", group.id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(SecurityMockMvcRequestPostProcessors.user(userDetails))
                 .content(objectMapper.writeValueAsString(group)))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(name))
-
     }
-
 
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test reservation controller PUT returns NOT FOUND when group does not exist`() {
         val name = faker.coffee.blendName()
         group.name = name
-        this.mvc.perform(MockMvcRequestBuilders.put("$URI{groupId}/",UUID.randomUUID())
+        this.mvc.perform(MockMvcRequestBuilders.put("$URI{groupId}/", UUID.randomUUID())
                 .with(SecurityMockMvcRequestPostProcessors.user(userDetails))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(SecurityMockMvcRequestPostProcessors.user(userDetails))
                 .content(objectMapper.writeValueAsString(group)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-
     }
 
     @Test
@@ -136,12 +129,11 @@ class GroupControllerImplTest {
     fun `test reservation controller DELETE returns OK and returns message`() {
         val name = faker.coffee.blendName()
         group.name = name
-        this.mvc.perform(MockMvcRequestBuilders.delete("$URI{groupId}/",group.id)
+        this.mvc.perform(MockMvcRequestBuilders.delete("$URI{groupId}/", group.id)
                 .with(SecurityMockMvcRequestPostProcessors.user(userDetails)))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").exists())
-
     }
 
     @Test
@@ -149,10 +141,9 @@ class GroupControllerImplTest {
     fun `test reservation controller DELETE returns NOT FOUND when group does not exist`() {
         val name = faker.coffee.blendName()
         group.name = name
-        this.mvc.perform(MockMvcRequestBuilders.delete("$URI{groupId}/",UUID.randomUUID())
+        this.mvc.perform(MockMvcRequestBuilders.delete("$URI{groupId}/", UUID.randomUUID())
                 .with(SecurityMockMvcRequestPostProcessors.user(userDetails)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-
     }
 }

@@ -22,7 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.test.context.ContextConfiguration
 import java.util.*
 
-
 @ContextConfiguration(classes = [JWTConfig::class, JwtUtil::class])
 @ExtendWith(MockitoExtension::class)
 internal class RefreshTokenServiceImplTest {
@@ -49,7 +48,7 @@ internal class RefreshTokenServiceImplTest {
         val randomString = (1..JWT_SECRET_LENGTH)
             .map { i -> kotlin.random.Random.nextInt(0, charPool.size) }
             .map(charPool::get)
-            .joinToString("");
+            .joinToString("")
 
         val jwtConfig = JWTConfig(
             uri = "/auth",

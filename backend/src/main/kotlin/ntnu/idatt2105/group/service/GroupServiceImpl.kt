@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
-
 @Service
 class GroupServiceImpl(val groupRepository: GroupRepository, val userService: UserService) : GroupService {
 
@@ -67,9 +66,8 @@ class GroupServiceImpl(val groupRepository: GroupRepository, val userService: Us
         return groupRepository.findAllByMembers_IdOrCreator_id(userId, userId).map { it.toGroupDto() }
     }
 
-    private fun getGroupById(id: UUID): Group = groupRepository.findById(id).orElseThrow{throw ApplicationException.throwException(
+    private fun getGroupById(id: UUID): Group = groupRepository.findById(id).orElseThrow { throw ApplicationException.throwException(
                 EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, id.toString()) }
 
     override fun getReserverById(id: UUID): Group = getGroupById(id)
-
 }

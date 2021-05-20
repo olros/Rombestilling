@@ -4,7 +4,6 @@ import ntnu.idatt2105.security.config.JWTConfig
 import org.springframework.security.authentication.AuthenticationServiceException
 import org.springframework.stereotype.Component
 
-
 @Component
 class JwtHeaderTokenExtractor(val jwtConfig: JWTConfig) : TokenExtractor {
     override fun extract(payload: String): String {

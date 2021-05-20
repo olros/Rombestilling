@@ -14,12 +14,12 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @RestController
-class MembershipControllerImpl(val membershipService: MembershipService) : MembershipController{
+class MembershipControllerImpl(val membershipService: MembershipService) : MembershipController {
     override fun getMemberships(predicate: Predicate, pageable: Pageable, groupId: UUID): Page<UserListDto> =
             membershipService.getMemberships(groupId, predicate, pageable)
 
     override fun createMembership(predicate: Predicate, pageable: Pageable, groupId: UUID, userEmail: UserEmailDto): Page<UserListDto> =
-            membershipService.createMemberships(groupId,userEmail, predicate, pageable)
+            membershipService.createMemberships(groupId, userEmail, predicate, pageable)
 
     override fun createMembershipBatch(
         groupId: UUID,
@@ -30,6 +30,5 @@ class MembershipControllerImpl(val membershipService: MembershipService) : Membe
     override fun deleteMembership(groupId: UUID, userId: UUID): ResponseEntity<Response> {
         membershipService.deleteMembership(groupId, userId)
         return ResponseEntity(Response("Membership has been deleted"), HttpStatus.OK)
-
     }
 }

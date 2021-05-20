@@ -10,7 +10,6 @@ import java.time.LocalDate
 import java.util.*
 import javax.persistence.*
 
-
 @Entity
 data class User(@Id
                 @Column(columnDefinition = "CHAR(32)")
@@ -45,4 +44,3 @@ data class User(@Id
     @QueryType(PropertyType.STRING)
     val search: String? = null
 }
-

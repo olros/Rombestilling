@@ -7,27 +7,26 @@ import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
-import ntnu.idatt2105.security.dto.ForgotPassword
-import ntnu.idatt2105.security.token.PasswordResetToken
-import ntnu.idatt2105.user.dto.UserDto
-import ntnu.idatt2105.user.dto.DetailedUserDto
-import ntnu.idatt2105.user.dto.UserRegistrationDto
-import ntnu.idatt2105.user.model.User
-import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.mailer.HtmlTemplate
 import ntnu.idatt2105.mailer.Mail
 import ntnu.idatt2105.mailer.MailService
-import ntnu.idatt2105.reservation.service.ReserverService
+import ntnu.idatt2105.security.dto.ForgotPassword
 import ntnu.idatt2105.security.dto.MakeAdminDto
-import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
 import ntnu.idatt2105.security.dto.ResetPasswordDto
+import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
+import ntnu.idatt2105.security.token.PasswordResetToken
 import ntnu.idatt2105.security.token.isAfter
+import ntnu.idatt2105.user.dto.DetailedUserDto
+import ntnu.idatt2105.user.dto.UserDto
+import ntnu.idatt2105.user.dto.UserRegistrationDto
 import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.RoleType.USER
+import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.RoleRepository
 import ntnu.idatt2105.util.CsvToBean.Companion.closeFileReader
 import ntnu.idatt2105.util.CsvToBean.Companion.createCSVToBean
 import ntnu.idatt2105.util.CsvToBean.Companion.throwIfFileEmpty
+import ntnu.idatt2105.user.repository.UserRepository
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -40,7 +39,6 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.time.LocalDate
 import java.util.*
-
 
 @Service
 class UserServiceImpl(
@@ -66,28 +64,28 @@ class UserServiceImpl(
         return modelMapper.map(savedUser, UserDto::class.java)
     }
 
-    private fun createUserObj(userDto : UserRegistrationDto): User {
+    private fun createUserObj(userDto: UserRegistrationDto): User {
         return User(id = UUID.randomUUID(), email = userDto.email, expirationDate = userDto.expirationDate, firstName = userDto.firstName,
-            surname = userDto.surname, phoneNumber =  userDto.phoneNumber)
+            surname = userDto.surname, phoneNumber = userDto.phoneNumber)
     }
 
     override fun registerUserBatch(file: MultipartFile): Response {
         throwIfFileEmpty(file)
         logger.info("Trying to register multiple users")
-        var fileReader : BufferedReader? = null
+        var fileReader: BufferedReader? = null
 
         try {
             fileReader = BufferedReader(InputStreamReader(file.inputStream))
             val csvToBean = createCSVToBean(fileReader, UserRegistrationDto::class.java)
             val listOfDTO: List<UserRegistrationDto> = csvToBean.parse()
             val listOfObj = mutableListOf<User>()
-            if(listOfDTO.isEmpty()) throw Exception()
+            if (listOfDTO.isEmpty()) throw Exception()
             listOfDTO.forEach {
                 listOfObj.add(createUserObj(it))
             }
             userRepository.saveAll(listOfObj)
             logger.info("The users have been created. Sending emails...")
-            listOfObj.forEach{
+            listOfObj.forEach {
                 forgotPassword(ForgotPassword(it.email))
             }
         } catch (ex: Exception) {
@@ -135,7 +133,7 @@ class UserServiceImpl(
         val userObj = getUser(user.userId!!, User::class.java)
         val adminRole = roleRepository.findByName(RoleType.ADMIN)
         val userRole = roleRepository.findByName(USER)
-        if(!userObj.roles.contains(adminRole))userObj.roles = mutableSetOf(adminRole!!,userRole!!)
+        if (!userObj.roles.contains(adminRole))userObj.roles = mutableSetOf(adminRole!!, userRole!!)
         return modelMapper.map(userRepository.save(userObj), DetailedUserDto::class.java)
     }
 
@@ -188,7 +186,7 @@ class UserServiceImpl(
             ExceptionType.ENTITY_NOT_FOUND, id.toString())
         }
         val user = getUserByEmail(resetDto.email)
-        if(user != token.user && token.isAfter()) {
+        if (user != token.user && token.isAfter()) {
             logger.error("$token is not valid for ${user.email}")
             throw ApplicationException.throwException(EntityType.TOKEN,
                 ExceptionType.NOT_VALID, id.toString())
@@ -196,7 +194,6 @@ class UserServiceImpl(
         roleRepository.findByName(USER).run {
             if (this == null) throw ApplicationException.throwException(EntityType.ROLE,
                     ExceptionType.ENTITY_NOT_FOUND, this?.name!!)
-
 
             if (!user.roles.contains(this)) user.roles = mutableSetOf(this)
         }

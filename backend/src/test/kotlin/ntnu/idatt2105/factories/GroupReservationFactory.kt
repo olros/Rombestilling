@@ -3,7 +3,6 @@ package ntnu.idatt2105.factories
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.reservation.model.GroupReservation
 import ntnu.idatt2105.reservation.model.Reservation
-import ntnu.idatt2105.reservation.model.UserReservation
 import ntnu.idatt2105.util.ReservationConstants
 import org.springframework.beans.factory.FactoryBean
 import java.time.ZonedDateTime
@@ -23,7 +22,7 @@ class GroupReservationFactory : FactoryBean<GroupReservation> {
         return false
     }
 
-    override fun getObject(): GroupReservation{
+    override fun getObject(): GroupReservation {
         val group = groupFactory.`object`
         val section = sectionFactory.`object`
         val tomorrow = ZonedDateTime.now().plusDays(1)
@@ -33,9 +32,9 @@ class GroupReservationFactory : FactoryBean<GroupReservation> {
                 id = UUID.randomUUID(),
                 group = group,
                 section = section,
-                fromTime =  earliestStartTimeTomorrow.plusHours(1),
+                fromTime = earliestStartTimeTomorrow.plusHours(1),
                 toTime = earliestStartTimeTomorrow.plusHours(5),
                 text = faker.bojackHorseman.characters(),
-                nrOfPeople= (0..10000).random())
+                nrOfPeople = (0..10000).random())
     }
 }

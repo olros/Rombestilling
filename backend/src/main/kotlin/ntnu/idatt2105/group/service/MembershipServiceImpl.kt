@@ -31,14 +31,13 @@ import java.io.InputStreamReader
 import java.lang.IllegalStateException
 import java.util.*
 
-
 @Service
 class MembershipServiceImpl(val groupRepository: GroupRepository, val userRepository: UserRepository) : MembershipService {
 
-    private fun getGroup(id:UUID) = groupRepository.findById(id).orElseThrow{throw ApplicationException.throwException(
+    private fun getGroup(id: UUID) = groupRepository.findById(id).orElseThrow { throw ApplicationException.throwException(
             EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, id.toString()) }
 
-    private fun getUser(email :String) = userRepository.findByEmail(email).run {
+    private fun getUser(email: String) = userRepository.findByEmail(email).run {
         if (this != null) return@run this
         throw ApplicationException.throwException(
                 EntityType.USER,
@@ -46,10 +45,10 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
                 email)
     }
 
-    private fun getUser(id: UUID) = userRepository.findById(id).orElseThrow{throw ApplicationException.throwException(
+    private fun getUser(id: UUID) = userRepository.findById(id).orElseThrow { throw ApplicationException.throwException(
             EntityType.USER,
             ExceptionType.ENTITY_NOT_FOUND,
-            id.toString())}
+            id.toString()) }
 
     override fun getMemberships(groupId: UUID, predicate: Predicate, pageable: Pageable): Page<UserListDto> =
         getGroup(groupId).run {
@@ -60,7 +59,7 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
 
     @Transactional
     override fun createMemberships(groupId: UUID, userEmail: UserEmailDto, predicate: Predicate, pageable: Pageable): Page<UserListDto> {
-        groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(
+        groupRepository.findById(groupId).orElseThrow { throw ApplicationException.throwException(
                 EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }
                 .run {
                     val member = getUser(userEmail.email)
@@ -74,7 +73,7 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
 
     @Transactional
     override fun deleteMembership(groupId: UUID, userId: UUID) {
-        groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(
+        groupRepository.findById(groupId).orElseThrow { throw ApplicationException.throwException(
                 EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }
                 .run {
                     val member = getUser(userId)

@@ -7,7 +7,6 @@ import ntnu.idatt2105.section.dto.CreateSectionRequest
 import ntnu.idatt2105.section.dto.toSection
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
-import ntnu.idatt2105.util.SectionType
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -39,7 +38,7 @@ class SectionFactoryImpl(val sectionRepository: SectionRepository) : SectionFact
         section.parent = parent
         validateCapacity(parent, section)
         validateParentType(parent, section)
-        
+
         return saveSection(section)
     }
 

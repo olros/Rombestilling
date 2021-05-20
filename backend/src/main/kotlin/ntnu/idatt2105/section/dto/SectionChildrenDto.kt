@@ -8,8 +8,8 @@ data class SectionChildrenDto(
     var id: UUID = UUID.randomUUID(),
     var name: String = "",
     var capacity: Int = 0,
-    var type: String = SectionType.ROOM)
-
+    var type: String = SectionType.ROOM
+)
 
 fun Section.toSectionChildrenDto() = SectionChildrenDto(
             id = this.id,

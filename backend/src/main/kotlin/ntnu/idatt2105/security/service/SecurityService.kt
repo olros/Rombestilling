@@ -7,9 +7,7 @@ import ntnu.idatt2105.group.repository.GroupRepository
 import ntnu.idatt2105.reservation.model.GroupReservation
 import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
-import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.User
-import ntnu.idatt2105.user.repository.RoleRepository
 import ntnu.idatt2105.user.repository.UserRepository
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -17,11 +15,12 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 import java.util.*
 
-
 @Service
-class SecurityService(val userRepository: UserRepository,
-                      val groupRepository: GroupRepository,
-                      val reservationRepository: ReservationRepository){
+class SecurityService(
+    val userRepository: UserRepository,
+    val groupRepository: GroupRepository,
+    val reservationRepository: ReservationRepository
+) {
 
     private fun getUser(): User? {
         val authentication: Authentication? = SecurityContextHolder.getContext().authentication
@@ -30,12 +29,12 @@ class SecurityService(val userRepository: UserRepository,
         return userRepository.findByEmail(email)
     }
 
-    fun reservationPermissions(reservationId: UUID) : Boolean {
+    fun reservationPermissions(reservationId: UUID): Boolean {
         val user = getUser() ?: return false
-        if(user.isAdmin()){
+        if (user.isAdmin()) {
             return true
         }
-        val reservation: Reservation? =  reservationRepository.findById(reservationId).orElse(null)
+        val reservation: Reservation? = reservationRepository.findById(reservationId).orElse(null)
         return isOwnReservation(reservation, user) || isMemberOfGroupReservation(reservation)
     }
 

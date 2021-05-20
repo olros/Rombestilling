@@ -5,7 +5,6 @@ import com.querydsl.core.types.dsl.Expressions
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 
-
 class JpaUtils {
 
     fun getDefaultPageable(): Pageable {

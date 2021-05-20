@@ -2,10 +2,12 @@ package ntnu.idatt2105.dto.response
 
 import java.time.LocalDate
 
-data class ResponseError(val message: String?,
-                         val errors: Any?,
-                         val status: Status,
-                         val timestamp: LocalDate = LocalDate.now()) {
+data class ResponseError(
+    val message: String?,
+    val errors: Any?,
+    val status: Status,
+    val timestamp: LocalDate = LocalDate.now()
+) {
 
     companion object {
         fun notFound(message: String?, exception: Exception) =

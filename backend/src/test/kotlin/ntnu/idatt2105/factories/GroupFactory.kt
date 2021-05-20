@@ -12,9 +12,7 @@ class GroupFactory : FactoryBean<Group> {
     override fun getObjectType(): Class<*> =
          Group::class.java
 
-
     override fun isSingleton(): Boolean = false
-
 
     override fun getObject(): Group =
          Group(
@@ -23,5 +21,4 @@ class GroupFactory : FactoryBean<Group> {
                 members = mutableSetOf(),
                  creator = UserFactory().`object`
         )
-
 }

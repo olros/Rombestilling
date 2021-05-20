@@ -1,6 +1,5 @@
 package ntnu.idatt2105.exception
 
-
 import ntnu.idatt2105.dto.response.ResponseError
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.lang.Exception
-
 
 @Order(2)
 @RestControllerAdvice
@@ -36,5 +34,4 @@ class CustomizedResponseEntityExceptionHandler : ResponseEntityExceptionHandler(
         val responseError: ResponseError = ResponseError.validationError(ex.message, ex)
         return ResponseEntity<Any?>(responseError, HttpStatus.BAD_REQUEST)
     }
-
 }

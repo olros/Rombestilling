@@ -8,7 +8,6 @@ import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.service.UserDetailsServiceImpl
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpMethod
-import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -17,7 +16,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
@@ -27,14 +25,14 @@ import java.util.List
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class WebSecurity(val refreshTokenService: RefreshTokenService,
-                  private val bCryptPasswordEncoder: BCryptPasswordEncoder,
-                  private val jwtUtil: JwtUtil,
-                  private val jwtConfig: JWTConfig) : WebSecurityConfigurerAdapter() {
-
+class WebSecurity(
+    val refreshTokenService: RefreshTokenService,
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+    private val jwtUtil: JwtUtil,
+    private val jwtConfig: JWTConfig
+) : WebSecurityConfigurerAdapter() {
 
     private val DOCS_WHITELIST = arrayOf(
             "/v2/api-docs",
@@ -76,7 +74,7 @@ class WebSecurity(val refreshTokenService: RefreshTokenService,
             .antMatchers(HttpMethod.DELETE, "/groups/{groupId}/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.PUT, "/groups/{groupId}/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.POST, "/groups/").hasRole(RoleType.USER)
-            .antMatchers(HttpMethod.GET, "/groups/{groupId}/memberships/" ).hasRole(RoleType.USER)
+            .antMatchers(HttpMethod.GET, "/groups/{groupId}/memberships/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.DELETE, "/groups/{groupId}/memberships/{userId}/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.POST, "/groups/{groupId}/memberships/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.POST, "/groups/{groupId}/memberships/batch-memberships/").hasRole(RoleType.USER)

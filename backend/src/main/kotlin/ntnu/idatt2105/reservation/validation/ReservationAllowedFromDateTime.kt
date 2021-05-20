@@ -1,10 +1,7 @@
 package ntnu.idatt2105.reservation.validation
 
-
-import ntnu.idatt2105.util.ReservationConstants
 import javax.validation.Constraint
 import kotlin.reflect.KClass
-
 
 @Target(AnnotationTarget.TYPE, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)

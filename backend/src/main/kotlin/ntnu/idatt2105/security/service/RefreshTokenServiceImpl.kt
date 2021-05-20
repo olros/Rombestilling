@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
-class RefreshTokenServiceImpl(val refreshTokenRepository: RefreshTokenRepository, val jwtUtil: JwtUtil): RefreshTokenService {
+class RefreshTokenServiceImpl(val refreshTokenRepository: RefreshTokenRepository, val jwtUtil: JwtUtil) : RefreshTokenService {
 
 
 
@@ -21,9 +21,7 @@ class RefreshTokenServiceImpl(val refreshTokenRepository: RefreshTokenRepository
         traverseAndInvalidateNextRefreshTokens(refreshToken)
         refreshToken.isValid = (false)
         refreshTokenRepository.save(refreshToken)
-
     }
-
 
     private fun traverseAndInvalidateNextRefreshTokens(refreshToken: RefreshToken) {
         var nextToken: RefreshToken? = refreshToken.next
@@ -55,15 +53,11 @@ class RefreshTokenServiceImpl(val refreshTokenRepository: RefreshTokenRepository
         val refreshTokenToSave: RefreshToken = buildRefreshToken(jwtRefreshToken)
         val savedRefreshToken: RefreshToken = refreshTokenRepository.save(refreshTokenToSave)
         return savedRefreshToken
-
-
     }
-
 
     fun parseToken(refreshToken: JwtToken): JwtRefreshToken {
         return jwtUtil.parseToken(refreshToken.getToken()) ?: TODO()
     }
-
 
     private fun buildRefreshToken(jwtRefreshToken: JwtRefreshToken): RefreshToken {
         return RefreshToken(

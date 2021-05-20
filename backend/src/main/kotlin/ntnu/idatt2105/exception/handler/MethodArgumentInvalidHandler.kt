@@ -2,18 +2,15 @@ package ntnu.idatt2105.exception.handler
 
 import ntnu.idatt2105.dto.response.ResponseError
 import org.springframework.core.annotation.Order
-import java.util.HashMap
-
-import org.springframework.web.bind.MethodArgumentNotValidException
-
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @Order(1)
 @RestControllerAdvice
-class MethodArgumentInvalidHandler  {
+class MethodArgumentInvalidHandler {
 
     /**
      * Return response validation error with the the errors mapped
