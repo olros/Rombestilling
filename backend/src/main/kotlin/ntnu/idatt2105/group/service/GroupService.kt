@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import java.util.*
 
-interface GroupService {
+interface GroupService: ReserverService {
     fun createGroup(group: CreateGroupDto, creatorId: UUID) : GroupDto
     fun updateGroup(groupId: UUID, group: Group) : GroupDto
     fun deleteGroup(groupId: UUID)
