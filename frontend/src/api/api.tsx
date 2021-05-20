@@ -60,7 +60,6 @@ export default {
   changePassword: (oldPassword: string, newPassword: string) =>
     IFetch<RequestResponse>({ method: 'POST', url: `${AUTH}/change-password/`, data: { oldPassword, newPassword } }),
   makeAdmin: (userId: string) => IFetch<User>({ method: 'POST', url: `${AUTH}/make-admin/`, data: { userId } }),
-  deleteUser: () => IFetch<RequestResponse>({ method: 'DELETE', url: `${USERS}/${ME}/` }),
 
   // Reservation
   getReservation: (sectionId: string, reservationId: string) =>
@@ -112,6 +111,7 @@ export default {
   getUserGroups: (userId?: string) => IFetch<Array<Group>>({ method: 'GET', url: `${USERS}/${userId || ME}/${GROUPS}/` }),
   getUsers: (filters?: any) => IFetch<PaginationResponse<UserList>>({ method: 'GET', url: `${USERS}/`, data: filters || {} }),
   updateUser: (userId: string, item: Partial<User>) => IFetch<User>({ method: 'PUT', url: `${USERS}/${userId}/`, data: item }),
+  deleteUser: (userId: string) => IFetch<RequestResponse>({ method: 'DELETE', url: `${USERS}/${userId}/` }),
   batchAddUser: (csvFile: File | Blob) => {
     const formData = new FormData();
     formData.append('file', csvFile);
