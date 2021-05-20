@@ -38,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import java.time.LocalDate
 import java.util.*
 
 
@@ -136,6 +137,22 @@ class UserServiceImpl(
         val userRole = roleRepository.findByName(USER)
         if(!userObj.roles.contains(adminRole))userObj.roles = mutableSetOf(adminRole!!,userRole!!)
         return modelMapper.map(userRepository.save(userObj), DetailedUserDto::class.java)
+    }
+
+    override fun invalidateExpiredUsers() {
+        logger.debug("Invalidating expired users...")
+        val invalidatedUsers = userRepository.findByExpirationDateBeforeAndRolesName(LocalDate.now(), USER)
+            .map {
+                it.roles.clear()
+                logger.debug("Cleared roles of user with id: ${it.id}")
+                it
+            }
+            .run {
+                userRepository.saveAll(this)
+            }
+            .toList()
+
+        logger.info("Successfully invalidated ${invalidatedUsers.size} users")
     }
 
     private fun getUserById(id: UUID): User =

@@ -27,7 +27,6 @@ class UserDetailsServiceImpl: UserDetailsService {
     override fun loadUserByUsername(email: String): UserDetails{
         val user: User = userRepository.findByEmail(email) ?: throw ApplicationException.throwException(
             EntityType.USER, ExceptionType.ENTITY_NOT_FOUND, "2", email)
-
         return UserDetailsImpl(user.id,user.email, user.password, getAuthorities(user))
     }
 
