@@ -2,6 +2,7 @@ package ntnu.idatt2105.group.service
 
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.factories.GroupFactory
+import ntnu.idatt2105.group.dto.CreateGroupDto
 import ntnu.idatt2105.group.dto.toGroupDto
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.group.repository.GroupRepository
@@ -50,7 +51,8 @@ class GroupServiceImplTest {
 
     @Test
     fun `test create group returns a group`(){
-        assertThat(groupService.createGroup(group, group.creator?.id!!).name).isEqualTo(group.name)
+        val createGroup = CreateGroupDto(group.name)
+        assertThat(groupService.createGroup(createGroup, group.creator.id).name).isEqualTo(createGroup.name)
 
     }
 
