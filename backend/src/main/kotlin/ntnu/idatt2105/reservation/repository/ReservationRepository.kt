@@ -19,8 +19,8 @@ import java.util.*
 @Repository
 interface ReservationRepository : JpaRepository<Reservation, UUID>, QuerydslPredicateExecutor<Reservation>, QuerydslBinderCustomizer<QReservation> {
     fun findReservationsByUserId(userId: UUID, pageable: Pageable) : Page<Reservation>
-    @Query("SELECT COUNT(ent) > 0 FROM Reservation ent WHERE ent.fromTime <= :toTime AND ent.toTime >= :fromTime")
-    fun existsInterval(@Param("fromTime") fromTime: ZonedDateTime, @Param("toTime") toTime: ZonedDateTime): Boolean
+    @Query("SELECT COUNT(ent) > 0 FROM Reservation ent WHERE ent.fromTime < :toTime AND ent.toTime > :fromTime AND ent.section.id = :sectionId")
+    fun existsInterval(@Param("fromTime") fromTime: ZonedDateTime, @Param("toTime") toTime: ZonedDateTime, @Param("sectionId") sectionId: UUID): Boolean
     fun findReservationsBySectionId(sectionId: UUID, pageable: Pageable) : Page<Reservation>
     fun findReservationByIdAndSectionId(userId: UUID, sectionId: UUID) : Reservation?
 

@@ -37,9 +37,23 @@ class ReservationServiceImpl(
 
 
     override fun createReservation(sectionId: UUID, reservation: ReservationCreateDto) : ReservationDto {
-        if (reservationRepository.existsInterval(reservation.fromTime!!, reservation.toTime!!)){
+        // Check for overlapping reservations at same section
+        if (reservationRepository.existsInterval(reservation.fromTime!!, reservation.toTime!!, sectionId)){
             throw ApplicationException.throwException(
                     EntityType.RESERVATION, ExceptionType.DUPLICATE_ENTITY, reservation.fromTime.toString(), reservation.toTime.toString())
+        }
+        val section = sectionRepository.findById(sectionId).orElseThrow { throw ApplicationException.throwException(
+            EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, reservation.sectionId.toString()) }
+        // Check for overlapping reservations at parent sections
+        if (section.parent != null && reservationRepository.existsInterval(reservation.fromTime, reservation.toTime, section.parent!!.id)){
+            throw ApplicationException.throwException(
+                EntityType.RESERVATION, ExceptionType.DUPLICATE_ENTITY, reservation.fromTime.toString(), reservation.toTime.toString())
+        }
+        // Check for overlapping reservations at child sections
+        section.children.forEach { child -> if (reservationRepository.existsInterval(reservation.fromTime, reservation.toTime, child.id)) {
+                throw ApplicationException.throwException(
+                    EntityType.RESERVATION, ExceptionType.DUPLICATE_ENTITY, reservation.fromTime.toString(), reservation.toTime.toString())
+            }
         }
         var newReservation = Reservation(id = UUID.randomUUID(),
                 toTime = reservation.toTime,
@@ -48,9 +62,6 @@ class ReservationServiceImpl(
                 nrOfPeople = reservation.nrOfPeople)
 
         val user = userService.getUser(reservation.userId!!, User::class.java)
-
-        val section = sectionRepository.findById(sectionId).orElseThrow { throw ApplicationException.throwException(
-                EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, reservation.sectionId.toString()) }
 
         newReservation.user = user
         newReservation.section = section

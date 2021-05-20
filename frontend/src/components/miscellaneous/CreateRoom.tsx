@@ -24,13 +24,15 @@ const CreateRoom = ({ parentId, children, ...props }: CreateRoomProps) => {
   const navigate = useNavigate();
   const showSnackbar = useSnackbar();
   const createSection = useCreateSection();
-  const { formState, handleSubmit, register, watch, setValue } = useForm<SectionCreate>();
+  const { formState, handleSubmit, register, watch, reset, setValue } = useForm<SectionCreate>();
   const submit = async (data: SectionCreate) => {
     await createSection.mutate(
       { ...data, parentId },
       {
         onSuccess: (data) => {
           showSnackbar(parentId ? 'Delen ble opprettet' : 'Rommet ble opprettet', 'success');
+          setOpen(false);
+          reset();
           navigate(`${URLS.ROOMS}${data.id}/`);
         },
         onError: (e) => {
