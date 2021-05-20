@@ -1,11 +1,8 @@
 package ntnu.idatt2105.group.service
 
-import com.opencsv.bean.CsvToBean
-import com.opencsv.bean.CsvToBeanBuilder
 import com.querydsl.core.types.ExpressionUtils
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
-import ntnu.idatt2105.dto.response.ResponseError
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
@@ -19,14 +16,11 @@ import ntnu.idatt2105.util.CsvToBean.Companion.closeFileReader
 import ntnu.idatt2105.util.CsvToBean.Companion.createCSVToBean
 import ntnu.idatt2105.util.CsvToBean.Companion.throwIfFileEmpty
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedReader
-import java.io.FileReader
-import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.IllegalStateException
 import java.util.*
@@ -86,18 +80,18 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
         file: MultipartFile,
         groupId: UUID
     ): Response {
-        val group = groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString())}
+        val group = groupRepository.findById(groupId).orElseThrow { throw ApplicationException.throwException(EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }
         throwIfFileEmpty(file)
-        var fileReader : BufferedReader? = null
+        var fileReader: BufferedReader? = null
         val invalidUsers = mutableListOf<UserEmailDto>()
 
-        try{
+        try {
             fileReader = BufferedReader(InputStreamReader(file.inputStream))
             val csvToBean = createCSVToBean(fileReader, UserEmailDto::class.java)
             val listOfDto: List<UserEmailDto> = csvToBean.parse()
-            if(listOfDto.isEmpty()) throw ApplicationException.throwException(EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString())
+            if (listOfDto.isEmpty()) throw ApplicationException.throwException(EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString())
 
-            listOfDto.forEach{
+            listOfDto.forEach {
                 try {
                     val user = getUser(it.email)
                     user.groups.add(group)
@@ -118,7 +112,4 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
             closeFileReader(fileReader)
         }
     }
-
-
-
 }

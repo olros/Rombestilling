@@ -78,7 +78,7 @@ class WebSecurity(
             .antMatchers(HttpMethod.DELETE, "/groups/{groupId}/memberships/{userId}/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.POST, "/groups/{groupId}/memberships/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.POST, "/groups/{groupId}/memberships/batch-memberships/").hasRole(RoleType.USER)
-            .antMatchers( "/**").hasAnyRole(RoleType.ADMIN)
+            .antMatchers("/**").hasAnyRole(RoleType.ADMIN)
             .anyRequest()
             .authenticated()
             .and()

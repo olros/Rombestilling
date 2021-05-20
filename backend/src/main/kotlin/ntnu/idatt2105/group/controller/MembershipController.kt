@@ -55,8 +55,9 @@ interface MembershipController {
         ApiResponse(responseCode = "404", description = "Not found: new group or user does not exist")
     ])
     @PostMapping("batch-memberships/")
-    fun createMembershipBatch(@PathVariable groupId: UUID,
-                              @RequestParam("file") file: MultipartFile
+    fun createMembershipBatch(
+        @PathVariable groupId: UUID,
+        @RequestParam("file") file: MultipartFile
     ): Response
 
     @Operation(summary = "Delete a membership", responses = [

@@ -26,7 +26,6 @@ class MembershipControllerImpl(val membershipService: MembershipService) : Membe
         file: MultipartFile
     ): Response = membershipService.createMembershipBatch(file, groupId)
 
-
     override fun deleteMembership(groupId: UUID, userId: UUID): ResponseEntity<Response> {
         membershipService.deleteMembership(groupId, userId)
         return ResponseEntity(Response("Membership has been deleted"), HttpStatus.OK)

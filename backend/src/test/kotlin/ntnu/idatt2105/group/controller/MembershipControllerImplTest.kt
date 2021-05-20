@@ -107,11 +107,10 @@ class MembershipControllerImplTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").isNotEmpty)
     }
 
-
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test batch create with single valid email`() {
-        val newUser =  userRepository.save(UserFactory().`object`)
+        val newUser = userRepository.save(UserFactory().`object`)
 
         val file = MockMultipartFile(
             "file",
@@ -128,14 +127,14 @@ class MembershipControllerImplTest {
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test batch create with multiple valid emails`() {
-        val newUser =  userRepository.save(UserFactory().`object`)
-        val newUser2 =  userRepository.save(UserFactory().`object`)
+        val newUser = userRepository.save(UserFactory().`object`)
+        val newUser2 = userRepository.save(UserFactory().`object`)
 
         val file = MockMultipartFile(
             "file",
             "test.csv",
             "csv",
-            ("email\n" + newUser.email+"\n" + newUser2.email).byteInputStream())
+            ("email\n" + newUser.email + "\n" + newUser2.email).byteInputStream())
 
         mvc.perform(
             MockMvcRequestBuilders.multipart(getURI(group) + "batch-memberships/").file(file)
@@ -158,9 +157,5 @@ class MembershipControllerImplTest {
                 .with(SecurityMockMvcRequestPostProcessors.user(userDetails)))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.containsString(email)))
-
     }
-
-
-
 }

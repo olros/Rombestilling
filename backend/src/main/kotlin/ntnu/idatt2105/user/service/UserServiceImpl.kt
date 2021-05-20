@@ -1,7 +1,5 @@
 package ntnu.idatt2105.user.service
 
-import com.opencsv.bean.CsvToBean
-import com.opencsv.bean.CsvToBeanBuilder
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.exception.ApplicationException
@@ -23,10 +21,10 @@ import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.RoleType.USER
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.RoleRepository
+import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.util.CsvToBean.Companion.closeFileReader
 import ntnu.idatt2105.util.CsvToBean.Companion.createCSVToBean
 import ntnu.idatt2105.util.CsvToBean.Companion.throwIfFileEmpty
-import ntnu.idatt2105.user.repository.UserRepository
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -35,7 +33,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedReader
-import java.io.IOException
 import java.io.InputStreamReader
 import java.time.LocalDate
 import java.util.*
@@ -95,7 +92,6 @@ class UserServiceImpl(
         }
         return Response("The users have been created")
     }
-
 
     private fun existsByEmail(email: String): Boolean {
         return userRepository.existsByEmail(email)
