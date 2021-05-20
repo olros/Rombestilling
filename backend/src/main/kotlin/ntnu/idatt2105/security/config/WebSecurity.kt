@@ -80,6 +80,7 @@ class WebSecurity(val refreshTokenService: RefreshTokenService,
             .antMatchers(HttpMethod.GET, "/groups/{groupId}/memberships/" ).hasRole(RoleType.USER)
             .antMatchers(HttpMethod.DELETE, "/groups/{groupId}/memberships/{userId}/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.POST, "/groups/{groupId}/memberships/").hasRole(RoleType.USER)
+            .antMatchers(HttpMethod.POST, "/groups/{groupId}/memberships/batch-memberships/").hasRole(RoleType.USER)
             .antMatchers( "/**").hasAnyRole(RoleType.ADMIN)
             .anyRequest()
             .authenticated()
