@@ -22,11 +22,9 @@ class MembershipControllerImpl(val membershipService: MembershipService) : Membe
             membershipService.createMemberships(groupId,userEmail, predicate, pageable)
 
     override fun createMembershipBatch(
-        predicate: Predicate,
-        pageable: Pageable,
         groupId: UUID,
         file: MultipartFile
-    ): Response = membershipService.createMembershipBatch(predicate, pageable, file, groupId)
+    ): Response = membershipService.createMembershipBatch(file, groupId)
 
 
     override fun deleteMembership(groupId: UUID, userId: UUID): ResponseEntity<Response> {

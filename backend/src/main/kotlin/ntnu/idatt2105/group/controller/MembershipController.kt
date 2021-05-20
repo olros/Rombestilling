@@ -53,10 +53,7 @@ interface MembershipController {
         ApiResponse(responseCode = "404", description = "Not found: new group or user does not exist")
     ])
     @PostMapping("batch-memberships/")
-    fun createMembershipBatch(@QuerydslPredicate(root = User::class) predicate: Predicate,
-                              @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
-                              sort = ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
-                              @PathVariable groupId: UUID,
+    fun createMembershipBatch(@PathVariable groupId: UUID,
                               @RequestParam("file") file: MultipartFile
     ): Response
 

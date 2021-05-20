@@ -81,8 +81,6 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
     }
 
     override fun createMembershipBatch(
-        predicate: Predicate,
-        pageable: Pageable,
         file: MultipartFile,
         groupId: UUID
     ): Response {
@@ -95,7 +93,7 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
             fileReader = BufferedReader(InputStreamReader(file.inputStream))
             val csvToBean = createCSVToBean(fileReader, UserEmailDto::class.java)
             val listOfDto: List<UserEmailDto> = csvToBean.parse()
-            if(listOfDto.isEmpty()) throw Exception()
+            if(listOfDto.isEmpty()) throw ApplicationException.throwException(EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString())
 
             listOfDto.forEach{
                 try {

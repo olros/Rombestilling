@@ -13,5 +13,5 @@ interface MembershipService {
     fun getMemberships(groupId: UUID, predicate: Predicate, pageable: Pageable) : Page<UserListDto>
     fun createMemberships(groupId: UUID, userEmail: UserEmailDto, predicate: Predicate, pageable: Pageable) : Page<UserListDto>
     fun deleteMembership(groupId: UUID, userId: UUID)
-    fun createMembershipBatch(predicate: Predicate, pageable: Pageable, file: MultipartFile, groupId: UUID): Response
+    fun createMembershipBatch(file: MultipartFile, groupId: UUID): Response
 }
