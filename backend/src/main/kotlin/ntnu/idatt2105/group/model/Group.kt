@@ -15,7 +15,7 @@ data class Group(
         @Column(columnDefinition = "CHAR(32)")
         var id: UUID = UUID.randomUUID(),
         var name: String = "",
-        @ManyToMany
+        @ManyToMany(fetch = FetchType.EAGER)
         @JoinTable(name = "group_user",
                 joinColumns = [JoinColumn(name = "group_id", referencedColumnName = "id")],
                 inverseJoinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")])

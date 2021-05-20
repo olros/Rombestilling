@@ -20,13 +20,13 @@ data class Section(
         var description: String = "",
         var capacity: Int = 0,
         var image: String,
-        @OneToMany(mappedBy = "parent" , cascade =[CascadeType.ALL])
+        @OneToMany(fetch = FetchType.EAGER,mappedBy = "parent" , cascade =[CascadeType.ALL])
         var children: MutableList<Section> = mutableListOf(),
         @ManyToOne
         var parent: Section? = null,
-        @OneToMany(mappedBy = "section")
+        @OneToMany(fetch=FetchType.LAZY, mappedBy = "section")
         var userReservation: MutableList<UserReservation> = mutableListOf(),
-        @OneToMany(mappedBy = "section")
+        @OneToMany(fetch=FetchType.LAZY, mappedBy = "section")
         var groupReservation: MutableList<GroupReservation> = mutableListOf()
 ){
         fun getType(): String{

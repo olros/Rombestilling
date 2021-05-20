@@ -23,7 +23,7 @@ data class User(@Id
                 var image: String = "",
                 var expirationDate: LocalDate = LocalDate.now().plusYears(1),
                 var password: String = "",
-                @ManyToMany(cascade = [CascadeType.MERGE, CascadeType.PERSIST])
+                @ManyToMany(fetch= FetchType.EAGER ,cascade = [CascadeType.MERGE, CascadeType.PERSIST])
                 @JoinTable(name = "user_roles",
                         joinColumns = [JoinColumn(name = "USER_ID", referencedColumnName = "id")],
                         inverseJoinColumns = [JoinColumn(name = "ROLE_ID", referencedColumnName = "id")])
