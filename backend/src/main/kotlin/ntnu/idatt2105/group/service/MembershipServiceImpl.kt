@@ -15,6 +15,9 @@ import ntnu.idatt2105.user.dto.UserListDto
 import ntnu.idatt2105.user.dto.toUserListDto
 import ntnu.idatt2105.user.model.QUser
 import ntnu.idatt2105.user.repository.UserRepository
+import ntnu.idatt2105.util.CsvToBean.Companion.closeFileReader
+import ntnu.idatt2105.util.CsvToBean.Companion.createCSVToBean
+import ntnu.idatt2105.util.CsvToBean.Companion.throwIfFileEmpty
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -90,7 +93,7 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
 
         try{
             fileReader = BufferedReader(InputStreamReader(file.inputStream))
-            val csvToBean = createCSVToBean(fileReader)
+            val csvToBean = createCSVToBean(fileReader, UserEmailDto::class.java)
             val listOfDto: List<UserEmailDto> = csvToBean.parse()
             if(listOfDto.isEmpty()) throw Exception()
 
@@ -116,25 +119,6 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
         }
     }
 
-    private fun createCSVToBean(fileReader: BufferedReader?): CsvToBean<UserEmailDto> =
-        CsvToBeanBuilder<UserEmailDto>(fileReader)
-            .withType(UserEmailDto::class.java)
-            .withIgnoreLeadingWhiteSpace(true)
-            .build()
-
-    private fun closeFileReader(fileReader: BufferedReader?) {
-        try {
-            fileReader!!.close()
-        } catch (ex: IOException) {
-            throw RuntimeException("Error during csv import")
-        }
-    }
-
-    private fun throwIfFileEmpty(file: MultipartFile) {
-        if (file.isEmpty) {
-            throw RuntimeException("Empty file")
-        }
-    }
 
 
 }
