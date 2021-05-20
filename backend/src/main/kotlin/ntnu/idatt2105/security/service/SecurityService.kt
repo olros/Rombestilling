@@ -47,16 +47,24 @@ class SecurityService(val userRepository: UserRepository,
     private fun isMemberOfGroupReservation(reservation: Reservation?) =
         (reservation as? GroupReservation)?.group?.isMember() == true
 
-    fun groupPermissions(groupId: UUID) : Boolean {
+    /**
+     * Check if a user has group permissions
+     * @param groupId Id of group
+     * @param onlyRead Only check if user has read-access
+     */
+    fun groupPermissions(groupId: UUID, onlyRead: Boolean): Boolean {
         val user = getUser() ?: return false
-        if(user.isAdmin()){
-            return true
+        return if(user.isAdmin()){
+            true
+        } else {
+            val group = groupRepository.findById(groupId).orElseThrow {
+                throw ApplicationException.throwException(
+                    EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()
+                )
+            }
+            return if (group != null) {
+                group.creator == user || (onlyRead && group.members.contains(user))
+            } else false
         }
-        val group =  groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(
-                EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }
-        if(group != null){
-            return group.creator == user
-        }
-        return false
     }
 }

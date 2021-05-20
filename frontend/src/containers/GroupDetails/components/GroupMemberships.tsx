@@ -7,7 +7,7 @@ import { startOfDay } from 'date-fns';
 import { isUserAdmin } from 'utils';
 
 // Material UI Components
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography, Divider } from '@material-ui/core';
 
 // Project Components
 import VerifyDialog from 'components/layout/VerifyDialog';
@@ -39,15 +39,15 @@ export type GroupMembershipsProps = {
 export const GroupMemberships = ({ groupId }: GroupMembershipsProps) => {
   const classes = useStyles();
   const showSnackbar = useSnackbar();
-  const { data: user } = useUser();
+  const { data: signedInUser } = useUser();
   const { data: group } = useGroup(groupId);
   const filters = useMemo(() => ({ fromTimeAfter: startOfDay(new Date()).toJSON() }), []);
   const { data, error, hasNextPage, fetchNextPage, isLoading, isFetching } = useMemberships(groupId, filters);
   const memberships = useMemo(() => (data !== undefined ? data.pages.map((page) => page.content).flat(1) : []), [data]);
   const isEmpty = useMemo(() => !memberships.length && !isFetching, [memberships, isFetching]);
-  const isAdmin = isUserAdmin(user) || Boolean(group?.creator.id === user?.id);
+  const isAdmin = isUserAdmin(signedInUser) || Boolean(group?.creator.id === signedInUser?.id);
 
-  const Membership = ({ user }: { user: UserList }) => {
+  const Membership = ({ user, creator }: { user: UserList; creator?: boolean }) => {
     const deleteMembership = useDeleteMembership(groupId);
     const remove = () =>
       deleteMembership.mutate(user.id, {
@@ -60,10 +60,14 @@ export const GroupMemberships = ({ groupId }: GroupMembershipsProps) => {
       });
     return (
       <UserListItem user={user}>
-        {isAdmin && (
-          <VerifyDialog color='secondary' onConfirm={remove} titleText='Fjern fra gruppe?'>
-            Fjern fra gruppe
-          </VerifyDialog>
+        {creator ? (
+          <Typography variant='subtitle2'>Eier gruppen</Typography>
+        ) : (
+          isAdmin && (
+            <VerifyDialog color='secondary' onConfirm={remove} titleText='Fjern fra gruppe?'>
+              Fjern fra gruppe
+            </VerifyDialog>
+          )
         )}
       </UserListItem>
     );
@@ -71,6 +75,8 @@ export const GroupMemberships = ({ groupId }: GroupMembershipsProps) => {
 
   return (
     <div className={classes.grid}>
+      {group && <Membership creator user={group?.creator} />}
+      <Divider />
       <AddMembership groupId={groupId}>Legg til bruker i gruppe</AddMembership>
       <Pagination fullWidth hasNextPage={hasNextPage} nextPage={() => fetchNextPage()}>
         <div className={classes.grid}>

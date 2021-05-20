@@ -2,7 +2,9 @@ import { ReactNode } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import URLS from 'URLS';
+import { useUser } from 'hooks/User';
 import { UserList } from 'types/Types';
+import { isUserAdmin } from 'utils';
 
 // Material UI Components
 import { makeStyles, Button, Typography, Skeleton } from '@material-ui/core';
@@ -36,6 +38,7 @@ export type UserListItemProps = {
 
 const UserListItem = ({ user, children }: UserListItemProps) => {
   const classes = useStyles();
+  const { data } = useUser();
   return (
     <Paper className={classnames(classes.paper, classes.grid)}>
       <div className={classnames(classes.top, classes.grid)}>
@@ -43,9 +46,11 @@ const UserListItem = ({ user, children }: UserListItemProps) => {
           <Typography variant='h3'>{`${user.firstName} ${user.surname}`}</Typography>
           <Typography variant='caption'>{`${user.email} | ${user.phoneNumber}`}</Typography>
         </div>
-        <Button component={Link} endIcon={<ArrowIcon />} to={`${URLS.USERS}${user.id}/`} variant='outlined'>
-          Profil
-        </Button>
+        {(isUserAdmin(data) || user.id === data?.id) && (
+          <Button component={Link} endIcon={<ArrowIcon />} to={`${URLS.USERS}${user.id}/`} variant='outlined'>
+            Profil
+          </Button>
+        )}
       </div>
       {children}
     </Paper>

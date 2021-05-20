@@ -20,7 +20,7 @@ import java.util.*
 
 @RestController
 class GroupControllerImpl(val groupService: GroupService,  val reservationService: ReservationService) : GroupController {
-    override fun getAllGroups(predicate: Predicate, pageable: Pageable) = groupService.getAllGroups(pageable, predicate)
+    override fun getAllGroups(predicate: Predicate, pageable: Pageable, principal: UserDetailsImpl) = groupService.getAllGroups(pageable, predicate, principal.getId())
 
     override fun getGroup(groupId: UUID): ResponseEntity<GroupDto> =
             ResponseEntity(groupService.getGroup(groupId), HttpStatus.OK)

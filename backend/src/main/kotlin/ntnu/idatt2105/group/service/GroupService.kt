@@ -14,6 +14,6 @@ interface GroupService: ReserverService {
     fun updateGroup(groupId: UUID, group: Group) : GroupDto
     fun deleteGroup(groupId: UUID)
     fun getGroup(groupId: UUID) : GroupDto
-    fun getAllGroups(pageable: Pageable, predicate: Predicate) : Page<GroupDto>
+    fun getAllGroups(pageable: Pageable, predicate: Predicate, creatorId: UUID) : Page<GroupDto>
     fun getUserGroups(userId:UUID) : List<GroupDto>
 }

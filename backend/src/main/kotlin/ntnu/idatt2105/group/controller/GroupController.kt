@@ -35,14 +35,15 @@ interface GroupController {
     @GetMapping
     fun getAllGroups(@QuerydslPredicate(root = Group::class) predicate: Predicate,
                      @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
-                             sort= ["name"], direction = Sort.Direction.DESC) pageable: Pageable): Page<GroupDto>
+                             sort= ["name"], direction = Sort.Direction.DESC) pageable: Pageable,
+                     @AuthenticationPrincipal principal: UserDetailsImpl): Page<GroupDto>
 
     @Operation(summary = "Fetch group details for the given group id", responses = [
         ApiResponse(responseCode = "200", description = "Success"),
         ApiResponse(responseCode = "404", description = "Not found: group with the given id does not exist")
     ])
     @GetMapping("{groupId}/")
-    @PreAuthorize("@securityService.groupPermissions(#groupId)")
+    @PreAuthorize("@securityService.groupPermissions(#groupId, true)")
     fun getGroup(@PathVariable groupId: UUID): ResponseEntity<GroupDto>
 
 
@@ -66,7 +67,7 @@ interface GroupController {
         ApiResponse(responseCode = "404", description = "Not found: group with the given id does not exist"),
     ])
     @PutMapping("{groupId}/")
-    @PreAuthorize("@securityService.groupPermissions(#groupId)")
+    @PreAuthorize("@securityService.groupPermissions(#groupId, false)")
     fun updateGroup(@PathVariable groupId: UUID, @RequestBody group: Group): ResponseEntity<GroupDto>
 
     @Operation(summary = "Delete existing group", responses = [
@@ -74,6 +75,6 @@ interface GroupController {
         ApiResponse(responseCode = "404", description = "Not found: group with the given id does not exist"),
     ])
     @DeleteMapping("{groupId}/")
-    @PreAuthorize("@securityService.groupPermissions(#groupId)")
+    @PreAuthorize("@securityService.groupPermissions(#groupId, false)")
     fun deleteGroup(@PathVariable groupId: UUID): ResponseEntity<Response>
 }
