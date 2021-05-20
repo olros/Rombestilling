@@ -7,6 +7,7 @@ import ntnu.idatt2105.security.token.JwtRefreshToken
 import ntnu.idatt2105.security.token.JwtToken
 import ntnu.idatt2105.security.token.RefreshToken
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
@@ -14,6 +15,7 @@ class RefreshTokenServiceImpl(val refreshTokenRepository: RefreshTokenRepository
 
 
 
+    @Transactional
     override fun invalidateSubsequentTokens(jti: String) {
         val refreshToken: RefreshToken = getByJti(jti)
         traverseAndInvalidateNextRefreshTokens(refreshToken)
@@ -32,6 +34,7 @@ class RefreshTokenServiceImpl(val refreshTokenRepository: RefreshTokenRepository
         }
     }
 
+    @Transactional
     override fun rotateRefreshToken(oldRefreshToken: JwtRefreshToken, newRefreshToken: JwtRefreshToken) {
         val oldRefreshToken: RefreshToken = getByJti(oldRefreshToken.getJti())
         val nextRefreshToken: RefreshToken = saveRefreshToken(newRefreshToken)
@@ -46,6 +49,7 @@ class RefreshTokenServiceImpl(val refreshTokenRepository: RefreshTokenRepository
     }
 
 
+    @Transactional
     override fun saveRefreshToken(token: JwtToken): RefreshToken {
         val jwtRefreshToken = parseToken(token)
         val refreshTokenToSave: RefreshToken = buildRefreshToken(jwtRefreshToken)

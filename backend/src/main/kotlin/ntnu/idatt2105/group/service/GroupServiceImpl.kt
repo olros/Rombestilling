@@ -15,16 +15,20 @@ import ntnu.idatt2105.user.service.UserService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 
 @Service
 class GroupServiceImpl(val groupRepository: GroupRepository, val userService: UserService) : GroupService {
+
+    @Transactional
     override fun createGroup(group: CreateGroupDto, creatorId: UUID): GroupDto {
         val newGroup = Group(id = UUID.randomUUID(), members = mutableSetOf(), creator = userService.getUser(creatorId, User::class.java), name = group.name)
         return groupRepository.save(newGroup).toGroupDto()
     }
 
+    @Transactional
     override fun updateGroup(groupId: UUID, group: Group): GroupDto {
         getGroupById(groupId).run {
             val updatedGroup = this.copy(
@@ -34,6 +38,7 @@ class GroupServiceImpl(val groupRepository: GroupRepository, val userService: Us
         }
     }
 
+    @Transactional
     override fun deleteGroup(groupId: UUID) {
         getGroupById(groupId).run {
             groupRepository.delete(this)
