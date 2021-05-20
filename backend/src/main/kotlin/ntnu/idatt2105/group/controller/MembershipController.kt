@@ -15,12 +15,14 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.querydsl.binding.QuerydslPredicate
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 
 @Api(value = "Group services", tags = ["Group Services"], description = "Group Services")
 @RequestMapping("/groups/{groupId}/memberships/")
+@PreAuthorize("@securityService.groupPermissions(#groupId)")
 interface MembershipController {
 
     @Operation(summary = "Fetch memberships for the given group", responses = [

@@ -5,6 +5,7 @@ import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.group.service.GroupService
+import ntnu.idatt2105.user.service.UserDetailsImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,8 +20,8 @@ class GroupControllerImpl(val groupService: GroupService) : GroupController {
     override fun getGroup(groupId: UUID): ResponseEntity<GroupDto> =
             ResponseEntity(groupService.getGroup(groupId), HttpStatus.OK)
 
-    override fun createGroup(group: Group): ResponseEntity<GroupDto> =
-            ResponseEntity(groupService.createGroup(group), HttpStatus.CREATED)
+    override fun createGroup(group: Group, principal: UserDetailsImpl): ResponseEntity<GroupDto> =
+            ResponseEntity(groupService.createGroup(group, principal.getId()), HttpStatus.CREATED)
 
 
     override fun updateGroup(groupId: UUID, group: Group): ResponseEntity<GroupDto> =

@@ -20,7 +20,8 @@ class GroupFactory : FactoryBean<Group> {
          Group(
                 id = UUID.randomUUID(),
                 name = faker.beer.yeast(),
-                members = mutableSetOf()
+                members = mutableSetOf(),
+                 creator = UserFactory().`object`
         )
 
 }
