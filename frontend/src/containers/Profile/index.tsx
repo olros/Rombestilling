@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import Helmet from 'react-helmet';
 import { useParams, useNavigate } from 'react-router-dom';
 import URLS from 'URLS';
@@ -19,10 +19,10 @@ import Container from 'components/layout/Container';
 import Paper from 'components/layout/Paper';
 import VerifyDialog from 'components/layout/VerifyDialog';
 import Tabs from 'components/layout/Tabs';
-import Http404 from 'containers/Http404';
 import EditProfile from 'containers/Profile/components/EditProfile';
-import { UserCalendar } from 'components/miscellaneous/Calendar';
 import { UserReservations } from 'containers/RoomDetails/components/RoomReservations';
+const Http404 = lazy(() => import(/* webpackChunkName: "http404" */ 'containers/Http404'));
+const UserCalendar = lazy(() => import(/* webpackChunkName: "user_calendar" */ 'components/miscellaneous/calendar/UserCalendar'));
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -68,7 +68,11 @@ const Profile = () => {
   }, [signedInUser, userId]);
 
   if (isError) {
-    return <Http404 />;
+    return (
+      <Suspense fallback={null}>
+        <Http404 />
+      </Suspense>
+    );
   }
   if (isLoading || !user) {
     return null;
@@ -116,7 +120,9 @@ const Profile = () => {
               <UserReservations userId={userId} />
             </Collapse>
             <Collapse in={tab === bookings.value} mountOnEnter>
-              <UserCalendar userId={userId} />
+              <Suspense fallback={null}>
+                <UserCalendar userId={userId} />
+              </Suspense>
             </Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <Paper>

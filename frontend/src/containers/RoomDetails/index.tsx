@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import Helmet from 'react-helmet';
 import URLS from 'URLS';
 import { Link, useParams } from 'react-router-dom';
@@ -18,7 +18,6 @@ import AboutIcon from '@material-ui/icons/InfoRounded';
 import StatsIcon from '@material-ui/icons/QueryStatsRounded';
 
 // Project Components
-import Http404 from 'containers/Http404';
 import Container from 'components/layout/Container';
 import Paper from 'components/layout/Paper';
 import Tabs from 'components/layout/Tabs';
@@ -27,7 +26,8 @@ import RoomStatistics from 'containers/RoomDetails/components/RoomStatistics';
 import { SectionReservations } from 'containers/RoomDetails/components/RoomReservations';
 import CreateRoom from 'components/miscellaneous/CreateRoom';
 import EditRoom from 'components/miscellaneous/EditRoom';
-import { SectionCalendar } from 'components/miscellaneous/Calendar';
+const Http404 = lazy(() => import(/* webpackChunkName: "http404" */ 'containers/Http404'));
+const SectionCalendar = lazy(() => import(/* webpackChunkName: "section_calendar" */ 'components/miscellaneous/calendar/SectionCalendar'));
 
 const useStyles = makeStyles((theme) => ({
   grid: {
@@ -65,7 +65,11 @@ const RoomDetails = () => {
   }, [id]);
 
   if (isError) {
-    return <Http404 />;
+    return (
+      <Suspense fallback={null}>
+        <Http404 />
+      </Suspense>
+    );
   }
   return (
     <Container>
@@ -97,7 +101,9 @@ const RoomDetails = () => {
                 <SectionReservations sectionId={id} />
               </Collapse>
               <Collapse in={tab === calendarTab.value} mountOnEnter>
-                <SectionCalendar sectionId={id} />
+                <Suspense fallback={null}>
+                  <SectionCalendar sectionId={id} />
+                </Suspense>
               </Collapse>
               <Collapse in={tab === sectionsTab.value} mountOnEnter>
                 <Paper className={classes.grid}>
