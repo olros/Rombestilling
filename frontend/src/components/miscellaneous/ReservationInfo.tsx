@@ -111,15 +111,18 @@ export const ReservationEditDialog = ({ reservation, ...props }: ReservationEdit
   const updateReservation = useUpdateReservation(reservation.section.id, reservation.id);
   const { formState, handleSubmit, register } = useForm<Pick<Reservation, 'text'>>({ defaultValues: { text: reservation.text } });
   const submit = async (data: Pick<Reservation, 'text'>) =>
-    updateReservation.mutate(data, {
-      onSuccess: () => {
-        showSnackbar('Reservasjonen ble oppdatert', 'success');
-        setOpen(false);
+    updateReservation.mutate(
+      { ...data, type: reservation.type },
+      {
+        onSuccess: () => {
+          showSnackbar('Reservasjonen ble oppdatert', 'success');
+          setOpen(false);
+        },
+        onError: (e) => {
+          showSnackbar(e.message, 'error');
+        },
       },
-      onError: (e) => {
-        showSnackbar(e.message, 'error');
-      },
-    });
+    );
 
   return (
     <>
