@@ -7,6 +7,9 @@ help:
 db:
 	docker-compose up
 
+format:
+	../gradlew ktlinFormat --warning-mode=all
+
 restart:
 	docker-compose build
 	docker-compose up
