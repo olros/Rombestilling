@@ -9,6 +9,7 @@ import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.group.dto.toGroupDto
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.group.repository.GroupRepository
+import ntnu.idatt2105.reservation.service.ReserverService
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.service.UserService
 import org.springframework.data.domain.Page
@@ -25,8 +26,7 @@ class GroupServiceImpl(val groupRepository: GroupRepository, val userService: Us
     }
 
     override fun updateGroup(groupId: UUID, group: Group): GroupDto {
-        groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(
-                EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }.run {
+        getGroupById(groupId).run {
             val updatedGroup = this.copy(
                     name = group.name
             )
@@ -35,18 +35,14 @@ class GroupServiceImpl(val groupRepository: GroupRepository, val userService: Us
     }
 
     override fun deleteGroup(groupId: UUID) {
-        groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(
-                EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }.run {
+        getGroupById(groupId).run {
             groupRepository.delete(this)
         }
     }
 
     override fun getGroup(groupId: UUID): GroupDto {
-        val group = groupRepository.findById(groupId).orElseThrow {
-            throw ApplicationException.throwException(
-                    EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString())
-        }
-        return group.toGroupDto()
+        return getGroupById(groupId)
+            .toGroupDto()
     }
 
     override fun getAllGroups(pageable: Pageable, predicate: Predicate): Page<GroupDto> {
@@ -58,4 +54,10 @@ class GroupServiceImpl(val groupRepository: GroupRepository, val userService: Us
     override fun getUserGroups(userId: UUID): List<GroupDto> {
         return groupRepository.findAllByMembers_IdOrCreator_id(userId, userId).map { it.toGroupDto() }
     }
+
+    private fun getGroupById(id: UUID): Group = groupRepository.findById(id).orElseThrow{throw ApplicationException.throwException(
+                EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, id.toString()) }
+
+    override fun getReserverById(id: UUID): Group = getGroupById(id)
+
 }

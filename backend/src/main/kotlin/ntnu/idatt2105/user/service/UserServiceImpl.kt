@@ -17,11 +17,11 @@ import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.mailer.HtmlTemplate
 import ntnu.idatt2105.mailer.Mail
 import ntnu.idatt2105.mailer.MailService
+import ntnu.idatt2105.reservation.service.ReserverService
 import ntnu.idatt2105.security.dto.MakeAdminDto
 import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
 import ntnu.idatt2105.security.dto.ResetPasswordDto
 import ntnu.idatt2105.security.token.isAfter
-import ntnu.idatt2105.user.model.Role
 import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.RoleType.USER
 import ntnu.idatt2105.user.repository.RoleRepository
@@ -35,9 +35,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
-import java.time.ZonedDateTime
 import java.util.*
-import kotlin.concurrent.thread
 
 
 @Service
@@ -216,4 +214,6 @@ class UserServiceImpl(
             )
         mailService.sendMail(mail)
     }
+
+    override fun getReserverById(id: UUID) = getUserById(id)
 }

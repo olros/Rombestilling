@@ -97,7 +97,7 @@ interface UserController {
         ApiResponse(responseCode = "404", description = "Not found: the authenticated was not found")
     ])
     @GetMapping("{userId}/reservations/")
-    fun getUserReservations(
+    fun getuserReservations(
         @PathVariable userId: UUID,
         @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
         @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,

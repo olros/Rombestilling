@@ -8,7 +8,6 @@ import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
 import ntnu.idatt2105.reservation.model.Reservation
-import ntnu.idatt2105.reservation.service.ReservationService
 import ntnu.idatt2105.util.PaginationConstants
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -28,8 +27,8 @@ interface ReservationController {
     @Operation(summary = "Fetch reservations", responses = [ApiResponse(responseCode = "200", description = "Success")])
     @GetMapping
     fun getAllReservations(
-            @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
-            @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
+        @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
             sort= ["fromTime"], direction = Sort.Direction.DESC) pageable: Pageable,
                            @PathVariable sectionId: UUID
     ): Page<ReservationDto>
@@ -46,7 +45,7 @@ interface ReservationController {
         ApiResponse(responseCode = "400", description = "Bad request: new reservation was not created"),
     ])
     @PostMapping
-    fun createReservation(@PathVariable sectionId: UUID, @RequestBody @Valid reservation: ReservationCreateDto): ReservationDto
+    fun createReservation(@PathVariable sectionId: UUID, @RequestBody @Valid reservation: ReservationCreateDto):  ReservationDto
 
     @Operation(summary = "Update existing reservation", responses = [
         ApiResponse(responseCode = "200", description = "Success: reservation was updated"),

@@ -3,6 +3,7 @@ package ntnu.idatt2105.group.model
 import ntnu.idatt2105.user.model.User
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
+import ntnu.idatt2105.reservation.model.Reserver
 import java.util.*
 import javax.persistence.*
 
@@ -22,7 +23,7 @@ data class Group(
         @OneToOne
         @JoinColumn(name="user_id", referencedColumnName = "id")
         var creator: User,
-){
+): Reserver {
         fun isMember(): Boolean {
                 val user = SecurityContextHolder.getContext()?.authentication?.principal as UserDetails? ?: return false
                 return containsContextUser(user) || this.creator.email == user.username
