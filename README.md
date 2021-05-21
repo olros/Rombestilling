@@ -5,6 +5,17 @@
 
 Prosjektet er et bookingsystem for rom. Her kan brukere reservere ulike rom og underdeler av rom. Reservasjon kan skje som enkeltperson eller på vegne av en gruppe. Rom og brukere opprettes og administreres av administratorer som har full tilgang til hele systemet. Administratorer kan batch-opprette mange bruker samtidig ved hjelp av CSV-filer, hvorpå de nye brukerne vil motta en epost med link til side der passord kan settes. Swagger-docs finnes på `/swagger-ui/`
 
+## Innhold ##
+1. [Applikasjonen](#applikasjonen)
+2. [Databaseskjema](#databaseskjema)
+3. [Teknologier](#teknologier)
+4. [Applikasjonstruktur](#applikasjonstruktur)
+5. [Sikkerhet](#sikkerhet)
+6. [API-dokumentasjon](#api-dokumentasjon)
+7. [Installasjon](#installasjon)
+8. [CI/CD](#cicd)
+9. [Medlemmer](#medlemmer)
+
 ## Applikasjonen
 Prosjektet består av en backend del og en frontend del hvorav begge delene er utviklet med moderne og stabile rammeverk. På frontend benytter vi oss av React, som er blant det mest brukte rammeverket idag. Vi brukte Typescript for å skrive frontend da det sørger for statisk typing, noe som betyr letter feilsøking og mindre feil. På backend har vi benyttet oss Spring Boot som rammeverk for å bygge REST-apiet vårt. Dette har vi gjort sammen med å bruke Kotlin og Gradle. Kotlin er et moderne språk som lar deg skrive både funksjonell og objekt orientert kode. Vi har benyttet oss av både CI og CD under prosjektet for å sørge for den beste kontinuerlige utviklingen. Vi har benyttet oss av Azure for å deploye backend hver gang vi oppdaterer main branchen vår, noe som har gjort at vi til enhver tid kan teste den nyeste funksjonaliteten vår, live. For å deploye frontend bruker vi Vercel, slik at den nyeste backenden alltid er i samspill med den nyeste frontenden. 
 
@@ -202,7 +213,9 @@ _Vanlig bruker:_
 
 _Disse brukerne er lagt inn **kun** for bruk under utvikling og skal på ingen måte brukes i et virkelig scenario._
 
-## Tester - CI
+## CI/CD
+
+### Tester - CI
 Test-coverage backend:
 ![image](https://user-images.githubusercontent.com/31009729/119147728-2373bb00-ba4c-11eb-870a-9879f2ddc1f3.png)
 
@@ -214,7 +227,7 @@ CI runs backend:
 CI runs frontend:
 - https://github.com/olros/IDATT2105-project/actions/workflows/ci_frontend.yml
 
-## Deployment - CD
+### Deployment - CD
 
 Fortløpende deployment er løst gjennom Azure for backend og Vercel for frontend.
 
