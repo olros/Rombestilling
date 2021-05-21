@@ -26,9 +26,12 @@ En _adminbruker_ har tilgang til alle aspekter en endebruker kan, i tillegg til 
 - Administrere brukere 
 - Administrere rom 
 - Administrere grupper
-- Administrere gruppemedlemsskap 
+- Administrere gruppemedlemsskap (evt ved csv-fil)
 - Se statistikk for rom
 
+Når adminbrukere oppretter vanlige brukere, enten enkeltbrukere eller ved csv, vil de nye brukere få tilsendt en epost med en link til å tilbakestille passord. De kan da trykke på denne og velge et passord for kontoen sin og logge inn i applikasjonen.
+
+Nye brukeres gyldighet blir satt til ett år. Når denne går ut på dato vil endebrukeren miste bruker-rollen og dermed misten tilgang til systemet. Dette gjøres via en planlagt oppgave (scheduled task/cron-job) som kjører hver dag kl 22:00.
 
 ## Databaseskjema
 Følgende er vårt databaseskjema:
