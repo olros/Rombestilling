@@ -38,6 +38,8 @@ Følgende er vårt databaseskjema:
 
 ![dbskjema](https://user-images.githubusercontent.com/35424810/119131275-87d94f00-ba39-11eb-8f96-1b6690b2237d.png)
 
+Her er det verdt å nevne litt om måten vi implementerte seksjoner/rom (sections). Seksjoner er strukturert som et tre hvor en rot-node tilsvarer et rom, og en barnenode er underseksjoner. Barnenodene vil her være løvnoder, da treet kun kan ha 2 nivåer. Dette gjør det enkelt å utvide til flere underseksjoner av underseksjoner og kunne reservere både rom og underseksjoner.  
+
 ## Teknologier 
 - **React** - Javascript-rammeverk for å bygge brukergrensesnitt
 - **Spring Boot** - Server-side rammeverk
