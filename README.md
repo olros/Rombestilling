@@ -148,6 +148,12 @@ yarn start
 
 Når applikasjonene har startet opp vil applikasjonen være tilgjengelig på http://localhost:3000/ og REST API-et vil da være tilgjengelig på http://localhost:8080/ 
 
+Det ligger en adminbruker inne i systemet man kan bruke under testing med følgende nøkler:
+
+- Epost: admin@test.com
+- Passord: admin
+
+_Denne brukeren er lagt inn **kun** for bruk under utvikling og skal på ingen måte brukes i et virkelig scenario._ 
 
 ## Medlemmer
 
