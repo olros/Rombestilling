@@ -134,15 +134,6 @@ make db / docker-compose up
 gradlew bootRun
 ```
 
-#### Docker
-```bash
-# Med GNU Make 
-make run
-
-# Uten GNU Make 
-docker-compose -f docker-compose.azure.yml up --build
-```
-
 ### Frontend
 
 ```bash
