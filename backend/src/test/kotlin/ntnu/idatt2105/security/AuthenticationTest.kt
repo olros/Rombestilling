@@ -2,7 +2,7 @@ package ntnu.idatt2105.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.JsonPath
-import ntnu.idatt2105.config.PasswordEncoderConfig
+import ntnu.idatt2105.core.config.PasswordEncoderConfig
 import ntnu.idatt2105.factories.UserFactory
 import ntnu.idatt2105.security.config.JWTConfig
 import ntnu.idatt2105.security.config.WebSecurity

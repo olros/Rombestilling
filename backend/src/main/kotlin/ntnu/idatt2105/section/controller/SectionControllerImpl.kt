@@ -1,7 +1,7 @@
 package ntnu.idatt2105.section.controller
 
 import com.querydsl.core.types.Predicate
-import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.core.response.Response
 import ntnu.idatt2105.section.dto.CreateSectionRequest
 import ntnu.idatt2105.section.dto.SectionDto
 import ntnu.idatt2105.section.service.SectionService

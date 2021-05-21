@@ -1,6 +1,6 @@
-package ntnu.idatt2105.exception
+package ntnu.idatt2105.core.exception
 
-import ntnu.idatt2105.config.PropertiesConfig
+import ntnu.idatt2105.core.config.PropertiesConfig
 import org.springframework.stereotype.Component
 import java.text.MessageFormat
 import java.util.*

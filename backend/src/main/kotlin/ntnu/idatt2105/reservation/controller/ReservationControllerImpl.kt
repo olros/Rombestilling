@@ -1,7 +1,7 @@
 package ntnu.idatt2105.reservation.controller
 
 import com.querydsl.core.types.Predicate
-import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.core.response.Response
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
 import ntnu.idatt2105.reservation.service.ReservationService

@@ -1,4 +1,4 @@
-package ntnu.idatt2105.config
+package ntnu.idatt2105.core.config
 
 import ntnu.idatt2105.user.model.Role
 import ntnu.idatt2105.user.model.RoleType

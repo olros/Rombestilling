@@ -1,6 +1,6 @@
-package ntnu.idatt2105.exception.handler
+package ntnu.idatt2105.core.exception.handler
 
-import ntnu.idatt2105.dto.response.ResponseError
+import ntnu.idatt2105.core.response.ResponseError
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.MethodArgumentNotValidException

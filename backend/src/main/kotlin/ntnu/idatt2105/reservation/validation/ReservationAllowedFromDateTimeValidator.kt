@@ -1,8 +1,8 @@
 package ntnu.idatt2105.reservation.validation
 
+import ntnu.idatt2105.core.util.ReservationConstants
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.user.model.RoleType
-import ntnu.idatt2105.util.ReservationConstants
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import java.time.ZonedDateTime

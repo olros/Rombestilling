@@ -1,4 +1,4 @@
-package ntnu.idatt2105.exception
+package ntnu.idatt2105.core.exception
 
 enum class ExceptionType(var value: String) {
     ENTITY_NOT_FOUND("not.found"),

@@ -4,9 +4,9 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import ntnu.idatt2105.core.util.SecurityConstants.AUTHORITIES_KEY
 import ntnu.idatt2105.security.config.JWTConfig
 import ntnu.idatt2105.user.service.UserDetailsImpl
-import ntnu.idatt2105.util.SecurityConstants.AUTHORITIES_KEY
 import org.springframework.stereotype.Component
 import java.util.*
 import java.util.stream.Collectors

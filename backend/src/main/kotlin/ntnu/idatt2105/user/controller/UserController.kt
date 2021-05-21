@@ -4,7 +4,8 @@ import com.querydsl.core.types.Predicate
 import io.swagger.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.core.response.Response
+import ntnu.idatt2105.core.util.PaginationConstants
 import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
 import ntnu.idatt2105.reservation.model.Reservation
@@ -13,7 +14,6 @@ import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.dto.UserRegistrationDto
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.service.UserDetailsImpl
-import ntnu.idatt2105.util.PaginationConstants
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort

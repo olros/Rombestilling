@@ -1,10 +1,10 @@
 package ntnu.idatt2105.section.service
 
 import com.querydsl.core.types.Predicate
-import ntnu.idatt2105.dto.response.Response
-import ntnu.idatt2105.exception.ApplicationException
-import ntnu.idatt2105.exception.EntityType
-import ntnu.idatt2105.exception.ExceptionType
+import ntnu.idatt2105.core.exception.ApplicationException
+import ntnu.idatt2105.core.exception.EntityType
+import ntnu.idatt2105.core.exception.ExceptionType
+import ntnu.idatt2105.core.response.Response
 import ntnu.idatt2105.section.dto.*
 import ntnu.idatt2105.section.dto.CreateSectionRequest
 import ntnu.idatt2105.section.dto.SectionDto

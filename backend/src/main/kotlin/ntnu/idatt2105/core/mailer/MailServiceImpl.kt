@@ -1,4 +1,4 @@
-package ntnu.idatt2105.mailer
+package ntnu.idatt2105.core.mailer
 
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender

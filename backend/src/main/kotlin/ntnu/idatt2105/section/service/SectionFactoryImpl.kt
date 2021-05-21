@@ -1,8 +1,8 @@
 package ntnu.idatt2105.section.service
 
-import ntnu.idatt2105.exception.ApplicationException
-import ntnu.idatt2105.exception.EntityType
-import ntnu.idatt2105.exception.ExceptionType
+import ntnu.idatt2105.core.exception.ApplicationException
+import ntnu.idatt2105.core.exception.EntityType
+import ntnu.idatt2105.core.exception.ExceptionType
 import ntnu.idatt2105.section.dto.CreateSectionRequest
 import ntnu.idatt2105.section.dto.toSection
 import ntnu.idatt2105.section.model.Section

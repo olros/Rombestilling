@@ -2,6 +2,7 @@ package ntnu.idatt2105.reservation.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.serpro69.kfaker.Faker
+import ntnu.idatt2105.core.util.ReservationConstants
 import ntnu.idatt2105.factories.UserReservationFactory
 import ntnu.idatt2105.reservation.dto.CreateUserReservationRequest
 import ntnu.idatt2105.reservation.model.UserReservation
@@ -10,7 +11,6 @@ import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
 import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.repository.UserRepository
-import ntnu.idatt2105.util.ReservationConstants
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

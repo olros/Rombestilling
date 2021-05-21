@@ -2,9 +2,9 @@ package ntnu.idatt2105.section.model
 
 import com.querydsl.core.annotations.PropertyType
 import com.querydsl.core.annotations.QueryType
+import ntnu.idatt2105.core.util.SectionType
 import ntnu.idatt2105.reservation.model.GroupReservation
 import ntnu.idatt2105.reservation.model.UserReservation
-import ntnu.idatt2105.util.SectionType
 import org.springframework.format.annotation.DateTimeFormat
 import java.time.ZonedDateTime
 import java.util.*

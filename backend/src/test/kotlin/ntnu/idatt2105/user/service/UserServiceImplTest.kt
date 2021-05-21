@@ -1,10 +1,10 @@
 package ntnu.idatt2105.user.service
 
 import io.github.serpro69.kfaker.Faker
-import ntnu.idatt2105.config.ModelMapperConfig
-import ntnu.idatt2105.exception.ApplicationException
+import ntnu.idatt2105.core.config.ModelMapperConfig
+import ntnu.idatt2105.core.exception.ApplicationException
+import ntnu.idatt2105.core.mailer.MailService
 import ntnu.idatt2105.factories.UserFactory
-import ntnu.idatt2105.mailer.MailService
 import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
 import ntnu.idatt2105.user.dto.DetailedUserDto
 import ntnu.idatt2105.user.dto.UserDto
