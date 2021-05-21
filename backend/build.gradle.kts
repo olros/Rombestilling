@@ -53,6 +53,7 @@ dependencies {
 	implementation("io.github.serpro69:kotlin-faker:1.6.0")
 	implementation("com.opencsv:opencsv:5.0")
 	implementation("io.springfox:springfox-boot-starter:3.0.0")
+	testImplementation("org.awaitility:awaitility:3.1.2")
 }
 
 

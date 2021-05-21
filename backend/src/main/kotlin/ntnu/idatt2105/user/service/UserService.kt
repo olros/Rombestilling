@@ -25,5 +25,5 @@ interface UserService: ReserverService {
     fun <T> getUser(id: UUID, mapTo: Class<T>): T
     fun deleteUser(id: UUID): Response
     fun makeAdmin(user: MakeAdminDto): DetailedUserDto
-
+    fun invalidateExpiredUsers()
 }

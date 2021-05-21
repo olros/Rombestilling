@@ -2,17 +2,20 @@ package ntnu.idatt2105.user.repository
 
 import com.querydsl.core.BooleanBuilder
 import ntnu.idatt2105.user.model.QUser
+import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.querydsl.QuerydslPredicateExecutor
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer
 import org.springframework.data.querydsl.binding.QuerydslBindings
+import java.time.LocalDate
 import java.util.*
 import java.util.function.Consumer
 
 interface UserRepository: JpaRepository<User, UUID>, QuerydslPredicateExecutor<User>, QuerydslBinderCustomizer<QUser> {
     fun findByEmail(email: String): User?
     fun existsByEmail(email: String): Boolean
+    fun findByExpirationDateBeforeAndRolesName(expirationDate: LocalDate, name: String): List<User>
 
     @JvmDefault
     override fun customize(bindings: QuerydslBindings, user: QUser) {
