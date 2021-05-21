@@ -16,6 +16,7 @@ import ntnu.idatt2105.section.repository.SectionRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 
@@ -37,6 +38,7 @@ class ReservationServiceImpl(
         }
     }
 
+    @Transactional
     override fun createReservation(sectionId: UUID, reservation: ReservationCreateDto) : ReservationDto {
         // Check for overlapping reservations at same section
         if (reservationRepository.existsInterval(reservation.fromTime!!, reservation.toTime!!, sectionId)){
@@ -85,6 +87,7 @@ class ReservationServiceImpl(
                     return this.toReservationDto()
             }
 
+    @Transactional
     override fun updateReservation(sectionId: UUID, reservationId: UUID, reservation: ReservationDto): ReservationDto {
         reservationRepository.findReservationByIdAndSectionId(reservationId, sectionId).run {
             if(this != null){
@@ -99,6 +102,7 @@ class ReservationServiceImpl(
                 EntityType.RESERVATION, ExceptionType.ENTITY_NOT_FOUND, reservationId.toString(), sectionId.toString())
     }
 
+    @Transactional
     override fun deleteReservation(sectionId: UUID, reservationId: UUID) {
         reservationRepository.findById(reservationId).orElseThrow{ throw ApplicationException.throwException(
                 EntityType.RESERVATION, ExceptionType.ENTITY_NOT_FOUND, reservationId.toString(), sectionId.toString()) }

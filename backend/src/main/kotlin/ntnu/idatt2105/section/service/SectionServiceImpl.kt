@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 
@@ -29,6 +30,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository,
         return sections.map{ it.toSectionListDto() }
     }
 
+    @Transactional
     override fun createSection(createSectionRequest: CreateSectionRequest): SectionDto {
         if (createSectionRequest.parentId != null)
             return getSection(createSectionRequest.parentId!!)
@@ -48,6 +50,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository,
         return section.toSectionDto()
     }
 
+    @Transactional
     override fun updateSection(id: UUID, section: SectionDto): SectionDto {
         getSection(id).run {
             var updatedSection = this.copy(
@@ -63,6 +66,7 @@ class SectionServiceImpl(val sectionRepository: SectionRepository,
 
     }
 
+    @Transactional
     override fun deleteSection(id: UUID): Response {
         getSection(id).run {
             sectionRepository.delete(this)

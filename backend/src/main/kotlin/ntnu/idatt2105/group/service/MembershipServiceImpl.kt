@@ -22,6 +22,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedReader
 import java.io.FileReader
@@ -57,6 +58,7 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
             return userRepository.findAll(newPredicate, pageable).map { it.toUserListDto() }
         }
 
+    @Transactional
     override fun createMemberships(groupId: UUID, userEmail: UserEmailDto, predicate: Predicate, pageable: Pageable): Page<UserListDto> {
         groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(
                 EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }
@@ -70,6 +72,7 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
         }
     }
 
+    @Transactional
     override fun deleteMembership(groupId: UUID, userId: UUID) {
         groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(
                 EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }
