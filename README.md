@@ -20,7 +20,7 @@ En _endebruker_ har begrenset tilgang og kan
 - Liste tilgjengelige rom
 - Reservere rom (på vegne av seg selv eller en gruppe)
 
-En _adminbruker_ har tilgang til alle aspekter en endebruker kan, i tillegg til følgende: 
+En _adminbruker_ har tilgang til alle aspekter en endebruker har, i tillegg til følgende: 
 - Lage endebrukere (evt ved csv-fil)
 - Gjøre endebrukere til adminbrukere
 - Administrere brukere 
