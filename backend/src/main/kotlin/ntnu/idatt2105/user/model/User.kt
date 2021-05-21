@@ -30,7 +30,7 @@ data class User(@Id
                 var roles: MutableSet<Role> = mutableSetOf(),
                 @OneToOne(mappedBy = "user", cascade = [CascadeType.ALL])
                 val pwdToken: PasswordResetToken? = null,
-                @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+                @ManyToMany(cascade = [CascadeType.MERGE, CascadeType.PERSIST], fetch = FetchType.LAZY)
                 @JoinTable(name = "group_user",
                 joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
                 inverseJoinColumns = [JoinColumn(name = "group_id", referencedColumnName = "id")],

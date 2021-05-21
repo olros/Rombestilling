@@ -116,6 +116,6 @@ export const useChangePassword = (): UseMutationResult<RequestResponse, RequestR
   return useMutation(({ oldPassword, newPassword }) => API.changePassword(oldPassword, newPassword));
 };
 
-export const useDeleteUser = (): UseMutationResult<RequestResponse, RequestResponse, unknown, unknown> => {
-  return useMutation(() => API.deleteUser());
+export const useDeleteUser = (): UseMutationResult<RequestResponse, RequestResponse, string, unknown> => {
+  return useMutation((userId) => API.deleteUser(userId));
 };

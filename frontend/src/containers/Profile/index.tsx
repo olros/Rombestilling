@@ -126,7 +126,7 @@ const Profile = () => {
             </Collapse>
             <Collapse in={tab === editTab.value} mountOnEnter>
               <Paper>
-                <EditProfile isAdmin={isUserAdmin(signedInUser)} user={user} />
+                <EditProfile user={user} />
               </Paper>
             </Collapse>
           </div>

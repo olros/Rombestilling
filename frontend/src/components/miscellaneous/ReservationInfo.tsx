@@ -92,8 +92,7 @@ const ReservationInfo = ({ sectionId, reservationId, onDelete }: ReservationInfo
       <Typography className={classes.about} variant='body1'>{`Fra: ${formatDate(parseISO(data.fromTime))}
 Til: ${formatDate(parseISO(data.toTime))}
 Personer: ${data.nrOfPeople}
-${canEdit ? `Reservert av: ${creator}` : ''}
-Beskrivelse: ${data.text}`}</Typography>
+${canEdit ? `Reservert av: ${creator}\n` : ''}Beskrivelse: ${data.text}`}</Typography>
       {canEdit && <ReservationEditDialog reservation={data} variant='text' />}
     </div>
   );

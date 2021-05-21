@@ -2,7 +2,7 @@ import { useMutation, useInfiniteQuery, useQuery, useQueryClient, UseMutationRes
 import API from 'api/api';
 import { getNextPaginationPage } from 'utils';
 import { Reservation, ReservationCreate, PaginationResponse, RequestResponse } from 'types/Types';
-import { SECTION_QUERY_KEY, SECTION_ALL_QUERY_KEY } from 'hooks/Section';
+import { SECTION_QUERY_KEY, SECTION_ALL_QUERY_KEY, SECTION_STATISTICS_QUERY_KEY } from 'hooks/Section';
 export const RESERVATION_QUERY_KEY = 'reservation';
 export const USER_RESERVATIONS_QUERY_KEY = 'user_reservations';
 export const SECTION_RESERVATIONS_QUERY_KEY = 'section_reservations';
@@ -76,6 +76,7 @@ export const useCreateReservation = (sectionId: string): UseMutationResult<Reser
     onSuccess: (data) => {
       queryClient.invalidateQueries(RESERVATION_QUERY_KEY);
       queryClient.invalidateQueries([SECTION_QUERY_KEY, SECTION_ALL_QUERY_KEY]);
+      queryClient.invalidateQueries([SECTION_QUERY_KEY, sectionId, SECTION_STATISTICS_QUERY_KEY]);
       queryClient.setQueryData([RESERVATION_QUERY_KEY, data.id], data);
     },
   });

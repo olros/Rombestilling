@@ -1,5 +1,6 @@
 package ntnu.idatt2105.group.service
 
+import com.querydsl.core.types.ExpressionUtils
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
@@ -8,7 +9,10 @@ import ntnu.idatt2105.group.dto.CreateGroupDto
 import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.group.dto.toGroupDto
 import ntnu.idatt2105.group.model.Group
+import ntnu.idatt2105.group.model.QGroup
 import ntnu.idatt2105.group.repository.GroupRepository
+import ntnu.idatt2105.reservation.model.QReservation
+import ntnu.idatt2105.reservation.model.QUserReservation
 import ntnu.idatt2105.reservation.service.ReserverService
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.service.UserService
@@ -50,8 +54,11 @@ class GroupServiceImpl(val groupRepository: GroupRepository, val userService: Us
             .toGroupDto()
     }
 
-    override fun getAllGroups(pageable: Pageable, predicate: Predicate): Page<GroupDto> {
-        return groupRepository.findAll(predicate, pageable).map {
+    override fun getAllGroups(pageable: Pageable, predicate: Predicate, creatorId: UUID): Page<GroupDto> {
+        val group = QGroup.group
+        val user = userService.getUser(creatorId, User::class.java)
+        val newPredicate = if (user.isAdmin()) predicate else ExpressionUtils.allOf(predicate, group.creator.id.eq(creatorId).or(group.members.any().id.eq(creatorId)))!!
+        return groupRepository.findAll(newPredicate, pageable).map {
             it.toGroupDto()
         }
     }

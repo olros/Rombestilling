@@ -43,7 +43,7 @@ const GroupDetails = () => {
   const reservationsTab = { value: 'reservations', label: 'Reservasjoner', icon: ListIcon };
   const calendarTab = { value: 'calendar', label: 'Kalender', icon: CalendarIcon };
   const membersTab = { value: 'members', label: 'Medlemmer', icon: UsersIcon };
-  const tabs = [reservationsTab, calendarTab, ...(isAdmin ? [membersTab] : [])];
+  const tabs = [reservationsTab, calendarTab, membersTab];
   const [tab, setTab] = useState(reservationsTab.value);
 
   useEffect(() => {
