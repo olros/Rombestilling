@@ -63,11 +63,23 @@ const RoomListItem = ({ room, reserve, showReserve }: RoomListItemProps) => {
       </div>
       <div className={classnames(classes.actions, classes.grid)}>
         {((room.type === 'room' && Boolean(room.children.length)) || room.type === 'section') && (
-          <Button className={classes.button} endIcon={open ? <ExpandLessIcon /> : <ExpandMoreIcon />} onClick={() => setOpen((prev) => !prev)} variant='text'>
+          <Button
+            className={classes.button}
+            color='secondary'
+            endIcon={open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            onClick={() => setOpen((prev) => !prev)}
+            variant='text'>
             {isRoom ? 'Seksjoner' : 'Rom'}
           </Button>
         )}
-        <Button className={classes.button} component={Link} endIcon={<OpenIcon />} target='_blank' to={`${URLS.ROOMS}${room.id}/`} variant='text'>
+        <Button
+          className={classes.button}
+          color='secondary'
+          component={Link}
+          endIcon={<OpenIcon />}
+          target='_blank'
+          to={`${URLS.ROOMS}${room.id}/`}
+          variant='text'>
           Åpne rom
         </Button>
       </div>

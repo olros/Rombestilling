@@ -6,7 +6,7 @@ import { useSnackbar } from 'hooks/Snackbar';
 import { useUpdateUser, useChangePassword, useLogout, useDeleteUser, useUser } from 'hooks/User';
 import { User } from 'types/Types';
 import { parseISO } from 'date-fns';
-import { dateAsUTC } from 'utils';
+import { dateAsUTC, isUserAdmin } from 'utils';
 
 // Material UI
 import { makeStyles, Typography } from '@material-ui/core';
@@ -41,7 +41,6 @@ const useStyles = makeStyles((theme) => ({
 
 export type EditProfileProps = {
   user: User;
-  isAdmin?: boolean;
 };
 
 type UserEditData = Pick<User, 'firstName' | 'surname' | 'email' | 'image' | 'phoneNumber'> & {
@@ -54,7 +53,7 @@ type ChangePasswordData = {
   repeatNewPassword: string;
 };
 
-const EditProfile = ({ user, isAdmin = false }: EditProfileProps) => {
+const EditProfile = ({ user }: EditProfileProps) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -108,11 +107,11 @@ const EditProfile = ({ user, isAdmin = false }: EditProfileProps) => {
     deleteUser.mutate(user.id, {
       onSuccess: () => {
         if (user.id === signedInUser?.id) {
-          showSnackbar('Brukeren ble slettet. Du vil nå bli sendt til brukeroversikten.', 'success');
-          setTimeout(() => navigate(URLS.USERS), 5000);
-        } else {
           showSnackbar('Brukeren din ble slettet. Du vil nå bli sendt til forsiden.', 'success');
           setTimeout(() => logout(), 5000);
+        } else {
+          showSnackbar('Brukeren ble slettet. Du vil nå bli sendt til brukeroversikten.', 'success');
+          setTimeout(() => navigate(URLS.USERS), 5000);
         }
       },
     });
@@ -161,7 +160,7 @@ const EditProfile = ({ user, isAdmin = false }: EditProfileProps) => {
           variant='outlined'
           watch={watch}
         />
-        {isAdmin && (
+        {isUserAdmin(signedInUser) && (
           <DatePicker control={control} disabled={updateUser.isLoading} formState={formState} fullWidth label='Aktiv til' name='expirationDate' type='date' />
         )}
         <div className={classes.btnRow}>
@@ -172,17 +171,19 @@ const EditProfile = ({ user, isAdmin = false }: EditProfileProps) => {
             Endre passord
           </Button>
         </div>
-        <Paper className={classes.list}>
-          <Typography variant='h3'>Faresone!</Typography>
-          <VerifyDialog
-            className={classes.red}
-            closeText='Avbryt'
-            confirmText='Slett brukeren min'
-            contentText='Sikker på at du vil slette brukeren din? Du kan ikke angre dette. Dine reserveringer vil slettes og kan ikke gjenopprettes.'
-            onConfirm={confirmedDeleteUser}>
-            Slett bruker
-          </VerifyDialog>
-        </Paper>
+        {isUserAdmin(signedInUser) && (
+          <Paper className={classes.list}>
+            <Typography variant='h3'>Faresone!</Typography>
+            <VerifyDialog
+              className={classes.red}
+              closeText='Avbryt'
+              confirmText='Slett brukeren'
+              contentText='Sikker på at du vil slette brukeren? Du kan ikke angre dette. Reserveringer vil slettes og kan ikke gjenopprettes.'
+              onConfirm={confirmedDeleteUser}>
+              Slett bruker
+            </VerifyDialog>
+          </Paper>
+        )}
       </form>
       <Dialog onClose={() => setOpen(false)} open={open} titleText='Endre Passord'>
         <form className={classes.list} onSubmit={passwordHandleSubmit(onChangePassword)}>
