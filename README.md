@@ -172,12 +172,40 @@ yarn start
 
 Når applikasjonene har startet opp vil applikasjonen være tilgjengelig på http://localhost:3000/ og REST API-et vil da være tilgjengelig på http://localhost:8080/ 
 
-Det ligger en adminbruker inne i systemet man kan bruke under testing med følgende nøkler:
+Det ligger en adminbruker og en vanlig bruker inne i systemet man kan bruke under testing med følgende innlogging:
+
+_Admin:_
 
 - Epost: admin@test.com
 - Passord: admin
 
-_Denne brukeren er lagt inn **kun** for bruk under utvikling og skal på ingen måte brukes i et virkelig scenario._ 
+_Vanlig bruker:_
+
+- Epost: user@test.com
+- Passord: user
+
+_Disse brukerne er lagt inn **kun** for bruk under utvikling og skal på ingen måte brukes i et virkelig scenario._
+
+## Tester - CI
+Test-coverage backend:
+![image](https://user-images.githubusercontent.com/31009729/119147728-2373bb00-ba4c-11eb-870a-9879f2ddc1f3.png)
+
+Tester har blitt kjørt fortløpende med CI for både frontend og backend gjennom Github Actions.
+
+CI runs backend:
+- https://github.com/olros/IDATT2105-project/actions/workflows/ci_backend.yml
+
+CI runs frontend:
+- https://github.com/olros/IDATT2105-project/actions/workflows/ci_frontend.yml
+
+## Deployment - CD
+
+Fortløpende deployment er løst gjennom Azure for backend og Vercel for frontend.
+
+I Azure har vi opprettet et privat Container Registry som vi kan pushe container images til. Det gjør vi gjennom en CD-workflow der vi bruker [_jib_](https://github.com/GoogleContainerTools/jib), et verktøy laget av Google for å lage container images, som et Gradle plugin til å lage et Docker-image av applikasjonen og så pushe det til registry'et. I Azure har vi også satt opp en Azure App Service-instans som kjører en [Docker-Compose fil](backend/docker-compose.azure.yml) som kjører applikasjonen og en MySQL-database. Ettersom databasen ligger i App Servicen blir den tømt hver gang applikasjonen starter på nytt, noe er praktisk under utvikling men naturligvis ville vært endret i et virkelig scenario. Det er også satt opp en Webhook som automatisk restarter App Service med nytt image fra Container Registry ved ny push til registry'et.
+
+Vercel har et veldig enkelt oppsett for frontend applikasjoner. Det eneste som har vært nødvendig fra vår side er å opprette et nytt prosjekt i Vercel og knytte det til dette Git-repositoryet. Etter det har Vercel automatisk oppdatert nettsiden ved push til _main_, samt laget såkalte _preview deployments_ til hver Pull Request som enkelt gjør oss i stand til å se hvordan nettsiden ser ut i nye branches.
+
 
 ## Medlemmer
 
