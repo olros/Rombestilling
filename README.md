@@ -52,7 +52,7 @@ Følgende er vårt databaseskjema:
 ## Sikkerhet
 Sikkerhet vært et gjennomgående fokus punkt under hele prosjektet da vi mener at dette er at vi de viktigste fokusene man må ivareta som utvikler. APIet vårt er designet rundt REST prinsipper, noe som gjør at vi derfor benytter oss av stateless authentication. Dette gjør vi ved hjelp av Json Web Tokens. En gyldig innlogget bruker vil til enhver tid ha en Acess token og en refresh token tilgjengelig. Acess token gjør at brukeren kan få tilgang på innhold, men denne har en gyldighet på 15 minutter, av sikkerhetsmessig årsaker. Bruker vil da automatisk benytte seg av refresh token for å få en ny og oppdatert acess token. Alt dette skjer automatisk, slik at bruker ikke skal trenge å bruke energi på det, samtidig som det gir brukeren en sikker opplevelse. 
 
-Vi har også implementert en enkel form for Refresh Token Rotation (RTR): Et refresh token kan bare brukes én gang og hvis en prøver å gjenbruke en refresh token vil alle resresh tokens utgitt til brukeren etter denne bli ugyldige. 
+Vi har også implementert en enkel form for Refresh Token Rotation (RTR): Et refresh token kan bare brukes én gang og hvis en prøver å gjenbruke en refresh token vil alle refresh tokens utgitt til brukeren etter denne bli ugyldige. 
 
 Vi har også hatt fokus på Zero Trust konseptet, og har derfor kun åpnet et fåtall endepunkter, mens resten krever autentisjon. Alle endepunkter krever authentisering og adminrolle. Vi har som nevnt åpnet et fåtall endepunkter til brukere med brukerrollen, slik at man må være registrert som en gyldig bruker med denne rollen. 
 
