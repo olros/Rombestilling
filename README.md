@@ -5,7 +5,7 @@
 
 Prosjektet er et bookingsystem for rom. Her kan brukere reservere ulike rom og underdeler av rom. Reservasjon kan skje som enkeltperson eller på vegne av en gruppe. Rom og brukere opprettes og administreres av administratorer som har full tilgang til hele systemet. Administratorer kan batch-opprette mange bruker samtidig ved hjelp av CSV-filer, hvorpå de nye brukerne vil motta en epost med link til side der passord kan settes. Swagger-docs finnes på `/swagger-ui/`
 
-## Table of Contents ##
+## Innhold ##
 1. [Applikasjonen](#applikasjonen)
 2. [Databaseskjema](#databaseskjema)
 3. [Teknologier](#teknologier)
