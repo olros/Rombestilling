@@ -158,6 +158,22 @@ make db / docker-compose up
 gradlew bootRun
 ```
 
+#### Epost konfigurasjon
+Applikasjonen benytter seg av epost for å sende ut informasjon til nye brukere og mer. For å sette opp epost må du lage en fil som heter ```emailconfig.properties``` under ```backend/src/main/resources/mail/```. Under ser du feltene som du må fylle ut for å sette opp epost med en gmail konto. 
+```bash
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=EPOST
+spring.mail.password=PASSORD
+spring.mail.properties.mail.transport.protocol=smtp
+spring.mail.properties.smtp.auth=true
+spring.mail.properties.smtp.starttls.enable=true
+```
+
+_**NB!**: Det kan hende du må endre på instillinger inne på selve epost kontoen din for å tillate å sende mail på denne måten._
+
+
+
 ### Frontend
 
 ```bash
