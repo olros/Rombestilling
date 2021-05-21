@@ -26,7 +26,7 @@ En _adminbruker_ har tilgang til alle aspekter en endebruker har, i tillegg til 
 - Administrere brukere 
 - Administrere rom 
 - Administrere grupper
-- Administrere gruppemedlemsskap (evt ved csv-fil)
+- Administrere gruppemedlemskap (evt opprette ved csv-fil)
 - Se statistikk for rom
 
 Når adminbrukere oppretter vanlige brukere, enten enkeltbrukere eller ved csv, vil de nye brukere få tilsendt en epost med en link til å tilbakestille passord. De kan da trykke på denne og velge et passord for kontoen sin og logge inn i applikasjonen.
