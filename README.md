@@ -13,7 +13,7 @@ Prosjektet er et bookingsystem for rom. Her kan brukere reservere ulike rom og u
 5. [Sikkerhet](#sikkerhet)
 6. [API-dokumentasjon](#api-dokumentasjon)
 7. [Installasjon](#installasjon)
-8. [CI/CD](#ci-cd)
+8. [CI/CD](#cicd)
 9. [Medlemmer](#medlemmer)
 
 ## Applikasjonen
