@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.factories.UserReservationFactory
 import ntnu.idatt2105.reservation.dto.CreateUserReservationRequest
-import ntnu.idatt2105.reservation.model.Reservation
 import ntnu.idatt2105.reservation.model.UserReservation
 import ntnu.idatt2105.reservation.repository.ReservationRepository
 import ntnu.idatt2105.section.model.Section
@@ -22,15 +21,12 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
-
-
+import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import java.time.LocalTime
 import java.time.ZonedDateTime
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -48,28 +44,27 @@ class UserReservationControllerImplTest {
     private lateinit var reservationRepository: ReservationRepository
 
     @Autowired
-    private lateinit var userRepository:  UserRepository
+    private lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var userDetailsService: UserDetailsService
 
     @Autowired
-    private lateinit var sectionRepository:  SectionRepository
-
+    private lateinit var sectionRepository: SectionRepository
 
     private lateinit var reservation: UserReservation
 
     private val faker = Faker()
 
     @BeforeEach
-    fun setUp(){
+    fun setUp() {
         reservation = UserReservationFactory().`object`
         userRepository.save(reservation.user!!)
         sectionRepository.save(reservation.section!!)
         reservation = reservationRepository.save(reservation)
     }
     @AfterEach
-    fun cleanUp(){
+    fun cleanUp() {
         reservationRepository.deleteAll()
         sectionRepository.deleteAll()
         userRepository.deleteAll()
@@ -90,9 +85,7 @@ class UserReservationControllerImplTest {
                 .andExpect(jsonPath("$.content.[*].type").value("user"))
                 .andExpect(jsonPath("$.content.[*].text", Matchers.hasItem(reservation.text)))
                 .andExpect(jsonPath("$.content.[*].text", Matchers.hasItem(newReservation.text)))
-
     }
-
 
     @Test
     @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
@@ -103,7 +96,6 @@ class UserReservationControllerImplTest {
                 .andExpect(jsonPath("$.type").value("user"))
                 .andExpect(jsonPath("$.user.id").value(reservation.user!!.id.toString()))
                 .andExpect(jsonPath("$.text").value(reservation.text))
-
     }
 
     @Test
@@ -120,7 +112,7 @@ class UserReservationControllerImplTest {
                 toTime = reservation.toTime?.plusDays(1),
                 text = reservation.text,
                 nrOfPeople = reservation.nrOfPeople,
-                type= "user" )
+                type = "user")
 
         this.mvc.perform(post(getURL(reservation.section!!))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -163,13 +155,12 @@ class UserReservationControllerImplTest {
                 toTime = reservation.toTime?.plusHours(20),
                 text = reservation.text,
                 nrOfPeople = reservation.nrOfPeople,
-                type= "user")
+                type = "user")
 
         this.mvc.perform(post(getURL(reservation.section!!))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(reservationCreate)))
                 .andExpect(status().isBadRequest)
-
     }
     @Test
     @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
@@ -196,13 +187,12 @@ class UserReservationControllerImplTest {
                 toTime = reservation.toTime,
                 text = reservation.text,
                 nrOfPeople = reservation.nrOfPeople,
-                type= "user")
+                type = "user")
 
         this.mvc.perform(post(getURL(reservation.section!!))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(reservationCreate)))
                 .andExpect(status().isBadRequest)
-
     }
     @Test
     @WithMockUser(roles = [RoleType.USER, RoleType.ADMIN])
@@ -255,7 +245,7 @@ class UserReservationControllerImplTest {
         sectionRepository.save(newReservation.section!!)
 
         val reservationWithNegativeNrOfPeople = newReservation.copy(nrOfPeople = -1)
-        val reservationCreateRequest =CreateUserReservationRequest(entityId = reservationWithNegativeNrOfPeople.user?.id,
+        val reservationCreateRequest = CreateUserReservationRequest(entityId = reservationWithNegativeNrOfPeople.user?.id,
                 sectionId = reservationWithNegativeNrOfPeople.section?.id,
                 fromTime = reservationWithNegativeNrOfPeople.fromTime,
                 toTime = reservationWithNegativeNrOfPeople.toTime,
@@ -299,7 +289,7 @@ class UserReservationControllerImplTest {
         sectionRepository.save(newReservation.section!!)
 
         val reservationStartingInThePast = newReservation.copy(fromTime = reservation.fromTime?.with(LocalTime.of(5, 0)))
-        val reservationCreateRequest =CreateUserReservationRequest(entityId = reservationStartingInThePast.user?.id,
+        val reservationCreateRequest = CreateUserReservationRequest(entityId = reservationStartingInThePast.user?.id,
                 sectionId = reservationStartingInThePast.section?.id,
                 fromTime = reservationStartingInThePast.fromTime,
                 toTime = reservationStartingInThePast.toTime,
@@ -345,7 +335,7 @@ class UserReservationControllerImplTest {
         val reservationStartingInThePast = newReservation.copy(
                 fromTime = reservation.fromTime?.plusMonths(ReservationConstants.MAX_MONTHS_FOR_USER_RESERVING_IN_FUTURE)
         )
-        val reservationCreateRequest =CreateUserReservationRequest(entityId = reservationStartingInThePast.user?.id,
+        val reservationCreateRequest = CreateUserReservationRequest(entityId = reservationStartingInThePast.user?.id,
                 sectionId = reservationStartingInThePast.section?.id,
                 fromTime = reservationStartingInThePast.fromTime,
                 toTime = reservationStartingInThePast.toTime,
@@ -374,7 +364,7 @@ class UserReservationControllerImplTest {
                 fromTime = reservationStartingInThePast.fromTime,
                 toTime = reservationStartingInThePast.toTime,
                 text = reservationStartingInThePast.text,
-                nrOfPeople = reservationStartingInThePast.nrOfPeople,type = "user")
+                nrOfPeople = reservationStartingInThePast.nrOfPeople, type = "user")
 
         mvc.perform(post(getURL(reservation.section!!))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -395,7 +385,7 @@ class UserReservationControllerImplTest {
                 fromTime = reservationWithNegatedTimeInterval.fromTime,
                 toTime = reservationWithNegatedTimeInterval.toTime,
                 text = reservationWithNegatedTimeInterval.text,
-                nrOfPeople = reservationWithNegatedTimeInterval.nrOfPeople,type = "user")
+                nrOfPeople = reservationWithNegatedTimeInterval.nrOfPeople, type = "user")
 
         mvc.perform(post(getURL(reservation.section!!))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -416,7 +406,7 @@ class UserReservationControllerImplTest {
                 fromTime = reservationWithLongerThanMaxDuration.fromTime,
                 toTime = reservationWithLongerThanMaxDuration.toTime,
                 text = reservationWithLongerThanMaxDuration.text,
-                nrOfPeople = reservationWithLongerThanMaxDuration.nrOfPeople,type = "user")
+                nrOfPeople = reservationWithLongerThanMaxDuration.nrOfPeople, type = "user")
         mvc.perform(post(getURL(reservation.section!!))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(reservationCreateRequest)))

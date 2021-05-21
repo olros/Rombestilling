@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
-
 @WebMvcTest
 @ContextConfiguration(classes = [WebSecurity::class, PasswordEncoderConfig::class, JWTConfig::class, JwtUtil::class])
 class AuthenticationTest {
@@ -149,5 +148,4 @@ class AuthenticationTest {
         )
             .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
-
 }

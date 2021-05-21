@@ -16,7 +16,7 @@ data class PasswordResetToken(
 ) {
 
     companion object {
-        //60 minutes
+        // 60 minutes
         private const val EXPIRATION = 60
     }
 }

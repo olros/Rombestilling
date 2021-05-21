@@ -5,11 +5,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
 
-
-data class UserDetailsImpl(private val id: UUID,
-        private val email: String,
-        private val password: String,
-        private val roles: Set<SimpleGrantedAuthority>): UserDetails {
+data class UserDetailsImpl(
+    private val id: UUID,
+    private val email: String,
+    private val password: String,
+    private val roles: Set<SimpleGrantedAuthority>
+) : UserDetails {
 
     override fun getAuthorities(): Collection<GrantedAuthority?> {
         return roles

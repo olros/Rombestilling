@@ -5,12 +5,11 @@ import org.springframework.stereotype.Component
 import java.text.MessageFormat
 import java.util.*
 
-
 /**
  * Helper class to generate domain specific RuntimeExceptions.
  */
 @Component
-class ApplicationException (propertiesConfig: PropertiesConfig) {
+class ApplicationException(propertiesConfig: PropertiesConfig) {
 
     class EntityNotFoundException(message: String?) : RuntimeException(message)
     class DuplicateEntityException(message: String?) : RuntimeException(message)

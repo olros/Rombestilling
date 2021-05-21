@@ -4,7 +4,6 @@ import ntnu.idatt2105.security.token.JwtRefreshToken
 import ntnu.idatt2105.security.token.JwtToken
 import ntnu.idatt2105.security.token.RefreshToken
 
-
 interface RefreshTokenService {
     fun saveRefreshToken(token: JwtToken): RefreshToken
 

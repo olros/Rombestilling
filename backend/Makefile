@@ -7,6 +7,9 @@ help:
 db:
 	docker-compose up
 
+format:
+	./gradlew ktlinFormat --warning-mode=all
+
 restart:
 	docker-compose build
 	docker-compose up
@@ -28,3 +31,6 @@ run-unix:
 
 run:
 	docker-compose -f docker-compose.azure.yml up --build
+
+test:
+	./gradlew test

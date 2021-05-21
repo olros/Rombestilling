@@ -5,10 +5,7 @@ import ntnu.idatt2105.security.exception.JwtExpiredTokenException
 import org.springframework.security.authentication.BadCredentialsException
 import java.security.SignatureException
 
-
-
-
-data class RawJwtAccessToken (private var token: String): JwtToken {
+data class RawJwtAccessToken(private var token: String) : JwtToken {
 
     fun parseClaims(signingKey: String?): Jws<Claims>? {
         try {

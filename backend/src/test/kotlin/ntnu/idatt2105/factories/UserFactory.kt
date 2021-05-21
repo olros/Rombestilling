@@ -1,6 +1,5 @@
 package ntnu.idatt2105.factories
 
-
 import io.github.serpro69.kfaker.Faker
 import io.github.serpro69.kfaker.FakerConfig
 import io.github.serpro69.kfaker.create
@@ -12,7 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.lang.Exception
 import java.time.LocalDate
 import java.util.*
-
 
 class UserFactory : FactoryBean<User> {
 
@@ -30,13 +28,13 @@ class UserFactory : FactoryBean<User> {
         faker.unique.configuration { enable(faker::internet) }
         faker.unique.configuration { enable(faker::name) }
         val userRole = RoleFactory().`object`
-        
+
         return UserBuilder(
-            id=UUID.randomUUID(),
-            email=faker.internet.email(),
-            firstName=faker.name.firstName(),
-            surname=faker.name.lastName(),
-            password=encoder.encode(faker.rickAndMorty.locations()),
+            id = UUID.randomUUID(),
+            email = faker.internet.email(),
+            firstName = faker.name.firstName(),
+            surname = faker.name.lastName(),
+            password = encoder.encode(faker.rickAndMorty.locations()),
             phoneNumber = faker.phoneNumber.phoneNumber(),
             expirationDate = LocalDate.now().plusDays(1),
             roles = mutableSetOf(userRole)

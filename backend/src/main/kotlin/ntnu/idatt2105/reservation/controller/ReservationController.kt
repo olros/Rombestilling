@@ -1,9 +1,9 @@
 package ntnu.idatt2105.reservation.controller
 
+import com.querydsl.core.types.Predicate
 import io.swagger.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
@@ -29,8 +29,8 @@ interface ReservationController {
     fun getAllReservations(
         @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
         @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
-            sort= ["fromTime"], direction = Sort.Direction.DESC) pageable: Pageable,
-                           @PathVariable sectionId: UUID
+            sort = ["fromTime"], direction = Sort.Direction.DESC) pageable: Pageable,
+        @PathVariable sectionId: UUID
     ): Page<ReservationDto>
 
     @Operation(summary = "Fetch reservation details for the given reservation id", responses = [
@@ -45,7 +45,7 @@ interface ReservationController {
         ApiResponse(responseCode = "400", description = "Bad request: new reservation was not created"),
     ])
     @PostMapping
-    fun createReservation(@PathVariable sectionId: UUID, @RequestBody @Valid reservation: ReservationCreateDto):  ReservationDto
+    fun createReservation(@PathVariable sectionId: UUID, @RequestBody @Valid reservation: ReservationCreateDto): ReservationDto
 
     @Operation(summary = "Update existing reservation", responses = [
         ApiResponse(responseCode = "200", description = "Success: reservation was updated"),

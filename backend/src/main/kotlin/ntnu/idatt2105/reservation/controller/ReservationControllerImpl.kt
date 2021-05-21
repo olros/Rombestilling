@@ -5,12 +5,10 @@ import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
 import ntnu.idatt2105.reservation.service.ReservationService
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
-
 
 @RestController
 class ReservationControllerImpl(val reservationService: ReservationService) : ReservationController {
@@ -30,7 +28,7 @@ class ReservationControllerImpl(val reservationService: ReservationService) : Re
     override fun updateReservation(sectionId: UUID, reservationId: UUID, reservation: ReservationDto) =
         reservationService.updateReservation(sectionId, reservationId, reservation)
 
-    override fun deleteReservation(sectionId: UUID, reservationId: UUID) : ResponseEntity<Response> {
+    override fun deleteReservation(sectionId: UUID, reservationId: UUID): ResponseEntity<Response> {
         reservationService.deleteReservation(sectionId, reservationId)
         return ResponseEntity.ok(Response("Reservation deleted"))
     }

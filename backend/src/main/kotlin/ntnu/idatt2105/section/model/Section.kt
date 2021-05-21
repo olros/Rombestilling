@@ -12,24 +12,24 @@ import javax.persistence.*
 
 @Entity
 data class Section(
-        @Id
-        @Column(columnDefinition = "CHAR(32)")
-        var id: UUID = UUID.randomUUID(),
-        var name: String = "",
-        @Column(columnDefinition = "TEXT")
-        var description: String = "",
-        var capacity: Int = 0,
-        var image: String,
-        @OneToMany(fetch = FetchType.EAGER,mappedBy = "parent" , cascade =[CascadeType.ALL])
-        var children: MutableList<Section> = mutableListOf(),
-        @ManyToOne
-        var parent: Section? = null,
-        @OneToMany(fetch=FetchType.LAZY, mappedBy = "section")
-        var userReservation: MutableList<UserReservation> = mutableListOf(),
-        @OneToMany(fetch=FetchType.LAZY, mappedBy = "section")
-        var groupReservation: MutableList<GroupReservation> = mutableListOf()
-){
-        fun getType(): String{
+    @Id
+    @Column(columnDefinition = "CHAR(32)")
+    var id: UUID = UUID.randomUUID(),
+    var name: String = "",
+    @Column(columnDefinition = "TEXT")
+    var description: String = "",
+    var capacity: Int = 0,
+    var image: String,
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "parent", cascade = [CascadeType.ALL])
+    var children: MutableList<Section> = mutableListOf(),
+    @ManyToOne
+    var parent: Section? = null,
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "section")
+    var userReservation: MutableList<UserReservation> = mutableListOf(),
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "section")
+    var groupReservation: MutableList<GroupReservation> = mutableListOf()
+) {
+        fun getType(): String {
                 if (parent != null)
                         return SectionType.SECTION
                 return SectionType.ROOM
@@ -39,7 +39,7 @@ data class Section(
 
     fun hasNoCapacityFor(section: Section): Boolean = getPreoccupationDegree() + section.capacity > this.capacity
 
-    private fun getPreoccupationDegree(): Int = children.fold(0, { acc, next -> acc + next.capacity})
+    private fun getPreoccupationDegree(): Int = children.fold(0, { acc, next -> acc + next.capacity })
 
     override fun toString(): String {
         return "Section(id=$id, name='$name', description='$description', capacity=$capacity, image='$image', children=$children, reservation=$userReservation)"
@@ -50,4 +50,3 @@ data class Section(
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     var interval: ZonedDateTime? = null
 }
-

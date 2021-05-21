@@ -12,15 +12,13 @@ import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.util.*
 
-
 @Component
 class SetupDataLoader(
     val userRepository: UserRepository,
     val roleRepository: RoleRepository,
     val passwordEncoder: BCryptPasswordEncoder
-): ApplicationListener<ContextRefreshedEvent?> {
+) : ApplicationListener<ContextRefreshedEvent?> {
     private var alreadySetup = false
-
 
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
         if (!alreadySetup) {
@@ -32,28 +30,27 @@ class SetupDataLoader(
                 ?: roleRepository.save(Role(id = UUID.randomUUID(), name = RoleType.ADMIN))
 
             userRepository.findByEmail("admin@test.com") ?: userRepository.save(
-                User(id=UUID.randomUUID(),
-                    firstName="Admin",
-                    surname="User",
-                    email="admin@test.com",
-                    phoneNumber="+4712345678",
-                    password=passwordEncoder.encode("admin"),
+                User(id = UUID.randomUUID(),
+                    firstName = "Admin",
+                    surname = "User",
+                    email = "admin@test.com",
+                    phoneNumber = "+4712345678",
+                    password = passwordEncoder.encode("admin"),
                     expirationDate = LocalDate.EPOCH,
                     roles = mutableSetOf(userRole, adminRole)
                 ))
 
             userRepository.findByEmail("user@test.com") ?: userRepository.save(
-                User(id=UUID.randomUUID(),
-                    firstName="Test",
-                    surname="User",
-                    email="user@test.com",
-                    phoneNumber="+test",
-                    password=passwordEncoder.encode("user"),
+                User(id = UUID.randomUUID(),
+                    firstName = "Test",
+                    surname = "User",
+                    email = "user@test.com",
+                    phoneNumber = "+test",
+                    password = passwordEncoder.encode("user"),
                     expirationDate = LocalDate.now().plusYears(1),
                     roles = mutableSetOf(userRole)
                 ))
         }
         alreadySetup = true
-
     }
 }

@@ -7,7 +7,6 @@ import ntnu.idatt2105.factories.UserFactory
 import ntnu.idatt2105.mailer.MailService
 import ntnu.idatt2105.security.repository.PasswordResetTokenRepository
 import ntnu.idatt2105.user.dto.DetailedUserDto
-import org.junit.jupiter.params.provider.Arguments
 import ntnu.idatt2105.user.dto.UserDto
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.RoleRepository
@@ -15,10 +14,10 @@ import ntnu.idatt2105.user.repository.UserRepository
 import ntnu.idatt2105.util.JpaUtils
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
-
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
@@ -63,11 +62,11 @@ internal class UserServiceImplTest {
         modelMapper = ModelMapperConfig().modelMapper()
         userFactory = UserFactory()
         userService = UserServiceImpl(
-            userRepository=userRepository,
-            modelMapper=modelMapper,
-            passwordEncoder=passwordEncoder,
-            mailService=mailService,
-            passwordResetTokenRepository=passwordResetTokenRepository,
+            userRepository = userRepository,
+            modelMapper = modelMapper,
+            passwordEncoder = passwordEncoder,
+            mailService = mailService,
+            passwordResetTokenRepository = passwordResetTokenRepository,
             roleRepository = roleRepository
         )
 
@@ -115,7 +114,7 @@ internal class UserServiceImplTest {
         `when`(userRepository.findById(user.id))
             .thenReturn(Optional.of(user))
 
-        val actualUser = userService.getUser(user.id, mapTo=dtoClass)
+        val actualUser = userService.getUser(user.id, mapTo = dtoClass)
 
         assertThat(actualUser).isExactlyInstanceOf(dtoClass)
     }

@@ -1,9 +1,9 @@
 package ntnu.idatt2105.user.controller
 
+import com.querydsl.core.types.Predicate
 import io.swagger.annotations.Api
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.reservation.dto.ReservationDto
@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 import javax.validation.Valid
-
 
 @Api(value = "User services", tags = ["User Services"], description = "User Services")
 @RequestMapping("/users/")
@@ -62,8 +61,8 @@ interface UserController {
     @Operation(summary = "Fetch users", responses = [ApiResponse(responseCode = "200", description = "Success")])
     @GetMapping
     fun getUsers(
-            @QuerydslPredicate(root = User::class) predicate: Predicate,
-            @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["firstName"], direction = Sort.Direction.ASC) pageable: Pageable
+        @QuerydslPredicate(root = User::class) predicate: Predicate,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort = ["firstName"], direction = Sort.Direction.ASC) pageable: Pageable
     ): ResponseEntity<Page<UserDto>>
 
     @Operation(summary = "Update existing user", responses = [
@@ -87,9 +86,9 @@ interface UserController {
     ])
     @GetMapping("me/reservations/")
     fun getMyReservations(
-            @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
-            @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
-            @AuthenticationPrincipal principal: UserDetailsImpl
+        @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort = ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
+        @AuthenticationPrincipal principal: UserDetailsImpl
     ): Page<ReservationDto>
 
     @Operation(summary = "Fetch reservations for the given user", responses = [
@@ -100,7 +99,7 @@ interface UserController {
     fun getuserReservations(
         @PathVariable userId: UUID,
         @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
-        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort = ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
     ): Page<ReservationDto>
     @Operation(summary = "Fetch groups for the given user", responses = [
         ApiResponse(responseCode = "200", description = "Success"),
@@ -108,6 +107,6 @@ interface UserController {
     ])
     @GetMapping("me/groups/")
     fun getUserGroups(
-            @AuthenticationPrincipal principal: UserDetailsImpl
+        @AuthenticationPrincipal principal: UserDetailsImpl
     ): List<GroupDto>
 }

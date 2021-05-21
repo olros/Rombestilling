@@ -2,31 +2,30 @@ package ntnu.idatt2105.section.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.jayway.jsonpath.JsonPath
-import ntnu.idatt2105.factories.UserReservationFactory
-import ntnu.idatt2105.section.dto.CreateSectionRequest
 import ntnu.idatt2105.factories.SectionFactory
+import ntnu.idatt2105.factories.UserReservationFactory
 import ntnu.idatt2105.reservation.repository.ReservationRepository
+import ntnu.idatt2105.section.dto.CreateSectionRequest
 import ntnu.idatt2105.section.model.Section
 import ntnu.idatt2105.section.repository.SectionRepository
 import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.repository.UserRepository
+import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.hasItem
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.http.MediaType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-import java.util.*
-import org.hamcrest.Matchers.hasItem
-import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers
-import org.junit.jupiter.api.AfterEach
 import java.time.ZonedDateTime
-
+import java.util.*
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -52,12 +51,10 @@ class SectionControllerImplTest {
     @Autowired
     private lateinit var userRepository: UserRepository
 
-
     @BeforeEach
     fun setUp() {
         section = SectionFactory().`object`
         section = sectionRepository.save(section)
-
     }
 
     @AfterEach
@@ -78,10 +75,7 @@ class SectionControllerImplTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.content.[*].name", hasItem(section.name)))
             .andExpect(jsonPath("$.content.[*].name", hasItem(newSection.name)))
-
-
     }
-
 
     @Test
     @WithMockUser(value = "spring")
@@ -91,7 +85,6 @@ class SectionControllerImplTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("\$.name").value(section.name))
             .andExpect(jsonPath("\$.type").value(section.getType().toString()))
-
     }
 
     @Test
@@ -281,7 +274,6 @@ class SectionControllerImplTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.content.[*].name", hasItem(section.name)))
             .andExpect(jsonPath("$.content.[*].name", Matchers.not(newReservation.section?.name)))
-
     }
 
     @Test
@@ -298,7 +290,6 @@ class SectionControllerImplTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.content.[*].name", hasItem(section.name)))
             .andExpect(jsonPath("$.content.[*].name", Matchers.not(newSection.name)))
-
     }
 
     @Test
@@ -316,7 +307,6 @@ class SectionControllerImplTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.content.[*].name", hasItem(section.name)))
             .andExpect(jsonPath("$.content.[*].name", Matchers.not(newSection.name)))
-
     }
 
     @Test
@@ -346,9 +336,7 @@ class SectionControllerImplTest {
             .andExpect(jsonPath("$.hoursOfReservation").value(2))
             .andExpect(jsonPath("$.daysWithReservation").value(1))
             .andExpect(jsonPath("$.userReservationCount").value(1))
-
     }
-
 
     @Test
     @WithMockUser(roles = [RoleType.ADMIN])
@@ -374,7 +362,6 @@ class SectionControllerImplTest {
             .andExpect(status().isOk)
     }
 
-
     @Test
     @WithMockUser(roles = [RoleType.ADMIN])
     fun `test statistics are returned correct when two reservations is within the span`() {
@@ -394,7 +381,6 @@ class SectionControllerImplTest {
         reservation2.toTime = ZonedDateTime.now().plusHours(4)
         newSection.userReservation.add(reservation2)
 
-
         userRepository.save(reservation1.user!!)
         reservationRepository.save(reservation1)
         userRepository.save(reservation2.user!!)
@@ -411,7 +397,6 @@ class SectionControllerImplTest {
             .andExpect(jsonPath("$.hoursOfReservation").value(4))
             .andExpect(jsonPath("$.daysWithReservation").value(1))
             .andExpect(jsonPath("$.userReservationCount").value(2))
-
     }
 
     @Test
@@ -437,12 +422,10 @@ class SectionControllerImplTest {
         wrongReservation.toTime = ZonedDateTime.now().plusHours(4)
         wrongSection.userReservation.add(wrongReservation)
 
-
         userRepository.save(correctReservation.user!!)
         reservationRepository.save(correctReservation)
         userRepository.save(wrongReservation.user!!)
         reservationRepository.save(wrongReservation)
-
 
         this.mvc.perform(
             get(getStatURL(correctSection))
@@ -482,13 +465,11 @@ class SectionControllerImplTest {
         reservation3.toTime = ZonedDateTime.now().plusMonths(1).plusHours(4)
         newSection.userReservation.add(reservation3)
 
-
         val reservation4 = UserReservationFactory().`object`
         reservation4.section = newSection
         reservation4.fromTime = ZonedDateTime.now().minusMonths(1).plusHours(2)
         reservation4.toTime = ZonedDateTime.now().minusMonths(1).plusHours(4)
         newSection.userReservation.add(reservation4)
-
 
         userRepository.save(reservation1.user!!)
         reservationRepository.save(reservation1)
@@ -510,7 +491,6 @@ class SectionControllerImplTest {
             .andExpect(jsonPath("$.hoursOfReservation").value(8))
             .andExpect(jsonPath("$.daysWithReservation").value(4))
             .andExpect(jsonPath("$.userReservationCount").value(4))
-
     }
 
     @Test
@@ -538,13 +518,11 @@ class SectionControllerImplTest {
         wrongReservation1.toTime = ZonedDateTime.now().plusYears(2).plusHours(4)
         newSection.userReservation.add(wrongReservation1)
 
-
         val wrongReservation2 = UserReservationFactory().`object`
         wrongReservation2.section = newSection
         wrongReservation2.fromTime = ZonedDateTime.now().minusYears(2).plusHours(2)
         wrongReservation2.toTime = ZonedDateTime.now().minusYears(2).plusHours(4)
         newSection.userReservation.add(wrongReservation2)
-
 
         userRepository.save(reservation1.user!!)
         reservationRepository.save(reservation1)
@@ -566,6 +544,5 @@ class SectionControllerImplTest {
             .andExpect(jsonPath("$.hoursOfReservation").value(4))
             .andExpect(jsonPath("$.daysWithReservation").value(2))
             .andExpect(jsonPath("$.userReservationCount").value(2))
-
     }
 }

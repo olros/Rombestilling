@@ -11,7 +11,6 @@ import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer
 import org.springframework.data.querydsl.binding.QuerydslBindings
 import java.util.*
 
-
 interface SectionRepository : JpaRepository<Section, UUID>, QuerydslPredicateExecutor<Section>,
     QuerydslBinderCustomizer<QSection> {
 
@@ -46,7 +45,6 @@ interface SectionRepository : JpaRepository<Section, UUID>, QuerydslPredicateExe
                         )
                     )
                 ).not()
-
             }
             Optional.of(predicate)
         }

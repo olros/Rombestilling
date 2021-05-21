@@ -1,6 +1,5 @@
 package ntnu.idatt2105.user.controller
 
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.factories.RoleFactory
@@ -15,7 +14,6 @@ import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.fail
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -26,7 +24,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.test.mock.mockito.SpyBean
-import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
@@ -43,7 +40,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDate
 import java.util.*
 import java.util.stream.Stream
-
 
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 @AutoConfigureMockMvc
@@ -129,7 +125,6 @@ class UserControllerImplTest {
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content.[*].id", hasItem(user.id.toString())))
     }
-
 
     @Test
     @WithMockUser(value = "spring")
@@ -311,7 +306,6 @@ class UserControllerImplTest {
                 Arguments.of("test_1234-testesen@mail.com")
             )
 
-
         /**
          * Provide a stream of invalid email arguments.
          */
@@ -385,7 +379,7 @@ class UserControllerImplTest {
                 .with(user(adminUserDetails))
         ).andExpect(status().isCreated)
 
-        assert(size+1 == userRepository.findAll().size)
+        assert(size + 1 == userRepository.findAll().size)
     }
 
     @Test
@@ -405,7 +399,6 @@ class UserControllerImplTest {
         ).andExpect(status().isBadRequest)
     }
 
-
     @Test
     fun `test batch create with multiple valid users`() {
         val file = MockMultipartFile(
@@ -424,7 +417,7 @@ class UserControllerImplTest {
                 .with(user(adminUserDetails))
         ).andExpect(status().isCreated)
 
-        assert(size+3 == userRepository.findAll().size)
+        assert(size + 3 == userRepository.findAll().size)
     }
 
     @Test

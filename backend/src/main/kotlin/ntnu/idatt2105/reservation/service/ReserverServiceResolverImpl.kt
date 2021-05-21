@@ -9,13 +9,12 @@ import java.lang.IllegalArgumentException
 class ReserverServiceResolverImpl(
     private val groupService: GroupService,
     private val userService: UserService
-): ReserverServiceResolver {
+) : ReserverServiceResolver {
 
     override fun resolveService(reservationType: String?): ReserverService =
         when (reservationType) {
             "user" -> userService
-            "group" ->  groupService
-            else -> throw IllegalArgumentException("Unsupported reserver service for type ${reservationType}")
+            "group" -> groupService
+            else -> throw IllegalArgumentException("Unsupported reserver service for type $reservationType")
         }
-
 }

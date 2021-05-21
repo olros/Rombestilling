@@ -11,9 +11,6 @@ import ntnu.idatt2105.group.dto.toGroupDto
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.group.model.QGroup
 import ntnu.idatt2105.group.repository.GroupRepository
-import ntnu.idatt2105.reservation.model.QReservation
-import ntnu.idatt2105.reservation.model.QUserReservation
-import ntnu.idatt2105.reservation.service.ReserverService
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.service.UserService
 import org.springframework.data.domain.Page
@@ -21,7 +18,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
-
 
 @Service
 class GroupServiceImpl(val groupRepository: GroupRepository, val userService: UserService) : GroupService {
@@ -67,9 +63,8 @@ class GroupServiceImpl(val groupRepository: GroupRepository, val userService: Us
         return groupRepository.findAllByMembers_IdOrCreator_id(userId, userId).map { it.toGroupDto() }
     }
 
-    private fun getGroupById(id: UUID): Group = groupRepository.findById(id).orElseThrow{throw ApplicationException.throwException(
+    private fun getGroupById(id: UUID): Group = groupRepository.findById(id).orElseThrow { throw ApplicationException.throwException(
                 EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, id.toString()) }
 
     override fun getReserverById(id: UUID): Group = getGroupById(id)
-
 }

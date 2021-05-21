@@ -26,9 +26,10 @@ interface SectionController {
 
     @Operation(summary = "Fetch sections", responses = [ApiResponse(responseCode = "200", description = "Success")])
     @GetMapping
-    fun getAllSections(@QuerydslPredicate(root = Section::class) predicate: Predicate,
-                       @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
-                        sort= ["name"], direction = Sort.Direction.DESC) pageable: Pageable
+    fun getAllSections(
+        @QuerydslPredicate(root = Section::class) predicate: Predicate,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
+         sort = ["name"], direction = Sort.Direction.DESC) pageable: Pageable
     ): Page<SectionListDto>
 
     @Operation(summary = "Create a new section", responses = [

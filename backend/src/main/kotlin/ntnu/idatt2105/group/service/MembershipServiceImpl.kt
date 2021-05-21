@@ -1,11 +1,8 @@
 package ntnu.idatt2105.group.service
 
-import com.opencsv.bean.CsvToBean
-import com.opencsv.bean.CsvToBeanBuilder
 import com.querydsl.core.types.ExpressionUtils
 import com.querydsl.core.types.Predicate
 import ntnu.idatt2105.dto.response.Response
-import ntnu.idatt2105.dto.response.ResponseError
 import ntnu.idatt2105.exception.ApplicationException
 import ntnu.idatt2105.exception.EntityType
 import ntnu.idatt2105.exception.ExceptionType
@@ -19,26 +16,22 @@ import ntnu.idatt2105.util.CsvToBean.Companion.closeFileReader
 import ntnu.idatt2105.util.CsvToBean.Companion.createCSVToBean
 import ntnu.idatt2105.util.CsvToBean.Companion.throwIfFileEmpty
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedReader
-import java.io.FileReader
-import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.IllegalStateException
 import java.util.*
 
-
 @Service
 class MembershipServiceImpl(val groupRepository: GroupRepository, val userRepository: UserRepository) : MembershipService {
 
-    private fun getGroup(id:UUID) = groupRepository.findById(id).orElseThrow{throw ApplicationException.throwException(
+    private fun getGroup(id: UUID) = groupRepository.findById(id).orElseThrow { throw ApplicationException.throwException(
             EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, id.toString()) }
 
-    private fun getUser(email :String) = userRepository.findByEmail(email).run {
+    private fun getUser(email: String) = userRepository.findByEmail(email).run {
         if (this != null) return@run this
         throw ApplicationException.throwException(
                 EntityType.USER,
@@ -46,10 +39,10 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
                 email)
     }
 
-    private fun getUser(id: UUID) = userRepository.findById(id).orElseThrow{throw ApplicationException.throwException(
+    private fun getUser(id: UUID) = userRepository.findById(id).orElseThrow { throw ApplicationException.throwException(
             EntityType.USER,
             ExceptionType.ENTITY_NOT_FOUND,
-            id.toString())}
+            id.toString()) }
 
     override fun getMemberships(groupId: UUID, predicate: Predicate, pageable: Pageable): Page<UserListDto> =
         getGroup(groupId).run {
@@ -60,7 +53,7 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
 
     @Transactional
     override fun createMemberships(groupId: UUID, userEmail: UserEmailDto, predicate: Predicate, pageable: Pageable): Page<UserListDto> {
-        groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(
+        groupRepository.findById(groupId).orElseThrow { throw ApplicationException.throwException(
                 EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }
                 .run {
                     val member = getUser(userEmail.email)
@@ -74,7 +67,7 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
 
     @Transactional
     override fun deleteMembership(groupId: UUID, userId: UUID) {
-        groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(
+        groupRepository.findById(groupId).orElseThrow { throw ApplicationException.throwException(
                 EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }
                 .run {
                     val member = getUser(userId)
@@ -87,18 +80,18 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
         file: MultipartFile,
         groupId: UUID
     ): Response {
-        val group = groupRepository.findById(groupId).orElseThrow{throw ApplicationException.throwException(EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString())}
+        val group = groupRepository.findById(groupId).orElseThrow { throw ApplicationException.throwException(EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString()) }
         throwIfFileEmpty(file)
-        var fileReader : BufferedReader? = null
+        var fileReader: BufferedReader? = null
         val invalidUsers = mutableListOf<UserEmailDto>()
 
-        try{
+        try {
             fileReader = BufferedReader(InputStreamReader(file.inputStream))
             val csvToBean = createCSVToBean(fileReader, UserEmailDto::class.java)
             val listOfDto: List<UserEmailDto> = csvToBean.parse()
-            if(listOfDto.isEmpty()) throw ApplicationException.throwException(EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString())
+            if (listOfDto.isEmpty()) throw ApplicationException.throwException(EntityType.GROUP, ExceptionType.ENTITY_NOT_FOUND, groupId.toString())
 
-            listOfDto.forEach{
+            listOfDto.forEach {
                 try {
                     val user = getUser(it.email)
                     user.groups.add(group)
@@ -119,7 +112,4 @@ class MembershipServiceImpl(val groupRepository: GroupRepository, val userReposi
             closeFileReader(fileReader)
         }
     }
-
-
-
 }

@@ -10,7 +10,6 @@ import ntnu.idatt2105.group.dto.GroupDto
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.reservation.dto.ReservationDto
 import ntnu.idatt2105.reservation.model.Reservation
-import ntnu.idatt2105.section.dto.SectionDto
 import ntnu.idatt2105.user.service.UserDetailsImpl
 import ntnu.idatt2105.util.PaginationConstants
 import org.springframework.data.domain.Page
@@ -24,7 +23,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
-
 @Api(value = "Group services", tags = ["Group Services"], description = "Group Services")
 @RequestMapping("/groups/")
 interface GroupController {
@@ -33,10 +31,12 @@ interface GroupController {
         ApiResponse(responseCode = "200", description = "Success"),
     ])
     @GetMapping
-    fun getAllGroups(@QuerydslPredicate(root = Group::class) predicate: Predicate,
-                     @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
-                             sort= ["name"], direction = Sort.Direction.DESC) pageable: Pageable,
-                     @AuthenticationPrincipal principal: UserDetailsImpl): Page<GroupDto>
+    fun getAllGroups(
+        @QuerydslPredicate(root = Group::class) predicate: Predicate,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
+                sort = ["name"], direction = Sort.Direction.DESC) pageable: Pageable,
+        @AuthenticationPrincipal principal: UserDetailsImpl
+    ): Page<GroupDto>
 
     @Operation(summary = "Fetch group details for the given group id", responses = [
         ApiResponse(responseCode = "200", description = "Success"),
@@ -46,15 +46,16 @@ interface GroupController {
     @PreAuthorize("@securityService.groupPermissions(#groupId, true)")
     fun getGroup(@PathVariable groupId: UUID): ResponseEntity<GroupDto>
 
-
     @Operation(summary = "Fetch reservations for a given group", responses = [
         ApiResponse(responseCode = "200", description = "Success"),
         ApiResponse(responseCode = "404", description = "Not found: group with the given id does not exist")
     ])
     @GetMapping("{groupId}/reservations/")
-    fun getGroupReservations(@QuerydslPredicate(root = Reservation::class) predicate: Predicate,
-                             @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort= ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
-                             @PathVariable groupId: UUID): Page<ReservationDto>
+    fun getGroupReservations(
+        @QuerydslPredicate(root = Reservation::class) predicate: Predicate,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE, sort = ["fromTime"], direction = Sort.Direction.ASC) pageable: Pageable,
+        @PathVariable groupId: UUID
+    ): Page<ReservationDto>
 
     @Operation(summary = "Create a new group", responses = [
         ApiResponse(responseCode = "201", description = "Created: new group was created"),

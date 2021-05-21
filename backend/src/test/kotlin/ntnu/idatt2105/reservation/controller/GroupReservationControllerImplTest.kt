@@ -3,7 +3,6 @@ package ntnu.idatt2105.reservation.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.serpro69.kfaker.Faker
 import ntnu.idatt2105.factories.GroupReservationFactory
-import ntnu.idatt2105.factories.RoleFactory
 import ntnu.idatt2105.factories.UserFactory
 import ntnu.idatt2105.group.repository.GroupRepository
 import ntnu.idatt2105.reservation.dto.CreateGroupReservationRequest
@@ -55,21 +54,21 @@ class GroupReservationControllerImplTest {
     @Autowired
     private lateinit var userRepository: UserRepository
 
-    private lateinit var reservation : GroupReservation
+    private lateinit var reservation: GroupReservation
 
     private val faker = Faker()
-    
+
     @BeforeEach
-    fun setUp(){
+    fun setUp() {
         reservation = GroupReservationFactory().`object`
         userRepository.save(reservation.group!!.creator)
         groupRepository.save(reservation.group!!)
         sectionRepository.save(reservation.section!!)
         reservation = reservationRepository.save(reservation)
     }
-    
+
     @AfterEach
-    fun cleanUp(){
+    fun cleanUp() {
         reservationRepository.deleteAll()
         sectionRepository.deleteAll()
         groupRepository.deleteAll()
@@ -102,7 +101,6 @@ class GroupReservationControllerImplTest {
                 .andExpect(jsonPath("$.type").value("group"))
                 .andExpect(jsonPath("$.group.id").value(reservation.group!!.id.toString()))
                 .andExpect(jsonPath("$.text").value(reservation.text))
-
     }
 
     @Test
@@ -121,7 +119,7 @@ class GroupReservationControllerImplTest {
                 toTime = reservation.toTime?.plusDays(1),
                 text = reservation.text,
                 nrOfPeople = reservation.nrOfPeople,
-                type= "group" )
+                type = "group")
 
         this.mvc.perform(post(getURL(newReservation.section!!))
                 .contentType(MediaType.APPLICATION_JSON)

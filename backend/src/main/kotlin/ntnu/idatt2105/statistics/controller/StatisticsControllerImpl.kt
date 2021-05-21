@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
 @RestController
-class StatisticsControllerImpl(val statisticsService: StatisticsService): StatisticsController {
+class StatisticsControllerImpl(val statisticsService: StatisticsService) : StatisticsController {
 
     override fun getStatistics(sectionId: UUID, predicate: Predicate): ResponseEntity<StatisticsDto> =
         ResponseEntity(statisticsService.getStatisticsForSection(sectionId, predicate), HttpStatus.OK)

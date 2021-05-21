@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
-
 @Service
 class ReservationServiceImpl(
     val reservationRepository: ReservationRepository,
@@ -39,16 +38,16 @@ class ReservationServiceImpl(
     }
 
     @Transactional
-    override fun createReservation(sectionId: UUID, reservation: ReservationCreateDto) : ReservationDto {
+    override fun createReservation(sectionId: UUID, reservation: ReservationCreateDto): ReservationDto {
         // Check for overlapping reservations at same section
-        if (reservationRepository.existsInterval(reservation.fromTime!!, reservation.toTime!!, sectionId)){
+        if (reservationRepository.existsInterval(reservation.fromTime!!, reservation.toTime!!, sectionId)) {
             throw ApplicationException.throwException(
                     EntityType.RESERVATION, ExceptionType.DUPLICATE_ENTITY, reservation.fromTime.toString(), reservation.toTime.toString())
         }
         val section = sectionRepository.findById(sectionId).orElseThrow { throw ApplicationException.throwException(
             EntityType.SECTION, ExceptionType.ENTITY_NOT_FOUND, reservation.sectionId.toString()) }
         // Check for overlapping reservations at parent sections
-        if (section.parent != null && reservationRepository.existsInterval(reservation.fromTime!!, reservation.toTime!!, section.parent!!.id)){
+        if (section.parent != null && reservationRepository.existsInterval(reservation.fromTime!!, reservation.toTime!!, section.parent!!.id)) {
             throw ApplicationException.throwException(
                 EntityType.RESERVATION, ExceptionType.DUPLICATE_ENTITY, reservation.fromTime.toString(), reservation.toTime.toString())
         }
@@ -79,7 +78,6 @@ class ReservationServiceImpl(
         }
     }
 
-
     override fun getReservation(sectionId: UUID, reservationId: UUID): ReservationDto =
         reservationRepository.findById(reservationId).orElseThrow { throw ApplicationException.throwException(
                 EntityType.RESERVATION, ExceptionType.ENTITY_NOT_FOUND, reservationId.toString(), sectionId.toString()) }
@@ -90,28 +88,26 @@ class ReservationServiceImpl(
     @Transactional
     override fun updateReservation(sectionId: UUID, reservationId: UUID, reservation: ReservationDto): ReservationDto {
         reservationRepository.findReservationByIdAndSectionId(reservationId, sectionId).run {
-            if(this != null){
+            if (this != null) {
                 this.text = reservation.text
-                this. nrOfPeople = reservation.nrOfPeople
+                this.nrOfPeople = reservation.nrOfPeople
                 reservationRepository.save(this).run {
                     return this.toReservationDto()
                 }
             }
         }
-        throw  ApplicationException.throwException(
+        throw ApplicationException.throwException(
                 EntityType.RESERVATION, ExceptionType.ENTITY_NOT_FOUND, reservationId.toString(), sectionId.toString())
     }
 
     @Transactional
     override fun deleteReservation(sectionId: UUID, reservationId: UUID) {
-        reservationRepository.findById(reservationId).orElseThrow{ throw ApplicationException.throwException(
+        reservationRepository.findById(reservationId).orElseThrow { throw ApplicationException.throwException(
                 EntityType.RESERVATION, ExceptionType.ENTITY_NOT_FOUND, reservationId.toString(), sectionId.toString()) }
                 .run {
             reservationRepository.delete(this)
-
         }
     }
-
 
     override fun getGroupReservation(groupId: UUID, pageable: Pageable, predicate: Predicate): Page<ReservationDto> {
         val reservation = QReservation.reservation

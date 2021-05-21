@@ -1,7 +1,7 @@
 package ntnu.idatt2105.user.model
 
-import java.util.UUID
 import java.time.LocalDate
+import java.util.UUID
 
 data class UserBuilder(
     val id: UUID = UUID.randomUUID(),

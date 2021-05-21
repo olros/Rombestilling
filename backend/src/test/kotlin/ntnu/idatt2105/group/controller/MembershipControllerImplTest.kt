@@ -27,19 +27,17 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 class MembershipControllerImplTest {
 
-
     private fun getURI(group: Group) = "/groups/${group.id}/memberships/"
 
     @Autowired
-    private lateinit var  groupRepository : GroupRepository
+    private lateinit var groupRepository: GroupRepository
 
     @Autowired
-    private lateinit var  userRepository: UserRepository
+    private lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -56,21 +54,20 @@ class MembershipControllerImplTest {
 
     private lateinit var userDetails: UserDetails
 
-
     private val faker = Faker()
 
     @BeforeEach
-    fun setup(){
+    fun setup() {
         user = userRepository.save(UserFactory().`object`)
         group = GroupFactory().`object`
         group.members.add(user)
-        userRepository.save(group.creator!!)
+        userRepository.save(group.creator)
         group = groupRepository.save(group)
-        userDetails = userDetailsService.loadUserByUsername(group.creator?.email)
+        userDetails = userDetailsService.loadUserByUsername(group.creator.email)
     }
 
     @AfterEach
-    fun cleanUp(){
+    fun cleanUp() {
         groupRepository.deleteAll()
         userRepository.deleteAll()
     }
@@ -83,13 +80,12 @@ class MembershipControllerImplTest {
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].id", Matchers.hasItem(user.id.toString())))
-
     }
 
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test memberships controller POST returns OK and returns page with new members in group`() {
-        val newUser =  userRepository.save(UserFactory().`object`)
+        val newUser = userRepository.save(UserFactory().`object`)
         this.mvc.perform(MockMvcRequestBuilders.post(getURI(group))
                 .with(SecurityMockMvcRequestPostProcessors.user(userDetails))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -97,12 +93,11 @@ class MembershipControllerImplTest {
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content.[*].id", Matchers.hasItem(newUser.id.toString())))
-
     }
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test memberships controller DELETE returns OK and returns page with updated members in group`() {
-        val newUser =  userRepository.save(UserFactory().`object`)
+        val newUser = userRepository.save(UserFactory().`object`)
         group.members.add(newUser)
         group = groupRepository.save(group)
         this.mvc.perform(MockMvcRequestBuilders.delete("${getURI(group)}{userId}/", user.id)
@@ -110,15 +105,12 @@ class MembershipControllerImplTest {
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").isNotEmpty)
-
-
     }
-
 
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test batch create with single valid email`() {
-        val newUser =  userRepository.save(UserFactory().`object`)
+        val newUser = userRepository.save(UserFactory().`object`)
 
         val file = MockMultipartFile(
             "file",
@@ -135,14 +127,14 @@ class MembershipControllerImplTest {
     @Test
     @WithMockUser(value = "spring", roles = [RoleType.USER, RoleType.ADMIN])
     fun `test batch create with multiple valid emails`() {
-        val newUser =  userRepository.save(UserFactory().`object`)
-        val newUser2 =  userRepository.save(UserFactory().`object`)
+        val newUser = userRepository.save(UserFactory().`object`)
+        val newUser2 = userRepository.save(UserFactory().`object`)
 
         val file = MockMultipartFile(
             "file",
             "test.csv",
             "csv",
-            ("email\n" + newUser.email+"\n" + newUser2.email).byteInputStream())
+            ("email\n" + newUser.email + "\n" + newUser2.email).byteInputStream())
 
         mvc.perform(
             MockMvcRequestBuilders.multipart(getURI(group) + "batch-memberships/").file(file)
@@ -165,9 +157,5 @@ class MembershipControllerImplTest {
                 .with(SecurityMockMvcRequestPostProcessors.user(userDetails)))
                 .andExpect(MockMvcResultMatchers.status().isOk)
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.containsString(email)))
-
     }
-
-
-
 }

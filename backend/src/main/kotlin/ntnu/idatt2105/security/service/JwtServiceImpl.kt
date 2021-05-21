@@ -18,7 +18,6 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 
-
 @Service
 class JwtServiceImpl(
     val jwtUtil: JwtUtil,
@@ -28,9 +27,7 @@ class JwtServiceImpl(
     val tokenValidator: TokenValidator,
     val refreshTokenService: RefreshTokenService,
     val userDetailsService: UserDetailsService
-): JwtService {
-
-
+) : JwtService {
 
     override fun refreshToken(header: String): JwtTokenResponse {
         val currentJwtRefreshToken: JwtRefreshToken = getCurrentJwtRefreshToken(header)
@@ -41,7 +38,6 @@ class JwtServiceImpl(
         val refreshToken: JwtRefreshToken = tokenFactory.createRefreshToken(userDetails) as JwtRefreshToken
         refreshTokenService.rotateRefreshToken(currentJwtRefreshToken, refreshToken)
         return JwtTokenResponse(accessToken.getToken(), refreshToken.getToken())
-
     }
 
     private fun getCurrentJwtRefreshToken(header: String): JwtRefreshToken {

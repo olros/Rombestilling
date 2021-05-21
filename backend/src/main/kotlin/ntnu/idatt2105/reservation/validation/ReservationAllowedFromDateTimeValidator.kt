@@ -9,8 +9,8 @@ import java.time.ZonedDateTime
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext
 
-class ReservationAllowedFromDateTimeValidator
-    : ConstraintValidator<ReservationAllowedFromDateTime?, ReservationCreateDto> {
+class ReservationAllowedFromDateTimeValidator :
+    ConstraintValidator<ReservationAllowedFromDateTime?, ReservationCreateDto> {
 
     override fun initialize(constraintAnnotation: ReservationAllowedFromDateTime?) {
     }
@@ -24,10 +24,10 @@ class ReservationAllowedFromDateTimeValidator
             reservation.fromTime?.with(ReservationConstants.LATEST_RESERVATION_TIME_OF_DAY)) ?: false
         val isWithinMaxMonthsInTheFuture = isWithinMaxMonthsInTheFuture(reservation)
 
-        return isInTheFuture
-            && isWithinMaxMonthsInTheFuture
-            && isStartingAfterEarliestTimeOfDay
-            && isStartingBeforeLatestTimeOfDay
+        return isInTheFuture &&
+            isWithinMaxMonthsInTheFuture &&
+            isStartingAfterEarliestTimeOfDay &&
+            isStartingBeforeLatestTimeOfDay
     }
 
     private fun isWithinMaxMonthsInTheFuture(reservation: ReservationCreateDto): Boolean {

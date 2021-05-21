@@ -5,7 +5,6 @@ import ntnu.idatt2105.dto.response.Response
 import ntnu.idatt2105.section.dto.CreateSectionRequest
 import ntnu.idatt2105.section.dto.SectionDto
 import ntnu.idatt2105.section.dto.SectionListDto
-import ntnu.idatt2105.section.model.Section
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import java.util.*

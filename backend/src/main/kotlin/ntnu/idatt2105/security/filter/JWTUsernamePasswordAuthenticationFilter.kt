@@ -9,7 +9,6 @@ import ntnu.idatt2105.security.token.JwtToken
 import ntnu.idatt2105.security.token.JwtTokenFactory
 import ntnu.idatt2105.security.token.TokenFactory
 import ntnu.idatt2105.user.service.UserDetailsImpl
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -22,7 +21,6 @@ import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-
 class JWTUsernamePasswordAuthenticationFilter : UsernamePasswordAuthenticationFilter {
 
     private var tokenFactory: TokenFactory
@@ -30,8 +28,8 @@ class JWTUsernamePasswordAuthenticationFilter : UsernamePasswordAuthenticationFi
     private var refreshTokenService: RefreshTokenService?
     private var jwtConfig: JWTConfig
 
-    constructor(refreshTokenService: RefreshTokenService, authenticationManager: AuthenticationManager, jwtConfig: JWTConfig)  {
-        this.refreshTokenService =refreshTokenService
+    constructor(refreshTokenService: RefreshTokenService, authenticationManager: AuthenticationManager, jwtConfig: JWTConfig) {
+        this.refreshTokenService = refreshTokenService
         this.jwtConfig = jwtConfig
         this.authenticationManager = authenticationManager
         tokenFactory = JwtTokenFactory(jwtConfig)

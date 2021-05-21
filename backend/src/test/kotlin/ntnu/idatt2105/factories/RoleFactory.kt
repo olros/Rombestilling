@@ -12,5 +12,4 @@ class RoleFactory : FactoryBean<Role> {
     override fun getObject(): Role = Role(id = UUID.randomUUID(), RoleType.USER)
 
     override fun getObjectType(): Class<*> = Role::class.java
-
 }
