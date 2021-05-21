@@ -1,4 +1,4 @@
-package ntnu.idatt2105.config
+package ntnu.idatt2105.core.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

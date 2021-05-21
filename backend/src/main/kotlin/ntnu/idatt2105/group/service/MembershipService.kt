@@ -1,7 +1,7 @@
 package ntnu.idatt2105.group.service
 
 import com.querydsl.core.types.Predicate
-import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.core.response.Response
 import ntnu.idatt2105.user.dto.UserEmailDto
 import ntnu.idatt2105.user.dto.UserListDto
 import org.springframework.data.domain.Page

@@ -1,8 +1,8 @@
 package ntnu.idatt2105.security.service
 
-import ntnu.idatt2105.exception.ApplicationException
-import ntnu.idatt2105.exception.EntityType
-import ntnu.idatt2105.exception.ExceptionType
+import ntnu.idatt2105.core.exception.ApplicationException
+import ntnu.idatt2105.core.exception.EntityType
+import ntnu.idatt2105.core.exception.ExceptionType
 import ntnu.idatt2105.group.repository.GroupRepository
 import ntnu.idatt2105.reservation.model.GroupReservation
 import ntnu.idatt2105.reservation.model.Reservation

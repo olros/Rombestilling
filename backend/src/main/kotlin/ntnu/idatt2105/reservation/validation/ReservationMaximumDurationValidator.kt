@@ -1,7 +1,7 @@
 package ntnu.idatt2105.reservation.validation
 
+import ntnu.idatt2105.core.util.ReservationConstants
 import ntnu.idatt2105.reservation.dto.ReservationCreateDto
-import ntnu.idatt2105.util.ReservationConstants
 import java.time.Duration
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext

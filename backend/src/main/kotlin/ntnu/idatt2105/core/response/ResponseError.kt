@@ -1,4 +1,4 @@
-package ntnu.idatt2105.dto.response
+package ntnu.idatt2105.core.response
 
 import java.time.LocalDate
 

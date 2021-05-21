@@ -1,4 +1,4 @@
-package ntnu.idatt2105.util
+package ntnu.idatt2105.core.util
 
 import java.time.LocalTime
 

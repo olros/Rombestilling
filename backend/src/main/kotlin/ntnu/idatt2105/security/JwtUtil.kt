@@ -4,10 +4,10 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.UnsupportedJwtException
 import io.jsonwebtoken.security.SignatureException
+import ntnu.idatt2105.core.util.SecurityConstants.AUTHORITIES_KEY
 import ntnu.idatt2105.security.config.JWTConfig
 import ntnu.idatt2105.security.token.JwtRefreshToken
 import ntnu.idatt2105.security.token.RawJwtAccessToken
-import ntnu.idatt2105.util.SecurityConstants.AUTHORITIES_KEY
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component

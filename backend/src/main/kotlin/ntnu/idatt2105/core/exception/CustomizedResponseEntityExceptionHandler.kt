@@ -1,6 +1,6 @@
-package ntnu.idatt2105.exception
+package ntnu.idatt2105.core.exception
 
-import ntnu.idatt2105.dto.response.ResponseError
+import ntnu.idatt2105.core.response.ResponseError
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

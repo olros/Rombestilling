@@ -2,19 +2,19 @@ package ntnu.idatt2105.group.service
 
 import com.querydsl.core.types.ExpressionUtils
 import com.querydsl.core.types.Predicate
-import ntnu.idatt2105.dto.response.Response
-import ntnu.idatt2105.exception.ApplicationException
-import ntnu.idatt2105.exception.EntityType
-import ntnu.idatt2105.exception.ExceptionType
+import ntnu.idatt2105.core.exception.ApplicationException
+import ntnu.idatt2105.core.exception.EntityType
+import ntnu.idatt2105.core.exception.ExceptionType
+import ntnu.idatt2105.core.response.Response
+import ntnu.idatt2105.core.util.CsvToBean.Companion.closeFileReader
+import ntnu.idatt2105.core.util.CsvToBean.Companion.createCSVToBean
+import ntnu.idatt2105.core.util.CsvToBean.Companion.throwIfFileEmpty
 import ntnu.idatt2105.group.repository.GroupRepository
 import ntnu.idatt2105.user.dto.UserEmailDto
 import ntnu.idatt2105.user.dto.UserListDto
 import ntnu.idatt2105.user.dto.toUserListDto
 import ntnu.idatt2105.user.model.QUser
 import ntnu.idatt2105.user.repository.UserRepository
-import ntnu.idatt2105.util.CsvToBean.Companion.closeFileReader
-import ntnu.idatt2105.util.CsvToBean.Companion.createCSVToBean
-import ntnu.idatt2105.util.CsvToBean.Companion.throwIfFileEmpty
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service

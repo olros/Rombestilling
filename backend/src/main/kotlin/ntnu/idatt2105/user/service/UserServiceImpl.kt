@@ -1,13 +1,16 @@
 package ntnu.idatt2105.user.service
 
 import com.querydsl.core.types.Predicate
-import ntnu.idatt2105.dto.response.Response
-import ntnu.idatt2105.exception.ApplicationException
-import ntnu.idatt2105.exception.EntityType
-import ntnu.idatt2105.exception.ExceptionType
-import ntnu.idatt2105.mailer.HtmlTemplate
-import ntnu.idatt2105.mailer.Mail
-import ntnu.idatt2105.mailer.MailService
+import ntnu.idatt2105.core.exception.ApplicationException
+import ntnu.idatt2105.core.exception.EntityType
+import ntnu.idatt2105.core.exception.ExceptionType
+import ntnu.idatt2105.core.mailer.HtmlTemplate
+import ntnu.idatt2105.core.mailer.Mail
+import ntnu.idatt2105.core.mailer.MailService
+import ntnu.idatt2105.core.response.Response
+import ntnu.idatt2105.core.util.CsvToBean.Companion.closeFileReader
+import ntnu.idatt2105.core.util.CsvToBean.Companion.createCSVToBean
+import ntnu.idatt2105.core.util.CsvToBean.Companion.throwIfFileEmpty
 import ntnu.idatt2105.security.dto.ForgotPassword
 import ntnu.idatt2105.security.dto.MakeAdminDto
 import ntnu.idatt2105.security.dto.ResetPasswordDto
@@ -22,9 +25,6 @@ import ntnu.idatt2105.user.model.RoleType.USER
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.repository.RoleRepository
 import ntnu.idatt2105.user.repository.UserRepository
-import ntnu.idatt2105.util.CsvToBean.Companion.closeFileReader
-import ntnu.idatt2105.util.CsvToBean.Companion.createCSVToBean
-import ntnu.idatt2105.util.CsvToBean.Companion.throwIfFileEmpty
 import org.modelmapper.ModelMapper
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page

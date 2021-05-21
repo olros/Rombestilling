@@ -1,6 +1,6 @@
 package ntnu.idatt2105.security.exception.handler
 
-import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.core.response.Response
 import ntnu.idatt2105.security.exception.JwtExpiredTokenException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

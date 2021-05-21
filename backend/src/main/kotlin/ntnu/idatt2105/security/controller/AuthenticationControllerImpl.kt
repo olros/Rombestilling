@@ -1,6 +1,6 @@
 package ntnu.idatt2105.security.controller
 
-import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.core.response.Response
 import ntnu.idatt2105.security.config.JWTConfig
 import ntnu.idatt2105.security.dto.ForgotPassword
 import ntnu.idatt2105.security.dto.JwtTokenResponse

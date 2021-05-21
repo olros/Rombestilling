@@ -1,29 +1,23 @@
 package ntnu.idatt2105.security.controller
 
 import io.swagger.annotations.Api
+import io.swagger.annotations.ApiParam
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import ntnu.idatt2105.dto.response.Response
+import ntnu.idatt2105.core.response.Response
+import ntnu.idatt2105.security.dto.*
 import ntnu.idatt2105.user.dto.DetailedUserDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
 import java.util.*
 import javax.servlet.http.HttpServletRequest
-import org.springframework.web.bind.annotation.RequestParam
-
-import io.swagger.annotations.ApiParam
-
-import org.springframework.web.bind.annotation.PostMapping
-
-import io.swagger.annotations.ApiOperation
-import ntnu.idatt2105.security.dto.*
-
 
 @Api(value = "Authentication services", tags = ["Authentication Services"], description = "Authentication Services")
 @RequestMapping("auth/")
 interface AuthenticationController {
 
-    @Operation(summary = "Log into the application",  responses = [
+    @Operation(summary = "Log into the application", responses = [
         ApiResponse(responseCode = "200", description = "Success: Access and refresh token generated")])
     @PostMapping("/login")
     fun fakeLogin(
