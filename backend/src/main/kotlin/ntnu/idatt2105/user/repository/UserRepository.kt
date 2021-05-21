@@ -2,7 +2,6 @@ package ntnu.idatt2105.user.repository
 
 import com.querydsl.core.BooleanBuilder
 import ntnu.idatt2105.user.model.QUser
-import ntnu.idatt2105.user.model.RoleType
 import ntnu.idatt2105.user.model.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.querydsl.QuerydslPredicateExecutor

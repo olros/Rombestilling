@@ -11,9 +11,6 @@ import ntnu.idatt2105.group.dto.toGroupDto
 import ntnu.idatt2105.group.model.Group
 import ntnu.idatt2105.group.model.QGroup
 import ntnu.idatt2105.group.repository.GroupRepository
-import ntnu.idatt2105.reservation.model.QReservation
-import ntnu.idatt2105.reservation.model.QUserReservation
-import ntnu.idatt2105.reservation.service.ReserverService
 import ntnu.idatt2105.user.model.User
 import ntnu.idatt2105.user.service.UserService
 import org.springframework.data.domain.Page

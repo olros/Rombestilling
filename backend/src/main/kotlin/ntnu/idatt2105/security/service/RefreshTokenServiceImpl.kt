@@ -13,8 +13,6 @@ import java.util.*
 @Service
 class RefreshTokenServiceImpl(val refreshTokenRepository: RefreshTokenRepository, val jwtUtil: JwtUtil) : RefreshTokenService {
 
-
-
     @Transactional
     override fun invalidateSubsequentTokens(jti: String) {
         val refreshToken: RefreshToken = getByJti(jti)
@@ -45,7 +43,6 @@ class RefreshTokenServiceImpl(val refreshTokenRepository: RefreshTokenRepository
         return refreshTokenRepository.findById(UUID.fromString(jti))
                 .orElseThrow { RefreshTokenNotFound() }
     }
-
 
     @Transactional
     override fun saveRefreshToken(token: JwtToken): RefreshToken {

@@ -53,7 +53,7 @@ class SecurityService(
      */
     fun groupPermissions(groupId: UUID, onlyRead: Boolean): Boolean {
         val user = getUser() ?: return false
-        return if(user.isAdmin()){
+        return if (user.isAdmin()) {
             true
         } else {
             val group = groupRepository.findById(groupId).orElseThrow {

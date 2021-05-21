@@ -31,10 +31,12 @@ interface GroupController {
         ApiResponse(responseCode = "200", description = "Success"),
     ])
     @GetMapping
-    fun getAllGroups(@QuerydslPredicate(root = Group::class) predicate: Predicate,
-                     @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
-                             sort= ["name"], direction = Sort.Direction.DESC) pageable: Pageable,
-                     @AuthenticationPrincipal principal: UserDetailsImpl): Page<GroupDto>
+    fun getAllGroups(
+        @QuerydslPredicate(root = Group::class) predicate: Predicate,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
+                sort = ["name"], direction = Sort.Direction.DESC) pageable: Pageable,
+        @AuthenticationPrincipal principal: UserDetailsImpl
+    ): Page<GroupDto>
 
     @Operation(summary = "Fetch group details for the given group id", responses = [
         ApiResponse(responseCode = "200", description = "Success"),

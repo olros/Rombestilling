@@ -52,9 +52,9 @@ class GroupControllerImplTest {
     @BeforeEach
     fun setup() {
         group = GroupFactory().`object`
-        userRepository.save(group.creator!!)
+        userRepository.save(group.creator)
         group = groupRepository.save(group)
-        userDetails = userDetailsService.loadUserByUsername(group.creator?.email)
+        userDetails = userDetailsService.loadUserByUsername(group.creator.email)
     }
 
     @AfterEach

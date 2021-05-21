@@ -38,7 +38,7 @@ class ReservationServiceImpl(
     }
 
     @Transactional
-    override fun createReservation(sectionId: UUID, reservation: ReservationCreateDto) : ReservationDto {
+    override fun createReservation(sectionId: UUID, reservation: ReservationCreateDto): ReservationDto {
         // Check for overlapping reservations at same section
         if (reservationRepository.existsInterval(reservation.fromTime!!, reservation.toTime!!, sectionId)) {
             throw ApplicationException.throwException(

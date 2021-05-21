@@ -32,10 +32,12 @@ interface MembershipController {
     ])
     @GetMapping
     @PreAuthorize("@securityService.groupPermissions(#groupId, true)")
-    fun getMemberships(@QuerydslPredicate(root = User::class) predicate: Predicate,
-                       @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
-                       sort= ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
-                       @PathVariable groupId: UUID): Page<UserListDto>
+    fun getMemberships(
+        @QuerydslPredicate(root = User::class) predicate: Predicate,
+        @PageableDefault(size = PaginationConstants.PAGINATION_SIZE,
+        sort = ["firstName"], direction = Sort.Direction.DESC) pageable: Pageable,
+        @PathVariable groupId: UUID
+    ): Page<UserListDto>
 
     @Operation(summary = "Create a new membership", responses = [
         ApiResponse(responseCode = "201", description = "Created: new membership was created"),

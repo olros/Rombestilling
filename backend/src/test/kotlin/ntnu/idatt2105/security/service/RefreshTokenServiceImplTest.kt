@@ -46,7 +46,7 @@ internal class RefreshTokenServiceImplTest {
     fun setUp() {
 
         val randomString = (1..JWT_SECRET_LENGTH)
-            .map { i -> kotlin.random.Random.nextInt(0, charPool.size) }
+            .map { kotlin.random.Random.nextInt(0, charPool.size) }
             .map(charPool::get)
             .joinToString("")
 

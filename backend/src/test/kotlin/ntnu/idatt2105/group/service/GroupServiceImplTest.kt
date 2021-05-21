@@ -38,7 +38,7 @@ class GroupServiceImplTest {
     @BeforeEach
     fun setUp() {
         group = GroupFactory().`object`
-        Mockito.lenient().`when`(userService.getUser(group.creator?.id!!, User::class.java)).thenReturn(group.creator)
+        Mockito.lenient().`when`(userService.getUser(group.creator.id, User::class.java)).thenReturn(group.creator)
         Mockito.lenient().`when`(groupRepository.findById(Mockito.any(UUID::class.java))).thenReturn(Optional.of(group))
         Mockito.lenient().`when`(groupRepository.save(Mockito.any(Group::class.java))).thenReturn(group)
     }

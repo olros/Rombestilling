@@ -70,7 +70,7 @@ class WebSecurity(
             .antMatchers(HttpMethod.DELETE, "/sections/{sectionId}/reservations/{reservationId}/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.PUT, "/sections/{sectionId}/reservations/{reservationId}/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.GET, "/sections/{sectionId}/reservations/{reservationId}/").hasRole(RoleType.USER)
-            .antMatchers(HttpMethod.GET, "/groups/","/groups/{groupId}/", "/groups/{groupId}/reservations/" ).hasRole(RoleType.USER)
+            .antMatchers(HttpMethod.GET, "/groups/", "/groups/{groupId}/", "/groups/{groupId}/reservations/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.DELETE, "/groups/{groupId}/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.PUT, "/groups/{groupId}/").hasRole(RoleType.USER)
             .antMatchers(HttpMethod.POST, "/groups/").hasRole(RoleType.USER)

@@ -61,9 +61,9 @@ class MembershipControllerImplTest {
         user = userRepository.save(UserFactory().`object`)
         group = GroupFactory().`object`
         group.members.add(user)
-        userRepository.save(group.creator!!)
+        userRepository.save(group.creator)
         group = groupRepository.save(group)
-        userDetails = userDetailsService.loadUserByUsername(group.creator?.email)
+        userDetails = userDetailsService.loadUserByUsername(group.creator.email)
     }
 
     @AfterEach
