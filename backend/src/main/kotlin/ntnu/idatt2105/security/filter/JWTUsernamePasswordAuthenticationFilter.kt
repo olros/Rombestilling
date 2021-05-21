@@ -64,7 +64,7 @@ class JWTUsernamePasswordAuthenticationFilter : UsernamePasswordAuthenticationFi
         tokens.putIfAbsent("token", accessToken.getToken())
         tokens.putIfAbsent("refreshToken", refreshToken.getToken())
 
-        response.addHeader(jwtConfig.header, (jwtConfig.prefix) + accessToken)
+        response.addHeader(jwtConfig.header, "${jwtConfig.prefix} ${accessToken.getToken()}")
         response.contentType = "application/json"
         response.characterEncoding = "UTF-8"
         objectMapper.writeValue(response.writer, tokens)
