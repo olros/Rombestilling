@@ -30,7 +30,6 @@ En _adminbruker_ har tilgang til alle aspekter en endebruker kan, i tillegg til 
 - Se statistikk for rom
 
 
-
 ## Databaseskjema
 Følgende er vårt databaseskjema:
 
@@ -48,6 +47,26 @@ Følgende er vårt databaseskjema:
 - **QueryDSL** - Spørrespråk for å konstruere SQL-spørringer 
 - **opencsv** - CSV-analyserer for Java
 - **awaitility** - Java DSL for å synkronisere asynkrone operasjoner  
+
+## Applikasjonstruktur
+### Backend
+Vi har forsøkt å legge opp strukturen på en domenesentrert måte, med pakker for hver av de tilknyttede domenemodellene våre. 
+![image](https://user-images.githubusercontent.com/35424810/119145606-1b1a8080-ba4a-11eb-9693-167e3e989f7d.png)
+![image](https://user-images.githubusercontent.com/35424810/119145686-2ec5e700-ba4a-11eb-86f9-4db7708ae69d.png)
+
+Hver pakke er deretter delt opp i underpakker som reflekterer de ulike elementene som utgjør en naturlig del av applikasjonen.
+
+#### Controller
+Controller-klassene er view-laget og tilbyr REST-endepunkter for klienter over HTTP.
+
+#### Service
+Service-klassene inneholder det meste av forretningslogikken slik at den er uavhengig av laget over.
+
+#### Repositories
+Repositories er våre repository-klasser og er ansvarlig for å kommunisere med databasen.
+
+#### Models & DTOs
+Modellene våre ligger i `model` pakken og deres respektive DTOer (Data Transfer Objects) ligger i `dto`. Dette er gjort for å decouple modell-laget fra view-laget slik at de også kan utvikle seg uavhengig av hverandre. 
 
 ## Sikkerhet
 Sikkerhet vært et gjennomgående fokus punkt under hele prosjektet da vi mener at dette er at vi de viktigste fokusene man må ivareta som utvikler. APIet vårt er designet rundt REST prinsipper, noe som gjør at vi derfor benytter oss av stateless authentication. Dette gjør vi ved hjelp av Json Web Tokens. En gyldig innlogget bruker vil til enhver tid ha en Acess token og en refresh token tilgjengelig. Acess token gjør at brukeren kan få tilgang på innhold, men denne har en gyldighet på 15 minutter, av sikkerhetsmessig årsaker. Bruker vil da automatisk benytte seg av refresh token for å få en ny og oppdatert acess token. Alt dette skjer automatisk, slik at bruker ikke skal trenge å bruke energi på det, samtidig som det gir brukeren en sikker opplevelse. 
